@@ -1,3 +1,4 @@
+import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_final_walkthrough_data.dart'
     as final_walk;
@@ -125,41 +126,10 @@ class _FormScreen6State extends State<FormScreen6> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      padding: const EdgeInsets.all(0),
-                                      fixedSize: const Size(10, 10)),
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            FormScreen5(id: widget.id),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/icons/ic_back.svg'),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                'Final Walkthrough',
-                                style: kAppBarSecondaryTitleTextStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const LinearProgressIndicator(
-                            value: 6.0 / 6.0,
-                          ),
+                          TitleComponent(
+                              screen: FormScreen5(id: widget.id),
+                              title: 'Final Walkthrough',
+                              linearProgressValue: 6.0)
                         ],
                       ),
                     ),

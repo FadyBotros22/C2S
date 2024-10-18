@@ -3,6 +3,7 @@ import 'package:c2s/components/checklist_component.dart';
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
+import 'package:c2s/components/title_component.dart';
 import 'package:c2s/components/transparent_action_button.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_initial_walk_through_data.dart'
@@ -172,43 +173,11 @@ class _FormScreen2State extends State<FormScreen2> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      padding: const EdgeInsets.all(0),
-                                      fixedSize: const Size(10, 10)),
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FormScreen1(
-                                          id: widget.id,
-                                        ),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/icons/ic_back.svg'),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                'Initial Walkthrough',
-                                style: kAppBarSecondaryTitleTextStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          const LinearProgressIndicator(
-                            value: 2.0 / 6.0,
-                          ),
-                          const SizedBox(height: 18),
+                          TitleComponent(
+                              screen: FormScreen1(id: widget.id),
+                              title: 'Initial Walkthrough',
+                              linearProgressValue: 2.0),
+                          SizedBox(height: 16),
                           const Text(
                             'It\'s incredibly important to ensure a proper initial walk through is conducted. Please ensure the following barriers will not be an issue to completing work.',
                             style: kParagraphTextStyle,

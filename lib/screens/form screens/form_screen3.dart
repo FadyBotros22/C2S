@@ -1,6 +1,7 @@
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
+import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_air_sealing_data.dart'
     as air_sealing;
@@ -110,41 +111,10 @@ class _FormScreen3State extends State<FormScreen3> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      padding: const EdgeInsets.all(0),
-                                      fixedSize: const Size(10, 10)),
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            FormScreen2(id: widget.id),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/icons/ic_back.svg'),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                'Air Sealing',
-                                style: kAppBarSecondaryTitleTextStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const LinearProgressIndicator(
-                            value: 3.0 / 6.0,
-                          ),
+                          TitleComponent(
+                              screen: FormScreen2(id: widget.id),
+                              title: 'Air Sealling',
+                              linearProgressValue: 3.0)
                         ],
                       ),
                     ),

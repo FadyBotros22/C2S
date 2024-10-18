@@ -1,3 +1,4 @@
+import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_wall_insulation_data.dart'
     as insulation;
@@ -88,54 +89,15 @@ class _FormScreen5State extends State<FormScreen5> {
       body: SafeArea(
         child: Column(
           children: [
+            TitleComponent(
+                screen: FormScreen4(id: widget.id),
+                title: 'Wall Insulation',
+                linearProgressValue: 5.0),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      padding: const EdgeInsets.all(0),
-                                      fixedSize: const Size(10, 10)),
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            FormScreen4(id: widget.id),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/icons/ic_back.svg'),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                'Wall Insulation',
-                                style: kAppBarSecondaryTitleTextStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const LinearProgressIndicator(
-                            value: 5.0 / 6.0,
-                          ),
-                        ],
-                      ),
-                    ),
                     Container(
                       margin: const EdgeInsets.all(16),
                       child: Column(

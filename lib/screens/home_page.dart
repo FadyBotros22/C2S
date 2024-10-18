@@ -71,7 +71,10 @@ class _HomePageState extends State<HomePage> {
                     style: kAppBarTitleTextStyle,
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
+                    icon: const Icon(
+                      Icons.more_vert,
+                    ),
+                    iconSize: 35,
                     onSelected: (String value) {
                       if (value == 'sort') {
                         setState(() {
@@ -179,6 +182,7 @@ class _HomePageState extends State<HomePage> {
                     ? entriesResponse.data.entries.isEmpty
                         ? const EmptyList()
                         : ListView.builder(
+                            padding: EdgeInsets.only(top: 10),
                             itemCount: entriesResponse.data.entries.length,
                             itemBuilder: (context, index) {
                               final project =
@@ -186,109 +190,137 @@ class _HomePageState extends State<HomePage> {
                               return Card(
                                 color: const Color(0xFFF5F5F5),
                                 margin: const EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 16),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                    left: 16, right: 20, bottom: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16, left: 16, right: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          const Text("Created by:",
-                                              style: kCreatedByTextStyle),
-                                          Text(
-                                            DateFormat('d MMMM, yyyy')
-                                                .format(project.date),
-                                            style: kDateTextStyle,
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text("Created by:",
+                                                  style: kCreatedByTextStyle),
+                                              Text(
+                                                DateFormat('d MMMM, yyyy')
+                                                    .format(project.date),
+                                                style: kDateTextStyle,
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 15.0),
-                                      Text(
-                                        project.createdBy,
-                                        style: kNameTextStyle,
-                                      ),
-                                      const SizedBox(height: 15.0),
-                                      Text(
-                                        project.jobId,
-                                        style: kProjectNameTextStyle,
-                                      ),
-                                      const SizedBox(height: 15.0),
-
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/icons/path929.svg',
-                                            height: 16.35,
-                                            width: 12,
-                                          ),
-                                          const SizedBox(width: 9),
+                                          const SizedBox(height: 15.0),
                                           Text(
-                                            project.address ?? "None",
+                                            project.createdBy,
+                                            style: kNameTextStyle,
+                                          ),
+                                          const SizedBox(height: 15.0),
+                                          Text(
+                                            project.jobId,
                                             style: kProjectNameTextStyle,
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12.5),
-                                      const Divider(
-                                          color:
-                                              Color(0xffDFDFDF)), // Faded line
-                                      // const SizedBox(height: 12.5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: 255,
-                                            child: LinearProgressIndicator(
-                                              value: project.progressStep
-                                                      .toDouble() /
-                                                  6,
-                                            ),
-                                          ), // Progress bar
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Widget screen;
-                                              String id = project.id;
-                                              int step =
-                                                  project.progressStep.toInt();
-                                              if (step == 1) {
-                                                screen = FormScreen2(id: id);
-                                              } else if (step == 2) {
-                                                screen = FormScreen3(id: id);
-                                              } else if (step == 3) {
-                                                screen = FormScreen4(id: id);
-                                              } else if (step == 4) {
-                                                screen = FormScreen5(id: id);
-                                              } else {
-                                                screen = FormScreen6(id: id);
-                                              }
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => screen,
-                                                ),
-                                              );
-                                            },
-                                            style: const ButtonStyle(
-                                                elevation:
-                                                    WidgetStatePropertyAll(0),
-                                                backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                        Color(0xffF5F5F5))),
-                                            child: SvgPicture.asset(
-                                              'assets/icons/ic_view_form.svg',
-                                              width: 28,
-                                              height: 28,
-                                            ),
+                                          const SizedBox(height: 15.0),
+                                          Row(
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icons/path929.svg',
+                                                height: 16.35,
+                                                width: 12,
+                                              ),
+                                              const SizedBox(width: 9),
+                                              Text(
+                                                project.address ?? "None",
+                                                style: kProjectNameTextStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 12.5,
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 16),
+                                      child: const Divider(
+                                          color: Color(0xffDFDFDF)),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SizedBox(
+                                                width: 270,
+                                                child: LinearProgressIndicator(
+                                                  value: project.progressStep
+                                                          .toDouble() /
+                                                      6,
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Widget screen;
+                                                  String id = project.id;
+                                                  int step = project
+                                                      .progressStep
+                                                      .toInt();
+                                                  if (step == 1) {
+                                                    screen =
+                                                        FormScreen2(id: id);
+                                                  } else if (step == 2) {
+                                                    screen =
+                                                        FormScreen3(id: id);
+                                                  } else if (step == 3) {
+                                                    screen =
+                                                        FormScreen4(id: id);
+                                                  } else if (step == 4) {
+                                                    screen =
+                                                        FormScreen5(id: id);
+                                                  } else {
+                                                    screen =
+                                                        FormScreen6(id: id);
+                                                  }
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          screen,
+                                                    ),
+                                                  );
+                                                },
+                                                style: const ButtonStyle(
+                                                    overlayColor:
+                                                        WidgetStatePropertyAll(
+                                                            Colors.transparent),
+                                                    elevation:
+                                                        WidgetStatePropertyAll(
+                                                            0),
+                                                    backgroundColor:
+                                                        WidgetStatePropertyAll(
+                                                            Color(0xffF5F5F5))),
+                                                child: SvgPicture.asset(
+                                                  'assets/icons/ic_view_form.svg',
+                                                  width: 28,
+                                                  height: 28,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               );
                             },
@@ -314,7 +346,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: SvgPicture.asset(
-            'assets/icons/ic_create_form.svg',
+            'assets/icons/button_create_button.svg',
             width: 70,
             height: 70,
           ),

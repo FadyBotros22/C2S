@@ -1,3 +1,4 @@
+import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_attic_insulation_data.dart'
     as attic;
@@ -111,41 +112,10 @@ class _FormScreen4State extends State<FormScreen4> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      padding: const EdgeInsets.all(0),
-                                      fixedSize: const Size(10, 10)),
-                                  onPressed: () {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            FormScreen3(id: widget.id),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/icons/ic_back.svg'),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                'Attic Insulation',
-                                style: kAppBarSecondaryTitleTextStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const LinearProgressIndicator(
-                            value: 4.0 / 6.0,
-                          ),
+                          TitleComponent(
+                              screen: FormScreen3(id: widget.id),
+                              title: 'Attic Insulation',
+                              linearProgressValue: 4.0)
                         ],
                       ),
                     ),
