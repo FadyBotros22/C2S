@@ -1,3 +1,4 @@
+import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
@@ -7,16 +8,10 @@ import 'package:c2s/data/patch%20data/patch_air_sealing_data.dart'
     as air_sealing;
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/form%20screens/form_screen4.dart';
-import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:c2s/constants.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
-
-import '../../components/action_button.dart';
-import '../../components/transparent_action_button.dart';
 
 class FormScreen3 extends StatefulWidget {
   const FormScreen3({super.key, required this.id});
@@ -33,6 +28,8 @@ class _FormScreen3State extends State<FormScreen3> {
 
   bool isEmptyOnWorkOrder = false;
   bool isEmptyAirSealingPics = false;
+
+  bool loading = true;
 
   bool validate() {
     if (onWorkOrder == null) {
@@ -72,7 +69,7 @@ class _FormScreen3State extends State<FormScreen3> {
     await apiService.patchAirSealing(widget.id, token, patchAirSealingData);
   }
 
-  void getEntry() async {
+  Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -91,7 +88,17 @@ class _FormScreen3State extends State<FormScreen3> {
   @override
   void initState() {
     super.initState();
-    getEntry();
+    _loadEntry();
+  }
+
+  Future<void> _loadEntry() async {
+    setState(() {
+      loading = true;
+    });
+    await getEntry();
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -101,25 +108,17 @@ class _FormScreen3State extends State<FormScreen3> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TitleComponent(
-                              screen: FormScreen2(id: widget.id),
-                              title: 'Air Sealling',
-                              linearProgressValue: 3.0)
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(16),
+            TitleComponent(
+                screen: FormScreen2(id: widget.id),
+                title: 'Air Sealling',
+                linearProgressValue: 3.0),
+            loading
+                ? const Center(
+                    heightFactor: 15,
+                    child: CircularProgressIndicator(),
+                  )
+                : Expanded(
+                    child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -155,68 +154,33 @@ class _FormScreen3State extends State<FormScreen3> {
                               });
                             },
                           ),
+                          ImageInputField(
+                            isRequired: isEmptyAirSealingPics,
+                            label: 'Air sealing quality pictures *',
+                            doesItExpand: true,
+                            url: airSealingPics,
+                            addImage: (String url) {
+                              setState(() {
+                                airSealingPics.add(url);
+                                isEmptyAirSealingPics = false;
+                              });
+                            },
+                            deleteImage: (index) {
+                              setState(() {
+                                airSealingPics.removeAt(index);
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ),
-                    ImageInputField(
-                      isRequired: isEmptyAirSealingPics,
-                      label: 'Air sealing quality pictures *',
-                      doesItExpand: true,
-                      url: airSealingPics,
-                      addImage: (String url) {
-                        setState(() {
-                          airSealingPics.add(url);
-                          isEmptyAirSealingPics = false;
-                        });
-                      },
-                      deleteImage: (index) {
-                        setState(() {
-                          airSealingPics.removeAt(index);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ActionButton(
-                    label: 'Save and next',
-                    onPressed: () {
-                      if (validate()) {
-                        patchEntry();
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FormScreen4(id: widget.id),
-                          ),
-                          (route) => false,
-                        );
-                      }
-                    },
                   ),
-                  TransparentActionButton(
-                    onPressed: () {
-                      if (validate()) {
-                        patchEntry();
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomePage(),
-                          ),
-                          (route) => false,
-                        );
-                      }
-                    },
-                    label: 'Save for now',
-                  ),
-                ],
-              ),
+            BottomButtons(
+              validate: validate,
+              previousScreen: FormScreen2(id: widget.id),
+              patchEntry: patchEntry,
+              nextScreen: FormScreen4(id: widget.id),
+              id: widget.id,
             ),
           ],
         ),

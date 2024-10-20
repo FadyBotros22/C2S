@@ -16,6 +16,14 @@ const kAppBarSecondaryTitleTextStyle = TextStyle(
   color: Color(0xFF606060),
 );
 
+const kQuestionTitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontWeight: FontWeight.w600,
+  fontSize: 16,
+  height: 21 / 16,
+  color: Colors.black,
+);
+
 const kTextButtonTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
   fontWeight: FontWeight.w600,
@@ -114,4 +122,12 @@ const kParagraphTextStyle = TextStyle(
   fontSize: 14,
   height: 21 / 14,
   color: Color(0xff606060),
+);
+
+const kProgressBarTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontWeight: FontWeight.w600,
+  fontSize: 10,
+  height: 20 / 10,
+  color: Colors.white,
 );

@@ -34,6 +34,8 @@ class _FormScreen6State extends State<FormScreen6> {
   bool isEmptyIsConfirmedNothingOnSite = false;
   bool isEmptyIsConfirmedBathroom = false;
 
+  bool loading = true;
+
   bool validate() {
     if (isConfirmedNothingOnSite == null) {
       setState(() {
@@ -85,7 +87,7 @@ class _FormScreen6State extends State<FormScreen6> {
     await apiService.patchFinal(widget.id, token, patchFinalWalkthroughData);
   }
 
-  void getEntry() async {
+  Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -106,7 +108,17 @@ class _FormScreen6State extends State<FormScreen6> {
   @override
   void initState() {
     super.initState();
-    getEntry();
+    _loadEntry();
+  }
+
+  Future<void> _loadEntry() async {
+    setState(() {
+      loading = true;
+    });
+    await getEntry();
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -116,25 +128,17 @@ class _FormScreen6State extends State<FormScreen6> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TitleComponent(
-                              screen: FormScreen5(id: widget.id),
-                              title: 'Final Walkthrough',
-                              linearProgressValue: 6.0)
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(16),
+            TitleComponent(
+                screen: FormScreen5(id: widget.id),
+                title: 'Final Walkthrough',
+                linearProgressValue: 6.0),
+            loading
+                ? const Center(
+                    heightFactor: 15,
+                    child: CircularProgressIndicator(),
+                  )
+                : Expanded(
+                    child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -187,31 +191,29 @@ class _FormScreen6State extends State<FormScreen6> {
                             title:
                                 'I confirm that the bathroom fan is in working order and checked before leaving job site *',
                           ),
+                          ImageInputField(
+                            deleteImage: (index) {
+                              setState(() {
+                                miscPics.removeAt(index);
+                              });
+                            },
+                            isRequired: false,
+                            label: 'Misc Quality Pictures',
+                            doesItExpand: true,
+                            url: miscPics,
+                            addImage: (url) {
+                              setState(() {
+                                miscPics.add(url);
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ),
-                    ImageInputField(
-                      deleteImage: (index) {
-                        setState(() {
-                          miscPics.removeAt(index);
-                        });
-                      },
-                      isRequired: false,
-                      label: 'Misc Quality Pictures',
-                      doesItExpand: true,
-                      url: miscPics,
-                      addImage: (url) {
-                        setState(() {
-                          miscPics.add(url);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 44, horizontal: 16),
+              margin: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 44, top: 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,

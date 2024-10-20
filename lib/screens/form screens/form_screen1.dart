@@ -1,4 +1,6 @@
 import 'package:c2s/components/action_button.dart';
+import 'package:c2s/components/bottom_buttons.dart';
+import 'package:c2s/components/date_input.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/components/title_component.dart';
@@ -10,12 +12,10 @@ import 'package:c2s/data/post_entries_response_data.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:c2s/statics/preferences.dart';
 import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
-import 'package:intl/intl.dart';
 
 class FormScreen1 extends StatefulWidget {
   const FormScreen1({super.key, this.id});
@@ -29,7 +29,6 @@ class _FormScreen1State extends State<FormScreen1> {
   bool iSelfHelp = false;
   late GetEntryResponseData getEntryResponseData;
 
-  DateTime? selectedDateTime;
   String? programType;
   bool? doeJob;
   String? date;
@@ -45,6 +44,8 @@ class _FormScreen1State extends State<FormScreen1> {
   bool isEmptyJobId = false;
   bool isEmptyDoe = false;
   bool isEmptyProg = false;
+
+  bool loading = true;
 
   bool validate() {
     if (programType == null) {
@@ -121,7 +122,7 @@ class _FormScreen1State extends State<FormScreen1> {
     await apiService.patchBase(widget.id!, token, patchBaseData);
   }
 
-  void getEntry() async {
+  Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -149,39 +150,6 @@ class _FormScreen1State extends State<FormScreen1> {
     });
   }
 
-  Future<void> _selectDateAndTime() async {
-    // Show date picker
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (pickedDate != null) {
-      // Show time picker
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(selectedDateTime ?? DateTime.now()),
-      );
-
-      if (pickedTime != null) {
-        // Combine the date and time into a DateTime object
-        setState(() {
-          selectedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-          date = DateFormat('yyyy-MM-dd').format(selectedDateTime!);
-          isEmptyDate = false;
-        });
-      }
-    }
-  }
-
   int getActiveChoiceForProgramType() {
     if (programType == null) {
       return 0;
@@ -200,8 +168,22 @@ class _FormScreen1State extends State<FormScreen1> {
   void initState() {
     super.initState();
     if (widget.id != null) {
-      getEntry();
+      _loadEntry();
+    } else {
+      setState(() {
+        loading = false;
+      });
     }
+  }
+
+  Future<void> _loadEntry() async {
+    setState(() {
+      loading = true;
+    });
+    await getEntry();
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -211,19 +193,17 @@ class _FormScreen1State extends State<FormScreen1> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              margin: EdgeInsets.all(16),
-              child: TitleComponent(
-                  screen: HomePage(),
-                  title: 'Create new form',
-                  linearProgressValue: 1.0),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(16),
+            TitleComponent(
+                screen: HomePage(),
+                title: 'Create new form',
+                linearProgressValue: 1.0),
+            loading
+                ? const Center(
+                    heightFactor: 15,
+                    child: CircularProgressIndicator(),
+                  )
+                : Expanded(
+                    child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -260,44 +240,33 @@ class _FormScreen1State extends State<FormScreen1> {
                             isSquare: false,
                             activeChoice: getActiveChoiceForProgramType(),
                           ),
-                        ],
-                      ),
-                    ),
-                    const Divider(indent: 0),
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                          const Divider(
+                            color: Color(0xffDCDCDC),
+                          ),
                           if (iSelfHelp)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RadioButtons(
-                                  isRequired: isEmptyDoe,
-                                  chooseButton: (value) {
-                                    setState(() {
-                                      if (value == "Yes") {
-                                        doeJob = true;
-                                      } else if (value == 'No') {
-                                        doeJob = false;
-                                      }
-                                      if (doeJob != null) {
-                                        isEmptyDoe = false;
-                                      }
-                                    });
-                                  },
-                                  title: 'DOE Job? *',
-                                  labels: const ['Yes', 'No'],
-                                  isColumn: false,
-                                  isSquare: false,
-                                  activeChoice: (doeJob == null)
-                                      ? 0
-                                      : doeJob!
-                                          ? 1
-                                          : 2,
-                                ),
-                              ],
+                            RadioButtons(
+                              isRequired: isEmptyDoe,
+                              chooseButton: (value) {
+                                setState(() {
+                                  if (value == "Yes") {
+                                    doeJob = true;
+                                  } else if (value == 'No') {
+                                    doeJob = false;
+                                  }
+                                  if (doeJob != null) {
+                                    isEmptyDoe = false;
+                                  }
+                                });
+                              },
+                              title: 'DOE Job? *',
+                              labels: const ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              activeChoice: (doeJob == null)
+                                  ? 0
+                                  : doeJob!
+                                      ? 1
+                                      : 2,
                             ),
                           InputField(
                             color: isEmptyCrew ? Colors.red : null,
@@ -310,51 +279,15 @@ class _FormScreen1State extends State<FormScreen1> {
                               });
                             },
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                        text: 'Date and time ',
-                                        style: kAppBarSecondaryTitleTextStyle),
-                                    TextSpan(
-                                        text: '*',
-                                        style: TextStyle(color: Colors.red)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextField(
-                                readOnly: true,
-                                onTap: () {
-                                  _selectDateAndTime();
-                                },
-                                decoration: InputDecoration(
-                                  hintText: date ?? '',
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide(
-                                      color: isEmptyDate
-                                          ? Colors.red
-                                          : const Color(
-                                              0xffB3B3B3), // Color when not focused
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ), // Full border on all sides
-                                ),
-                              ),
-                              if (isEmptyDate)
-                                const Text(
-                                  'This field is required',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              const SizedBox(height: 40),
-                            ],
+                          DateInput(
+                            onChanged: (value) {
+                              setState(() {
+                                date = value;
+                                isEmptyDate = false;
+                              });
+                            },
+                            color: isEmptyDate ? Colors.red : null,
+                            hintText: date,
                           ),
                           InputField(
                             title: 'Address line 1 *',
@@ -392,69 +325,13 @@ class _FormScreen1State extends State<FormScreen1> {
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ActionButton(
-                    label: 'Save and next',
-                    onPressed: () async {
-                      if (widget.id == null) {
-                        if (validate()) {
-                          String id = await postEntry();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FormScreen2(id: id),
-                            ),
-                          );
-                        }
-                      } else {
-                        if (validate()) {
-                          patchEntry();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FormScreen2(id: widget.id!),
-                            ),
-                          );
-                        }
-                      }
-                    },
                   ),
-                  TransparentActionButton(
-                    onPressed: () async {
-                      if (widget.id == null) {
-                        if (validate()) {
-                          postEntry();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(),
-                            ),
-                          );
-                        }
-                      } else {
-                        if (validate()) {
-                          patchEntry();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    label: 'Save for now',
-                  ),
-                ],
-              ),
+            BottomButtons(
+              validate: validate,
+              previousScreen: HomePage(),
+              patchEntry: widget.id == null ? postEntry : patchEntry,
+              nextScreen: FormScreen2(id: widget.id ?? ''),
+              id: widget.id,
             ),
           ],
         ),

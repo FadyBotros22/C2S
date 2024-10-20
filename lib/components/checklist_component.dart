@@ -23,29 +23,25 @@ class _ChecklistComponentState extends State<ChecklistComponent> {
     return Container(
       color: const Color(0xffFAFAFA),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             margin: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.title,
-                  style: kParagraphTextStyle.copyWith(color: Colors.black),
-                ),
-                const SizedBox(height: 10),
-                RadioButtons(
-                    isRequired: false,
-                    chooseButton: (value) {
-                      widget.chooseButtons(value);
-                    },
-                    labels: const ['Yes', 'No'],
-                    isColumn: false,
-                    isSquare: true,
-                    activeChoice: widget.activeChoice)
-              ],
+            child: Text(
+              widget.title,
+              style: kParagraphTextStyle.copyWith(color: Colors.black),
             ),
           ),
+          RadioButtons(
+              isChecklistComponent: true,
+              isRequired: false,
+              chooseButton: (value) {
+                widget.chooseButtons(value);
+              },
+              labels: const ['Yes', 'No'],
+              isColumn: false,
+              isSquare: true,
+              activeChoice: widget.activeChoice),
           const Divider(
             indent: 0,
             color: Color(0xffDCDCDC),

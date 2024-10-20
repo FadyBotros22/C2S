@@ -21,14 +21,18 @@ class CompleteForm extends StatelessWidget {
             height: 130,
           ),
           const SizedBox(height: 30),
-          const Text(
+          Text(
             'Thank You!',
-            style: kAppBarTitleTextStyle,
+            style: kAppBarTitleTextStyle.copyWith(
+              decorationColor: Colors.white,
+            ),
           ),
           const SizedBox(height: 15),
-          const Text(
+          Text(
             'You have completed this form',
-            style: kAppBarSecondaryTitleTextStyle,
+            style: kAppBarSecondaryTitleTextStyle.copyWith(
+              decorationColor: Colors.white,
+            ),
           ),
           const SizedBox(height: 30),
           ActionButton(

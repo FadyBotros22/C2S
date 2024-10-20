@@ -101,7 +101,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
                       children: [
                         TextSpan(
                           text: widget.label.replaceAll('*', ''),
-                          style: kAppBarSecondaryTitleTextStyle,
+                          style: kQuestionTitleTextStyle,
                         ),
                         const TextSpan(
                           text: '*',
@@ -113,7 +113,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
                 if (!widget.label.contains('*'))
                   Text(
                     widget.label,
-                    style: kAppBarSecondaryTitleTextStyle,
+                    style: kQuestionTitleTextStyle,
                   ),
                 if (widget.doesItExpand)
                   SingleChildScrollView(
@@ -138,7 +138,10 @@ class _ImageInputFieldState extends State<ImageInputField> {
                 if (!widget.doesItExpand)
                   widget.url!.isEmpty
                       ? loading
-                          ? const CircularProgressIndicator()
+                          ? const Padding(
+                              padding: EdgeInsets.only(top: 10, left: 10),
+                              child: CircularProgressIndicator(),
+                            )
                           : picInput
                       : ImageDisplay(
                           url: widget.url![0],

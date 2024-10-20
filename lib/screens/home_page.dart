@@ -1,11 +1,12 @@
 import 'package:c2s/components/empty_list.dart';
+import 'package:c2s/components/linear_progress.dart';
 import 'package:c2s/data/entries_response_data.dart';
+import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
 import 'package:c2s/screens/form%20screens/form_screen4.dart';
 import 'package:c2s/screens/form%20screens/form_screen5.dart';
 import 'package:c2s/screens/form%20screens/form_screen6.dart';
-import 'package:c2s/screens/form_screen.dart';
 import 'package:c2s/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
@@ -261,13 +262,13 @@ class _HomePageState extends State<HomePage> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               SizedBox(
-                                                width: 270,
-                                                child: LinearProgressIndicator(
-                                                  value: project.progressStep
-                                                          .toDouble() /
-                                                      6,
-                                                ),
-                                              ),
+                                                  width: 270,
+                                                  child: LinearProgress(
+                                                    linearProgressValue: project
+                                                        .progressStep
+                                                        .toDouble(),
+                                                    color: Color(0xff34C759),
+                                                  )),
                                               ElevatedButton(
                                                 onPressed: () {
                                                   Widget screen;
@@ -340,7 +341,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const FormScreen(),
+                  builder: (context) => const FormScreen1(),
                 ));
           },
           backgroundColor: Colors.transparent,
