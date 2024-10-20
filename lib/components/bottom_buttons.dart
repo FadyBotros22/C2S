@@ -1,3 +1,4 @@
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:flutter/material.dart';
 import 'action_button.dart';
@@ -40,13 +41,16 @@ class BottomButtons extends StatelessWidget {
                 }
               } else {
                 if (validate()) {
-                  patchEntry();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => nextScreen,
-                    ),
-                  );
+                  bool isComplete = await patchEntry();
+                  isComplete
+                      ? Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => nextScreen,
+                          ),
+                        )
+                      : Snackbar().showSnackBar(context,
+                          "Error occurred, try connecting to active Network");
                 }
               }
             },
@@ -54,13 +58,16 @@ class BottomButtons extends StatelessWidget {
           TransparentActionButton(
             onPressed: () async {
               if (validate()) {
-                patchEntry();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => previousScreen,
-                  ),
-                );
+                bool isComplete = await patchEntry();
+                isComplete
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => previousScreen,
+                        ),
+                      )
+                    : Snackbar().showSnackBar(context,
+                        "Error occurred, try connecting to active Network");
               }
             },
             label: 'Save for now',

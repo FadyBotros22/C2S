@@ -8,6 +8,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
+
   runApp(
     MaterialApp(
       theme: ThemeData(

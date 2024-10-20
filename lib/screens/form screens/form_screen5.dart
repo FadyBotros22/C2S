@@ -1,4 +1,5 @@
 import 'package:c2s/components/bottom_buttons.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_wall_insulation_data.dart'
@@ -53,23 +54,31 @@ class _FormScreen5State extends State<FormScreen5> {
                     cornerBracesChecked: false,
                     blockersChecked: false),
                 notes: notes ?? ''));
-
-    await apiService.patchWallInsulation(
-        widget.id, token, patchWallInsulationData);
+    try {
+      await apiService.patchWallInsulation(
+          widget.id, token, patchWallInsulationData);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id);
 
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id);
-
-    setState(() {
-      onWorkOrder = getEntryResponseData.data?.wallInsulation?.onWorkOrder;
-      notes = getEntryResponseData.data?.wallInsulation?.notes;
-    });
+      setState(() {
+        onWorkOrder = getEntryResponseData.data?.wallInsulation?.onWorkOrder;
+        notes = getEntryResponseData.data?.wallInsulation?.notes;
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   @override

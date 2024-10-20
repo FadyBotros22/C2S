@@ -1,10 +1,13 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:c2s/components/image_display.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:io';
 import 'image_upload.dart';
+import 'snakbar.dart';
 
 class ImageInputField extends StatefulWidget {
   const ImageInputField({
@@ -35,26 +38,57 @@ class _ImageInputFieldState extends State<ImageInputField> {
   Future<void> _pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
+
     setState(() {
       loading = true;
     });
+
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
+      String? url;
 
-      if (await imageFile.exists()) {
-        try {
+      try {
+        if (await imageFile.exists()) {
+          // Compress the image
           File compressedImageFile = await compressImage(imageFile);
-          String url = await uploadFile(compressedImageFile);
-          widget.addImage!(url);
-        } catch (e) {
-          print('Error during image upload: $e');
+
+          url = await uploadFile(compressedImageFile);
+
+          if (url == '') {
+            Snackbar snackBar = Snackbar();
+            snackBar.showSnackBar(
+                context, 'Network error, try to connect to an active network');
+          } else {
+            widget.addImage!(url); // Add image URL
+          }
+        } else {
+          print('File does not exist');
         }
-      } else {
-        print('File does not exist');
+      } on NetworkException catch (e) {
+        // Network-related errors caught here
+        print('NetworkException caught: ${e.message}');
+        print('Recovery suggestion: ${e.recoverySuggestion}');
+        print('Underlying exception: ${e.underlyingException}');
+        Snackbar snackBar = Snackbar();
+        snackBar.showSnackBar(
+            context, 'Network error occurred, please try again.');
+      } catch (e) {
+        // General exceptions caught here
+        print('Error during image upload: $e');
+        Snackbar snackBar = Snackbar();
+        snackBar.showSnackBar(context, 'An error occurred: $e');
       }
+
+      setState(() {
+        loading = false; // Stop loading after file processing
+      });
+    } else {
+      // Handle case where no file was selected
       setState(() {
         loading = false;
       });
+      Snackbar snackBar = Snackbar();
+      snackBar.showSnackBar(context, 'No image selected.');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:c2s/components/action_button.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'home_page.dart';
@@ -58,8 +59,9 @@ class _LoginPageState extends State<LoginPage> {
 
       // print(token);
       return true;
-    } catch (error) {
-      print('Error fetching user: $error');
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
     }
     return false;
   }

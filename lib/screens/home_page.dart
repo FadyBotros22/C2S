@@ -1,5 +1,6 @@
 import 'package:c2s/components/empty_list.dart';
 import 'package:c2s/components/linear_progress.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/data/entries_response_data.dart';
 import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
@@ -29,23 +30,31 @@ class _HomePageState extends State<HomePage> {
 
   void logout() async {
     ApiService apiService = ApiService(DioClass.getDio());
+    try {
+      var token =
+          (await Preferences.getPreferences()).getString('token').toString();
 
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
-
-    await apiService.logout(token);
+      await apiService.logout(token);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   void getEntries() async {
     ApiService apiService = ApiService(DioClass.getDio());
+    try {
+      var token =
+          (await Preferences.getPreferences()).getString('token').toString();
 
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
-
-    entriesResponse = await apiService.getEntries(token);
-    setState(() {
-      isLoading = false;
-    });
+      entriesResponse = await apiService.getEntries(token);
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   @override

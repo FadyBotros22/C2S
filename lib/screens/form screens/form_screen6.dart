@@ -1,3 +1,4 @@
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_final_walkthrough_data.dart'
@@ -8,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
-
-import 'package:flutter_svg/svg.dart';
 import 'package:c2s/constants.dart';
 
 import '../../components/action_button.dart';
@@ -83,26 +82,35 @@ class _FormScreen6State extends State<FormScreen6> {
                 contactMethod: 'contactMethod',
                 email: 'email',
                 phoneNumber: 'phoneNumber'));
-
-    await apiService.patchFinal(widget.id, token, patchFinalWalkthroughData);
+    try {
+      await apiService.patchFinal(widget.id, token, patchFinalWalkthroughData);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id);
 
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id);
-
-    setState(() {
-      notes = getEntryResponseData.data?.finalWalkthrough!.notes;
-      isConfirmedBathroom =
-          getEntryResponseData.data?.finalWalkthrough!.bathroomConfirmation;
-      isConfirmedNothingOnSite =
-          getEntryResponseData.data?.finalWalkthrough!.leftConfirmation;
-      miscPics = getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
-    });
+      setState(() {
+        notes = getEntryResponseData.data?.finalWalkthrough!.notes;
+        isConfirmedBathroom =
+            getEntryResponseData.data?.finalWalkthrough!.bathroomConfirmation;
+        isConfirmedNothingOnSite =
+            getEntryResponseData.data?.finalWalkthrough!.leftConfirmation;
+        miscPics =
+            getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   @override

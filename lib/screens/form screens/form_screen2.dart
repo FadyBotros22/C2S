@@ -1,20 +1,17 @@
-import 'package:c2s/components/action_button.dart';
 import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/checklist_component.dart';
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/components/transparent_action_button.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_initial_walk_through_data.dart'
     as patch;
 import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
-import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:c2s/api_service.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:c2s/statics/dio.dart';
@@ -47,7 +44,7 @@ class _FormScreen2State extends State<FormScreen2> {
 
   bool loading = true;
 
-  void patchEntry() async {
+  Future<bool> patchEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -75,8 +72,13 @@ class _FormScreen2State extends State<FormScreen2> {
           concernsPic:
               corners.isNotEmpty ? corners : ['https://www.google.co.uk/']),
     );
-    await apiService.patchInitial(
-        widget.id, token, patchInitialWalkThroughData);
+    try {
+      await apiService.patchInitial(
+          widget.id, token, patchInitialWalkThroughData);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   bool validate() {
@@ -126,31 +128,37 @@ class _FormScreen2State extends State<FormScreen2> {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id);
 
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id);
-
-    setState(() {
-      knob =
-          getEntryResponseData.data?.initialWalkthrough?.checklist?.knobAndTube;
-      abestos =
-          getEntryResponseData.data?.initialWalkthrough?.checklist?.abestos;
-      tiles = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.titlesOnSite;
-      dryers = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.unventedDryers;
-      moisture = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.moistureConcerns;
-      blowerDoor =
-          getEntryResponseData.data?.initialWalkthrough?.blowerDoorStatus;
-      blowerValue =
-          getEntryResponseData.data?.initialWalkthrough?.blowerStartingValue;
-      walkthroughNotes = getEntryResponseData.data?.initialWalkthrough?.notes;
-      heatPic = getEntryResponseData.data?.initialWalkthrough?.heatingSystemPic;
-      waterPic = getEntryResponseData.data?.initialWalkthrough?.waterHeaterPic;
-      corners =
-          getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
-    });
+      setState(() {
+        knob = getEntryResponseData
+            .data?.initialWalkthrough?.checklist?.knobAndTube;
+        abestos =
+            getEntryResponseData.data?.initialWalkthrough?.checklist?.abestos;
+        tiles = getEntryResponseData
+            .data?.initialWalkthrough?.checklist?.titlesOnSite;
+        dryers = getEntryResponseData
+            .data?.initialWalkthrough?.checklist?.unventedDryers;
+        moisture = getEntryResponseData
+            .data?.initialWalkthrough?.checklist?.moistureConcerns;
+        blowerDoor =
+            getEntryResponseData.data?.initialWalkthrough?.blowerDoorStatus;
+        blowerValue =
+            getEntryResponseData.data?.initialWalkthrough?.blowerStartingValue;
+        walkthroughNotes = getEntryResponseData.data?.initialWalkthrough?.notes;
+        heatPic =
+            getEntryResponseData.data?.initialWalkthrough?.heatingSystemPic;
+        waterPic =
+            getEntryResponseData.data?.initialWalkthrough?.waterHeaterPic;
+        corners =
+            getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   List<String> urlHandler(String? object) {

@@ -2,6 +2,7 @@ import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_air_sealing_data.dart'
@@ -66,23 +67,32 @@ class _FormScreen3State extends State<FormScreen3> {
                     basementSealed: ''),
                 notes: sealingNotes ?? '',
                 sealingQualityPic: airSealingPics));
-    await apiService.patchAirSealing(widget.id, token, patchAirSealingData);
+    try {
+      await apiService.patchAirSealing(widget.id, token, patchAirSealingData);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id);
 
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id);
-
-    setState(() {
-      onWorkOrder = getEntryResponseData.data?.airSealing?.onWorkOrder;
-      sealingNotes = getEntryResponseData.data?.airSealing?.notes;
-      airSealingPics =
-          getEntryResponseData.data?.airSealing?.sealingQualityPic ?? [];
-    });
+      setState(() {
+        onWorkOrder = getEntryResponseData.data?.airSealing?.onWorkOrder;
+        sealingNotes = getEntryResponseData.data?.airSealing?.notes;
+        airSealingPics =
+            getEntryResponseData.data?.airSealing?.sealingQualityPic ?? [];
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   @override
