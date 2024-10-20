@@ -1,4 +1,5 @@
 import 'package:c2s/components/bottom_buttons.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_attic_insulation_data.dart'
@@ -63,28 +64,36 @@ class _FormScreen4State extends State<FormScreen4> {
         atticInsulationPic: atticPics,
       ),
     );
-
-    await apiService.patchAtticInsulation(
-        widget.id, token, patchAtticInsulationData);
+    try {
+      await apiService.patchAtticInsulation(
+          widget.id, token, patchAtticInsulationData);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
-
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id);
-
-    setState(() {
-      onWorkOrder = getEntryResponseData.data?.atticInsulation?.onWorkOrder;
-      notesOnMeasurements = getEntryResponseData
-          .data?.atticInsulation?.inaccurateMeasurementsNotes;
-      notesOnAtticInsulation =
-          getEntryResponseData.data?.atticInsulation?.notes;
-      atticPics =
-          getEntryResponseData.data?.atticInsulation?.atticInsulationPic ?? [];
-    });
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id);
+      setState(() {
+        onWorkOrder = getEntryResponseData.data?.atticInsulation?.onWorkOrder;
+        notesOnMeasurements = getEntryResponseData
+            .data?.atticInsulation?.inaccurateMeasurementsNotes;
+        notesOnAtticInsulation =
+            getEntryResponseData.data?.atticInsulation?.notes;
+        atticPics =
+            getEntryResponseData.data?.atticInsulation?.atticInsulationPic ??
+                [];
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   @override

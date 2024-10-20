@@ -1,4 +1,5 @@
 import 'package:c2s/components/action_button.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'home_page.dart';
@@ -21,8 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   void login() async {
-    // ImageUpload imageUpload = ImageUpload();
-    // imageUpload.configureAmplify();
     setState(() {
       isLoading = true;
     });
@@ -47,8 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       ApiService apiService = ApiService(DioClass.getDio());
       UserRequestData userRequest = UserRequestData(
-          // user: User(userName: userName, password: password),
-          user: User(userName: "ismail", password: "12345678"),
+          user: User(userName: userName, password: password),
           device: Device(deviceId: "deviceId", os: "IOS"));
 
       final fetchedUser = await apiService.login(userRequest);
@@ -58,8 +56,9 @@ class _LoginPageState extends State<LoginPage> {
 
       // print(token);
       return true;
-    } catch (error) {
-      print('Error fetching user: $error');
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
     }
     return false;
   }

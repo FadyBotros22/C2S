@@ -1,10 +1,9 @@
-import 'package:c2s/components/action_button.dart';
 import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/date_input.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
+import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/components/transparent_action_button.dart';
 import 'package:c2s/data/get_entry_response_data.dart';
 import 'package:c2s/data/patch%20data/patch_base_data.dart';
 import 'package:c2s/data/post_entries_request_data.dart' as request;
@@ -101,10 +100,15 @@ class _FormScreen1State extends State<FormScreen1> {
             city: city!,
             coordinates: request.Coordinates(latitude: 0, longitude: 0),
             jobId: jobId!);
-
-    PostEntriesResponseData postEntriesResponseData =
-        await apiService.postEntry(token, postEntriesRequestData);
-    return postEntriesResponseData.data.id;
+    try {
+      PostEntriesResponseData postEntriesResponseData =
+          await apiService.postEntry(token, postEntriesRequestData);
+      return postEntriesResponseData.data.id;
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
+    return '';
   }
 
   void patchEntry() async {
@@ -118,30 +122,38 @@ class _FormScreen1State extends State<FormScreen1> {
             address: address!,
             city: city!,
             date: date!));
-
-    await apiService.patchBase(widget.id!, token, patchBaseData);
+    try {
+      await apiService.patchBase(widget.id!, token, patchBaseData);
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   Future<void> getEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
+    try {
+      GetEntryResponseData getEntryResponseData =
+          await apiService.getEntry(token, widget.id!);
 
-    GetEntryResponseData getEntryResponseData =
-        await apiService.getEntry(token, widget.id!);
-
-    setState(() {
-      programType = getEntryResponseData.data?.programType;
-      doeJob = getEntryResponseData.data?.doeJob;
-      crew = "Fady";
-      date = getEntryResponseData.data?.date;
-      address = getEntryResponseData.data?.address;
-      city = getEntryResponseData.data?.city;
-      jobId = getEntryResponseData.data?.jobId;
-      if (programType == 'self_help') {
-        iSelfHelp = true;
-      }
-    });
+      setState(() {
+        programType = getEntryResponseData.data?.programType;
+        doeJob = getEntryResponseData.data?.doeJob;
+        crew = "Fady";
+        date = getEntryResponseData.data?.date;
+        address = getEntryResponseData.data?.address;
+        city = getEntryResponseData.data?.city;
+        jobId = getEntryResponseData.data?.jobId;
+        if (programType == 'self_help') {
+          iSelfHelp = true;
+        }
+      });
+    } catch (e) {
+      Snackbar().showSnackBar(
+          context, "Error occurred, try connecting to active Network");
+    }
   }
 
   void selfHelp(bool isSelfHelp) {
