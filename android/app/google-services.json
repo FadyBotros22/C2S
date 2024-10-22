@@ -1,51 +1,13 @@
 {
   "project_info": {
-    "project_number": "795523020990",
-    "project_id": "c2dfinal",
-    "storage_bucket": "c2dfinal.appspot.com"
+    "project_number": "628381792861",
+    "project_id": "c2s-649af",
+    "storage_bucket": "c2s-649af.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:795523020990:android:97ea8fe64f4520371886ef",
-        "android_client_info": {
-          "package_name": "com.c2s.app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBi20lEnrp6OGE3V_141YGsp5q1fbFkF8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:795523020990:android:01eb7f1cdce3b1921886ef",
-        "android_client_info": {
-          "package_name": "com.example.app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBi20lEnrp6OGE3V_141YGsp5q1fbFkF8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:795523020990:android:71949c14101984371886ef",
+        "mobilesdk_app_id": "1:628381792861:android:99b4fccc7332297beb2bb4",
         "android_client_info": {
           "package_name": "com.example.c2s"
         }
@@ -53,45 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCBi20lEnrp6OGE3V_141YGsp5q1fbFkF8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:795523020990:android:d68943ae1a19669b1886ef",
-        "android_client_info": {
-          "package_name": "come.example.c2s"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBi20lEnrp6OGE3V_141YGsp5q1fbFkF8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:795523020990:android:55d09f46015c3a071886ef",
-        "android_client_info": {
-          "package_name": "xom.example.c2s"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCBi20lEnrp6OGE3V_141YGsp5q1fbFkF8"
+          "current_key": "AIzaSyDK9wHmvYM0DWfw3wvJH9x71Yq7oWgn8SA"
         }
       ],
       "services": {

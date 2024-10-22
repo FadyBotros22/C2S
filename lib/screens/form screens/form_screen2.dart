@@ -164,8 +164,9 @@ class _FormScreen2State extends State<FormScreen2> {
   List<String> urlHandler(String? object) {
     if (object == null) {
       return [];
-    } else
+    } else {
       return [object];
+    }
   }
 
   @override

@@ -4,11 +4,22 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'components/amplifyconfiguration.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _configureAmplify();
-
+  try {
+    await _configureAmplify();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    logger.e(e);
+  }
   runApp(
     MaterialApp(
       theme: ThemeData(
