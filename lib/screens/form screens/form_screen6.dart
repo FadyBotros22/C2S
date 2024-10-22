@@ -251,6 +251,8 @@ class _FormScreen6State extends State<FormScreen6> {
       builder: (BuildContext context) {
         return AlertDialog(
           alignment: Alignment.center,
+          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+          actionsPadding: EdgeInsets.all(0),
           title: const Text(
             'Submit Form',
             style: kLogoutAlertTitleTextStyle,
@@ -267,37 +269,60 @@ class _FormScreen6State extends State<FormScreen6> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 30),
-              Divider(),
             ],
           ),
           actions: [
-            Row(
-              // crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
               children: [
-                Expanded(
-                  child: TextButton(
-                    child: const Text('Yes'),
-                    onPressed: () {
-                      // Add your submit logic here
-                      patchEntry();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CompleteForm(),
-                        ),
-                        (route) => false,
-                      );
-                    },
-                  ),
+                Divider(
+                  color: Colors.grey,
+                  indent: 0,
+                  height: 1,
                 ),
-                Expanded(
-                  child: TextButton(
-                    child: const Text('No'),
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        child: Text(
+                          'Yes',
+                          style: kMcqLabelTextStyle.copyWith(
+                              color: Color(0xff007AFF), fontSize: 17),
+                        ), // Yes button
+                        onPressed: () {
+                          // Add your submit logic here
+                          patchEntry();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CompleteForm(),
+                            ),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: VerticalDivider(
+                        indent: 0,
+                        endIndent: 0,
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Expanded(
+                      child: TextButton(
+                        child: Text(
+                          'No',
+                          style: kLogoutAlertTitleTextStyle.copyWith(
+                              color: Color(0xff007AFF)),
+                        ), // No but
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

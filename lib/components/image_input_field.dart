@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:io';
 import 'image_upload.dart';
 import 'snakbar.dart';
@@ -66,14 +65,10 @@ class _ImageInputFieldState extends State<ImageInputField> {
         }
       } on NetworkException catch (e) {
         // Network-related errors caught here
-        print('NetworkException caught: ${e.message}');
-        print('Recovery suggestion: ${e.recoverySuggestion}');
-        print('Underlying exception: ${e.underlyingException}');
         Snackbar snackBar = Snackbar();
         snackBar.showSnackBar(
             context, 'Network error occurred, please try again.');
       } catch (e) {
-        // General exceptions caught here
         print('Error during image upload: $e');
         Snackbar snackBar = Snackbar();
         snackBar.showSnackBar(context, 'An error occurred: $e');

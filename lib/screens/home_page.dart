@@ -98,6 +98,9 @@ class _HomePageState extends State<HomePage> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               alignment: Alignment.center,
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 20),
+                              actionsPadding: EdgeInsets.all(0),
                               title: const Text(
                                 'Logout',
                                 textAlign: TextAlign.center,
@@ -111,37 +114,64 @@ class _HomePageState extends State<HomePage> {
                                     style: kLogoutAlertSecondaryTitleTextStyle,
                                     textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(height: 30),
-                                  Divider(),
                                 ],
                               ), // Smaller title
                               actions: [
-                                Row(
+                                Column(
                                   children: [
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          logout();
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const LoginPage(),
-                                            ),
-                                            (route) => false,
-                                          );
-                                        },
-                                        child: const Text('Yes'), // Yes button
-                                      ),
+                                    Divider(
+                                      color: Colors.grey,
+                                      indent: 0,
+                                      height: 1,
                                     ),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                        child: const Text('No'), // No button
-                                      ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              logout();
+                                              Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const LoginPage(),
+                                                ),
+                                                (route) => false,
+                                              );
+                                            },
+                                            child: Text(
+                                              'Yes',
+                                              style:
+                                                  kMcqLabelTextStyle.copyWith(
+                                                      color: Color(0xff007AFF),
+                                                      fontSize: 17),
+                                            ), // Yes button
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 80,
+                                          child: VerticalDivider(
+                                            indent: 0,
+                                            endIndent: 0,
+                                            width: 1,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close the dialog
+                                            },
+                                            child: Text(
+                                              'No',
+                                              style: kLogoutAlertTitleTextStyle
+                                                  .copyWith(
+                                                      color: Color(0xff007AFF)),
+                                            ), // No button
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 )

@@ -47,7 +47,7 @@ class _FormScreen3State extends State<FormScreen3> {
     return true;
   }
 
-  void patchEntry() async {
+  Future<bool> patchEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -69,9 +69,11 @@ class _FormScreen3State extends State<FormScreen3> {
                 sealingQualityPic: airSealingPics));
     try {
       await apiService.patchAirSealing(widget.id, token, patchAirSealingData);
+      return true;
     } catch (e) {
       Snackbar().showSnackBar(
           context, "Error occurred, try connecting to active Network");
+      return false;
     }
   }
 
@@ -187,7 +189,6 @@ class _FormScreen3State extends State<FormScreen3> {
                   ),
             BottomButtons(
               validate: validate,
-              previousScreen: FormScreen2(id: widget.id),
               patchEntry: patchEntry,
               nextScreen: FormScreen4(id: widget.id),
               id: widget.id,

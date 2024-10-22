@@ -1,5 +1,6 @@
 import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
+import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'action_button.dart';
 import 'transparent_action_button.dart';
@@ -9,7 +10,6 @@ class BottomButtons extends StatelessWidget {
     super.key,
     this.id,
     required this.validate,
-    required this.previousScreen,
     required this.patchEntry,
     required this.nextScreen,
   });
@@ -17,7 +17,6 @@ class BottomButtons extends StatelessWidget {
   final Function validate;
   final Function patchEntry;
   final Widget nextScreen;
-  final Widget previousScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class BottomButtons extends StatelessWidget {
                     ? Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => previousScreen,
+                          builder: (context) => HomePage(),
                         ),
                       )
                     : Snackbar().showSnackBar(context,

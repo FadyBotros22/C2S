@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:c2s/components/action_button.dart';
+import 'package:c2s/components/image_upload.dart';
 import 'package:c2s/components/snakbar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'home_page.dart';
@@ -25,7 +29,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoading = true;
     });
-    if (await fetchUserData(username, password)) {
+    String status = await fetchUserData(username, password);
+    if (status == 'true') {
       errorMessage = '';
       Navigator.pushAndRemoveUntil(
         context,
@@ -34,15 +39,15 @@ class _LoginPageState extends State<LoginPage> {
         ),
         (route) => false,
       );
-    } else {
-      setState(() {
-        isLoading = false;
-        errorMessage = 'Username or password incorrect, Please try again';
-      });
+    } else if (status == "false") {
+      errorMessage = 'Username or password incorrect, Please try again';
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<bool> fetchUserData(String userName, String password) async {
+  Future<String> fetchUserData(String userName, String password) async {
     try {
       ApiService apiService = ApiService(DioClass.getDio());
       UserRequestData userRequest = UserRequestData(
@@ -54,13 +59,21 @@ class _LoginPageState extends State<LoginPage> {
           .setString("token", fetchedUser.data.authToken);
       (await Preferences.getPreferences()).getString('token');
 
-      // print(token);
-      return true;
-    } catch (e) {
+      return "true";
+    } on SocketException catch (e) {
+      logger.e(e);
       Snackbar().showSnackBar(
           context, "Error occurred, try connecting to active Network");
+      return "";
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.badResponse) {
+        return "false";
+      } else {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+        return "";
+      }
     }
-    return false;
   }
 
   @override

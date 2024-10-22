@@ -340,7 +340,6 @@ class _FormScreen1State extends State<FormScreen1> {
                   ),
             BottomButtons(
               validate: validate,
-              previousScreen: HomePage(),
               patchEntry: widget.id == null ? postEntry : patchEntry,
               nextScreen: FormScreen2(id: widget.id ?? ''),
               id: widget.id,

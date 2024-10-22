@@ -38,7 +38,7 @@ class _FormScreen5State extends State<FormScreen5> {
     return true;
   }
 
-  void patchEntry() async {
+  Future<bool> patchEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -57,9 +57,11 @@ class _FormScreen5State extends State<FormScreen5> {
     try {
       await apiService.patchWallInsulation(
           widget.id, token, patchWallInsulationData);
+      return true;
     } catch (e) {
       Snackbar().showSnackBar(
           context, "Error occurred, try connecting to active Network");
+      return false;
     }
   }
 
@@ -156,7 +158,6 @@ class _FormScreen5State extends State<FormScreen5> {
                   ),
             BottomButtons(
               validate: validate,
-              previousScreen: FormScreen4(id: widget.id),
               patchEntry: patchEntry,
               nextScreen: FormScreen6(id: widget.id),
               id: widget.id,
