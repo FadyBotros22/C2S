@@ -5,7 +5,7 @@ class Snackbar {
     final snackBar = SnackBar(
       content: Text(message),
       backgroundColor: Colors.blue,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

@@ -30,13 +30,17 @@ class _FormScreen3State extends State<FormScreen3> {
   bool isEmptyOnWorkOrder = false;
   bool isEmptyAirSealingPics = false;
 
-  bool loading = true;
+  bool isLoading = true;
+  bool isImageLoading = false;
 
   bool validate() {
     if (onWorkOrder == null) {
       setState(() {
         isEmptyOnWorkOrder = true;
       });
+      return false;
+    } else if (isImageLoading) {
+      Snackbar().showSnackBar(context, "Image is uploading, please wait");
       return false;
     } else if (airSealingPics.isEmpty) {
       setState(() {
@@ -109,11 +113,11 @@ class _FormScreen3State extends State<FormScreen3> {
 
   Future<void> _loadEntry() async {
     setState(() {
-      loading = true;
+      isLoading = true;
     });
     await getEntry();
     setState(() {
-      loading = false;
+      isLoading = false;
     });
   }
 
@@ -128,7 +132,7 @@ class _FormScreen3State extends State<FormScreen3> {
                 screen: FormScreen2(id: widget.id),
                 title: 'Air Sealing',
                 linearProgressValue: 3.0),
-            loading
+            isLoading
                 ? const Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(),
@@ -184,6 +188,11 @@ class _FormScreen3State extends State<FormScreen3> {
                             deleteImage: (index) {
                               setState(() {
                                 airSealingPics.removeAt(index);
+                              });
+                            },
+                            isImageLoading: (bool isLoading) {
+                              setState(() {
+                                isImageLoading = isLoading;
                               });
                             },
                           ),

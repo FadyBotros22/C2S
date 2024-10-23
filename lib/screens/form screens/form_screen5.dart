@@ -26,7 +26,7 @@ class _FormScreen5State extends State<FormScreen5> {
   String? notes;
   bool isEmptyOnWorkOrder = false;
 
-  bool loading = true;
+  bool isLoading = true;
 
   bool validate() {
     if (onWorkOrder == null) {
@@ -95,11 +95,11 @@ class _FormScreen5State extends State<FormScreen5> {
 
   Future<void> _loadEntry() async {
     setState(() {
-      loading = true;
+      isLoading = true;
     });
     await getEntry();
     setState(() {
-      loading = false;
+      isLoading = false;
     });
   }
 
@@ -114,7 +114,7 @@ class _FormScreen5State extends State<FormScreen5> {
                 screen: FormScreen4(id: widget.id),
                 title: 'Wall Insulation',
                 linearProgressValue: 5.0),
-            loading
+            isLoading
                 ? const Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(),

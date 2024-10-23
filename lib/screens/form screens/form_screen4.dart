@@ -30,13 +30,17 @@ class _FormScreen4State extends State<FormScreen4> {
 
   bool isEmptyOnWorkOrder = false;
 
-  bool loading = true;
+  bool isLoading = true;
+  bool isImageLoading = false;
 
   bool validate() {
     if (onWorkOrder == null) {
       setState(() {
         isEmptyOnWorkOrder = true;
       });
+      return false;
+    } else if (isImageLoading) {
+      Snackbar().showSnackBar(context, "Image is uploading, please wait");
       return false;
     }
     return true;
@@ -110,11 +114,11 @@ class _FormScreen4State extends State<FormScreen4> {
 
   Future<void> _loadEntry() async {
     setState(() {
-      loading = true;
+      isLoading = true;
     });
     await getEntry();
     setState(() {
-      loading = false;
+      isLoading = false;
     });
   }
 
@@ -129,7 +133,7 @@ class _FormScreen4State extends State<FormScreen4> {
                 screen: FormScreen3(id: widget.id),
                 title: 'Attic Insulation',
                 linearProgressValue: 4.0),
-            loading
+            isLoading
                 ? const Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(),
@@ -187,6 +191,11 @@ class _FormScreen4State extends State<FormScreen4> {
                               addImage: (String url) {
                                 setState(() {
                                   atticPics.add(url);
+                                });
+                              },
+                              isImageLoading: (bool isLoading) {
+                                setState(() {
+                                  isImageLoading = isLoading;
                                 });
                               },
                               isRequired: false,

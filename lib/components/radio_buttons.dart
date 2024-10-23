@@ -72,11 +72,6 @@ class _RadioButtonsState extends State<RadioButtons> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.isRequired)
-            const Text(
-              'This field is Required',
-              style: TextStyle(color: Colors.red),
-            ),
           if (widget.title != null && widget.title!.contains('*'))
             Text.rich(
               TextSpan(
@@ -101,6 +96,11 @@ class _RadioButtonsState extends State<RadioButtons> {
             child:
                 widget.isColumn ? Column(children: body) : Row(children: body),
           ),
+          if (widget.isRequired)
+            const Text(
+              'This field is Required',
+              style: TextStyle(color: Colors.red),
+            ),
         ],
       ),
     );

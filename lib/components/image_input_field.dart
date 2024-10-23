@@ -19,13 +19,16 @@ class ImageInputField extends StatefulWidget {
     this.url,
     required this.deleteImage,
     required this.isRequired,
+    required this.isImageLoading,
   });
+
   final String label;
   final bool doesItExpand;
   final Function? addImage;
   final Function deleteImage;
   final List<String>? url;
   final bool isRequired;
+  final Function isImageLoading;
 
   @override
   State<ImageInputField> createState() => _ImageInputFieldState();
@@ -39,7 +42,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
   Future<void> _pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
-
+    widget.isImageLoading(true);
     setState(() {
       loading = true;
     });
@@ -56,7 +59,6 @@ class _ImageInputFieldState extends State<ImageInputField> {
           url = await uploadFile(compressedImageFile);
 
           if (url == '' && mounted) {
-            Snackbar snackBar = Snackbar();
             snackBar.showSnackBar(
                 context, 'Network error, try to connect to an active network');
           } else {
@@ -73,18 +75,16 @@ class _ImageInputFieldState extends State<ImageInputField> {
           snackBar.showSnackBar(context, 'An error occurred: $e');
         }
       }
-
-      setState(() {
-        loading = false; // Stop loading after file processing
-      });
     } else {
-      setState(() {
-        loading = false;
-      });
       if (mounted) {
         snackBar.showSnackBar(context, 'No image selected.');
       }
     }
+
+    setState(() {
+      loading = false;
+    });
+    widget.isImageLoading(false);
   }
 
   void deleteUrl(index) {
@@ -158,8 +158,12 @@ class _ImageInputFieldState extends State<ImageInputField> {
                               },
                             );
                           }),
-                        if (loading == true) const CircularProgressIndicator(),
-                        if (loading == true) const SizedBox(width: 20),
+                        if (loading == true)
+                          const Padding(
+                            padding:
+                                EdgeInsets.only(top: 10, left: 10, right: 40),
+                            child: CircularProgressIndicator(),
+                          ),
                         picInput
                       ],
                     ),
@@ -167,9 +171,14 @@ class _ImageInputFieldState extends State<ImageInputField> {
                 if (!widget.doesItExpand)
                   widget.url!.isEmpty
                       ? loading
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 10, left: 10),
-                              child: CircularProgressIndicator(),
+                          ? Column(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 20, left: 10),
+                                  child: CircularProgressIndicator(),
+                                ),
+                                SizedBox(height: 20),
+                              ],
                             )
                           : picInput
                       : ImageDisplay(

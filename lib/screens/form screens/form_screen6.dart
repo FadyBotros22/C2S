@@ -33,7 +33,8 @@ class _FormScreen6State extends State<FormScreen6> {
   bool isEmptyIsConfirmedNothingOnSite = false;
   bool isEmptyIsConfirmedBathroom = false;
 
-  bool loading = true;
+  bool isLoading = true;
+  bool isImageLoading = false;
 
   bool validate() {
     if (isConfirmedNothingOnSite == null) {
@@ -45,6 +46,9 @@ class _FormScreen6State extends State<FormScreen6> {
       setState(() {
         isEmptyIsConfirmedBathroom = true;
       });
+      return false;
+    } else if (isImageLoading) {
+      Snackbar().showSnackBar(context, "Image is uploading, please wait");
       return false;
     }
     return true;
@@ -125,11 +129,11 @@ class _FormScreen6State extends State<FormScreen6> {
 
   Future<void> _loadEntry() async {
     setState(() {
-      loading = true;
+      isLoading = true;
     });
     await getEntry();
     setState(() {
-      loading = false;
+      isLoading = false;
     });
   }
 
@@ -144,7 +148,7 @@ class _FormScreen6State extends State<FormScreen6> {
                 screen: FormScreen5(id: widget.id),
                 title: 'Final Walkthrough',
                 linearProgressValue: 6.0),
-            loading
+            isLoading
                 ? const Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(),
@@ -216,6 +220,11 @@ class _FormScreen6State extends State<FormScreen6> {
                             addImage: (url) {
                               setState(() {
                                 miscPics.add(url);
+                              });
+                            },
+                            isImageLoading: (bool isLoading) {
+                              setState(() {
+                                isImageLoading = isLoading;
                               });
                             },
                           ),

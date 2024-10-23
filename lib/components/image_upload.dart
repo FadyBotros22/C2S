@@ -13,13 +13,7 @@ Future<String> uploadFile(File file) async {
     final result = await Amplify.Storage.uploadFile(
       localFile: AWSFile.fromPath(file.path),
       path: StoragePath.fromString('public/$key.jpg'),
-      onProgress: (progress) {
-        logger.i('Upload Progress: ${progress.fractionCompleted}');
-      },
     ).result;
-
-    // Log successful result
-    logger.i('File uploaded successfully with result: $result');
 
     return "https://$bucket.s3.us-east-2.amazonaws.com/public/$key.jpg";
   } catch (e) {

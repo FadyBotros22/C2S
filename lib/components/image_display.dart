@@ -1,3 +1,4 @@
+import 'package:c2s/components/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_svg/svg.dart';
@@ -24,6 +25,11 @@ class ImageDisplay extends StatelessWidget {
               url!,
               height: 66,
               width: 66,
+              errorBuilder: (context, error, stackTrace) {
+                Snackbar().showSnackBar(context, "Network Error, try again");
+                deleteImage();
+                return SizedBox(height: 0, width: 0);
+              },
             ),
           ),
         ),

@@ -42,7 +42,9 @@ class _FormScreen2State extends State<FormScreen2> {
   bool isEmptyCheckList = false;
   bool isEmptyBlowerValue = false;
 
-  bool loading = true;
+  bool isLoading = true;
+  bool isImageLoading = false;
+  // bool
 
   Future<bool> patchEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
@@ -90,6 +92,14 @@ class _FormScreen2State extends State<FormScreen2> {
       setState(() {
         isEmptyCheckList = true;
       });
+      return false;
+    } else if (blowerValue == null) {
+      setState(() {
+        isEmptyBlowerValue = true;
+      });
+      return false;
+    } else if (isImageLoading) {
+      Snackbar().showSnackBar(context, "Image is uploading, please wait");
       return false;
     } else if (heatPic == null) {
       setState(() {
@@ -179,11 +189,11 @@ class _FormScreen2State extends State<FormScreen2> {
 
   Future<void> _loadEntry() async {
     setState(() {
-      loading = true;
+      isLoading = true;
     });
     await getEntry();
     setState(() {
-      loading = false;
+      isLoading = false;
     });
   }
 
@@ -198,7 +208,7 @@ class _FormScreen2State extends State<FormScreen2> {
                 screen: FormScreen1(id: widget.id),
                 title: 'Initial Walkthrough',
                 linearProgressValue: 2.0),
-            loading
+            isLoading
                 ? const Center(
                     heightFactor: 15,
                     child: CircularProgressIndicator(),
@@ -296,6 +306,7 @@ class _FormScreen2State extends State<FormScreen2> {
                           ),
                           InputField(
                             title: 'Blower door starting value *',
+                            color: isEmptyBlowerValue ? Colors.red : null,
                             hintText: '${blowerValue ?? ''}',
                             onChanged: (value) {
                               setState(() {
@@ -331,6 +342,11 @@ class _FormScreen2State extends State<FormScreen2> {
                                 heatPic = url;
                               });
                             },
+                            isImageLoading: (bool isLoading) {
+                              setState(() {
+                                isImageLoading = isLoading;
+                              });
+                            },
                           ),
                           ImageInputField(
                             deleteImage: (index) {
@@ -348,6 +364,11 @@ class _FormScreen2State extends State<FormScreen2> {
                                 waterPic = url;
                               });
                             },
+                            isImageLoading: (bool isLoading) {
+                              setState(() {
+                                isImageLoading = isLoading;
+                              });
+                            },
                           ),
                           ImageInputField(
                             isRequired: isEmptyWaterPic,
@@ -362,6 +383,11 @@ class _FormScreen2State extends State<FormScreen2> {
                             deleteImage: (index) {
                               setState(() {
                                 corners.removeAt(index);
+                              });
+                            },
+                            isImageLoading: (bool isLoading) {
+                              setState(() {
+                                isImageLoading = isLoading;
                               });
                             },
                           ),
