@@ -62,15 +62,16 @@ class _LoginPageState extends State<LoginPage> {
       return "true";
     } on SocketException catch (e) {
       logger.e(e);
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      Snackbar().showSnackBar(context, 'socket error');
       return "";
     } on DioException catch (e) {
       if (e.type == DioExceptionType.badResponse) {
         return "false";
+      } else if (e.type == DioExceptionType.connectionError) {
+        Snackbar().showSnackBar(context, "Network error");
+        return "";
       } else {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
+        Snackbar().showSnackBar(context, "unknown error");
         return "";
       }
     }
