@@ -26,8 +26,10 @@ class ImageDisplay extends StatelessWidget {
               height: 66,
               width: 66,
               errorBuilder: (context, error, stackTrace) {
-                Snackbar().showSnackBar(context, "Network Error, try again");
-                deleteImage();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Snackbar().showSnackBar(context, "Network Error, try again");
+                  deleteImage();
+                });
                 return SizedBox(height: 0, width: 0);
               },
             ),
