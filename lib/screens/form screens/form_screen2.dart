@@ -156,8 +156,10 @@ class _FormScreen2State extends State<FormScreen2> {
             getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 
@@ -354,7 +356,6 @@ class _FormScreen2State extends State<FormScreen2> {
                             doesItExpand: true,
                             addImage: (url) {
                               setState(() {
-                                print('url added $url');
                                 corners.add(url);
                               });
                             },

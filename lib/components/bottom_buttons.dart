@@ -24,6 +24,7 @@ class BottomButtons extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           ActionButton(
             label: 'Save and next',
@@ -31,25 +32,29 @@ class BottomButtons extends StatelessWidget {
               if (id == null) {
                 if (validate()) {
                   String id = await patchEntry();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FormScreen2(id: id),
-                    ),
-                  );
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FormScreen2(id: id),
+                      ),
+                    );
+                  }
                 }
               } else {
                 if (validate()) {
                   bool isComplete = await patchEntry();
-                  isComplete
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => nextScreen,
-                          ),
-                        )
-                      : Snackbar().showSnackBar(context,
-                          "Error occurred, try connecting to active Network");
+                  if (context.mounted) {
+                    isComplete
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => nextScreen,
+                            ),
+                          )
+                        : Snackbar().showSnackBar(context,
+                            "Error occurred, try connecting to active Network");
+                  }
                 }
               }
             },
@@ -58,15 +63,17 @@ class BottomButtons extends StatelessWidget {
             onPressed: () async {
               if (validate()) {
                 bool isComplete = await patchEntry();
-                isComplete
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                      )
-                    : Snackbar().showSnackBar(context,
-                        "Error occurred, try connecting to active Network");
+                if (context.mounted) {
+                  isComplete
+                      ? Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        )
+                      : Snackbar().showSnackBar(context,
+                          "Error occurred, try connecting to active Network");
+                }
               }
             },
             label: 'Save for now',

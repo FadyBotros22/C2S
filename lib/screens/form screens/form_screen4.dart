@@ -69,8 +69,10 @@ class _FormScreen4State extends State<FormScreen4> {
           widget.id, token, patchAtticInsulationData);
       return true;
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
       return false;
     }
   }
@@ -93,8 +95,10 @@ class _FormScreen4State extends State<FormScreen4> {
                 [];
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 

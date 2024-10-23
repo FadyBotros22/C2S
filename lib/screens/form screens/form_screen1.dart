@@ -105,13 +105,15 @@ class _FormScreen1State extends State<FormScreen1> {
           await apiService.postEntry(token, postEntriesRequestData);
       return postEntriesResponseData.data.id;
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
     return '';
   }
 
-  void patchEntry() async {
+  Future<bool> patchEntry() async {
     ApiService apiService = ApiService(DioClass.getDio());
     var token =
         (await Preferences.getPreferences()).getString('token').toString();
@@ -124,9 +126,13 @@ class _FormScreen1State extends State<FormScreen1> {
             date: date!));
     try {
       await apiService.patchBase(widget.id!, token, patchBaseData);
+      return true;
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
+      return false;
     }
   }
 
@@ -151,8 +157,10 @@ class _FormScreen1State extends State<FormScreen1> {
         }
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 

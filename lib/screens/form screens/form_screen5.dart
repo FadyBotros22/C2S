@@ -59,8 +59,10 @@ class _FormScreen5State extends State<FormScreen5> {
           widget.id, token, patchWallInsulationData);
       return true;
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
       return false;
     }
   }
@@ -78,8 +80,10 @@ class _FormScreen5State extends State<FormScreen5> {
         notes = getEntryResponseData.data?.wallInsulation?.notes;
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 

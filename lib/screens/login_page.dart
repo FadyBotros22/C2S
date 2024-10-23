@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:c2s/components/action_button.dart';
-import 'package:c2s/components/image_upload.dart';
 import 'package:c2s/components/snakbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     String status = await fetchUserData(username, password);
-    if (status == 'true') {
+    if (status == 'true' && mounted) {
       errorMessage = '';
       Navigator.pushAndRemoveUntil(
         context,
@@ -60,20 +59,20 @@ class _LoginPageState extends State<LoginPage> {
       (await Preferences.getPreferences()).getString('token');
 
       return "true";
-    } on SocketException catch (e) {
-      logger.e(e);
-      Snackbar().showSnackBar(context, 'socket error');
+    } on SocketException catch (_) {
+      if (mounted) {
+        Snackbar().showSnackBar(context, 'socket error');
+      }
       return "";
     } on DioException catch (e) {
       if (e.type == DioExceptionType.badResponse) {
         return "false";
-      } else if (e.type == DioExceptionType.connectionError) {
+      } else if (e.type == DioExceptionType.connectionError && mounted) {
         Snackbar().showSnackBar(context, "Network error");
-        return "";
-      } else {
+      } else if (mounted) {
         Snackbar().showSnackBar(context, "unknown error");
-        return "";
       }
+      return "";
     }
   }
 

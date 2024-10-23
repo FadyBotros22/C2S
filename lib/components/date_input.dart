@@ -29,7 +29,7 @@ class _DateInputState extends State<DateInput> {
       lastDate: DateTime(2101),
     );
 
-    if (pickedDate != null) {
+    if (pickedDate != null && mounted) {
       // Show time picker
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,

@@ -71,8 +71,10 @@ class _FormScreen3State extends State<FormScreen3> {
       await apiService.patchAirSealing(widget.id, token, patchAirSealingData);
       return true;
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
       return false;
     }
   }
@@ -92,8 +94,10 @@ class _FormScreen3State extends State<FormScreen3> {
             getEntryResponseData.data?.airSealing?.sealingQualityPic ?? [];
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 
@@ -122,7 +126,7 @@ class _FormScreen3State extends State<FormScreen3> {
           children: [
             TitleComponent(
                 screen: FormScreen2(id: widget.id),
-                title: 'Air Sealling',
+                title: 'Air Sealing',
                 linearProgressValue: 3.0),
             loading
                 ? const Center(

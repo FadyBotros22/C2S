@@ -85,8 +85,10 @@ class _FormScreen6State extends State<FormScreen6> {
     try {
       await apiService.patchFinal(widget.id, token, patchFinalWalkthroughData);
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 
@@ -108,8 +110,10 @@ class _FormScreen6State extends State<FormScreen6> {
             getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
       });
     } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
+      if (mounted) {
+        Snackbar().showSnackBar(
+            context, "Error occurred, try connecting to active Network");
+      }
     }
   }
 

@@ -8,6 +8,8 @@ import 'dart:io';
 import 'image_upload.dart';
 import 'snakbar.dart';
 
+Snackbar snackBar = Snackbar();
+
 class ImageInputField extends StatefulWidget {
   const ImageInputField({
     super.key,
@@ -53,37 +55,35 @@ class _ImageInputFieldState extends State<ImageInputField> {
 
           url = await uploadFile(compressedImageFile);
 
-          if (url == '') {
+          if (url == '' && mounted) {
             Snackbar snackBar = Snackbar();
             snackBar.showSnackBar(
                 context, 'Network error, try to connect to an active network');
           } else {
             widget.addImage!(url); // Add image URL
           }
-        } else {
-          print('File does not exist');
         }
-      } on NetworkException catch (e) {
-        // Network-related errors caught here
-        Snackbar snackBar = Snackbar();
-        snackBar.showSnackBar(
-            context, 'Network error occurred, please try again.');
+      } on NetworkException catch (_) {
+        if (mounted) {
+          snackBar.showSnackBar(
+              context, 'Network error occurred, please try again.');
+        }
       } catch (e) {
-        print('Error during image upload: $e');
-        Snackbar snackBar = Snackbar();
-        snackBar.showSnackBar(context, 'An error occurred: $e');
+        if (mounted) {
+          snackBar.showSnackBar(context, 'An error occurred: $e');
+        }
       }
 
       setState(() {
         loading = false; // Stop loading after file processing
       });
     } else {
-      // Handle case where no file was selected
       setState(() {
         loading = false;
       });
-      Snackbar snackBar = Snackbar();
-      snackBar.showSnackBar(context, 'No image selected.');
+      if (mounted) {
+        snackBar.showSnackBar(context, 'No image selected.');
+      }
     }
   }
 
