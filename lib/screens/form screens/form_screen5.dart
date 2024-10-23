@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
+
+import '../../injection_container.dart';
 
 class FormScreen5 extends StatefulWidget {
   const FormScreen5({super.key, required this.id});
@@ -39,9 +40,7 @@ class _FormScreen5State extends State<FormScreen5> {
   }
 
   Future<bool> patchEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
 
     insulation.PatchWallInsulationData patchWallInsulationData =
         insulation.PatchWallInsulationData(
@@ -55,8 +54,8 @@ class _FormScreen5State extends State<FormScreen5> {
                     blockersChecked: false),
                 notes: notes ?? ''));
     try {
-      await apiService.patchWallInsulation(
-          widget.id, token, patchWallInsulationData);
+      await getIt<ApiService>()
+          .patchEntry(widget.id, token, patchWallInsulationData.toJson());
       return true;
     } catch (e) {
       if (mounted) {
@@ -68,12 +67,11 @@ class _FormScreen5State extends State<FormScreen5> {
   }
 
   Future<void> getEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     try {
       GetEntryResponseData getEntryResponseData =
-          await apiService.getEntry(token, widget.id);
+          await getIt<ApiService>().getEntry(token, widget.id);
 
       setState(() {
         onWorkOrder = getEntryResponseData.data?.wallInsulation?.onWorkOrder;

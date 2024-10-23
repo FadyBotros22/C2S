@@ -11,8 +11,9 @@ import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
+
+import '../../injection_container.dart';
 
 class FormScreen4 extends StatefulWidget {
   const FormScreen4({super.key, required this.id});
@@ -47,9 +48,7 @@ class _FormScreen4State extends State<FormScreen4> {
   }
 
   Future<bool> patchEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
 
     attic.PatchAtticInsulationData patchAtticInsulationData =
         attic.PatchAtticInsulationData(
@@ -69,8 +68,8 @@ class _FormScreen4State extends State<FormScreen4> {
       ),
     );
     try {
-      await apiService.patchAtticInsulation(
-          widget.id, token, patchAtticInsulationData);
+      await getIt<ApiService>()
+          .patchEntry(widget.id, token, patchAtticInsulationData.toJson());
       return true;
     } catch (e) {
       if (mounted) {
@@ -82,12 +81,11 @@ class _FormScreen4State extends State<FormScreen4> {
   }
 
   Future<void> getEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     try {
       GetEntryResponseData getEntryResponseData =
-          await apiService.getEntry(token, widget.id);
+          await getIt<ApiService>().getEntry(token, widget.id);
       setState(() {
         onWorkOrder = getEntryResponseData.data?.atticInsulation?.onWorkOrder;
         notesOnMeasurements = getEntryResponseData

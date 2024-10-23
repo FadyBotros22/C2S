@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:c2s/api_service.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/statics/dio.dart';
+import '../../injection_container.dart';
 
 class FormScreen2 extends StatefulWidget {
   const FormScreen2({super.key, required this.id});
@@ -47,9 +47,7 @@ class _FormScreen2State extends State<FormScreen2> {
   // bool
 
   Future<bool> patchEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
 
     patch.PatchInitialWalkThroughData patchInitialWalkThroughData =
         patch.PatchInitialWalkThroughData(
@@ -75,8 +73,11 @@ class _FormScreen2State extends State<FormScreen2> {
               corners.isNotEmpty ? corners : ['https://www.google.co.uk/']),
     );
     try {
-      await apiService.patchInitial(
-          widget.id, token, patchInitialWalkThroughData);
+      await getIt<ApiService>().patchEntry(
+        widget.id,
+        token,
+        patchInitialWalkThroughData.toJson(),
+      );
       return true;
     } catch (e) {
       return false;
@@ -135,12 +136,11 @@ class _FormScreen2State extends State<FormScreen2> {
   }
 
   Future<void> getEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     try {
       GetEntryResponseData getEntryResponseData =
-          await apiService.getEntry(token, widget.id);
+          await getIt<ApiService>().getEntry(token, widget.id);
 
       setState(() {
         knob = getEntryResponseData

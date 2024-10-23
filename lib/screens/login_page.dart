@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:c2s/components/action_button.dart';
 import 'package:c2s/components/snakbar.dart';
+import 'package:c2s/statics/preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
+import '../injection_container.dart';
 import 'home_page.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
 import 'package:c2s/data/user_request_data.dart';
-import 'package:c2s/statics/preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,15 +48,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> fetchUserData(String userName, String password) async {
     try {
-      ApiService apiService = ApiService(DioClass.getDio());
+      // ApiService apiService = ApiService(DioClass.getDio());
       UserRequestData userRequest = UserRequestData(
           user: User(userName: userName, password: password),
           device: Device(deviceId: "deviceId", os: "IOS"));
 
-      final fetchedUser = await apiService.login(userRequest);
-      (await Preferences.getPreferences())
-          .setString("token", fetchedUser.data.authToken);
-      (await Preferences.getPreferences()).getString('token');
+      final fetchedUser = await getIt<ApiService>().login(userRequest);
+      getIt<Preferences>().saveData('token', fetchedUser.data.authToken);
 
       return "true";
     } on SocketException catch (_) {

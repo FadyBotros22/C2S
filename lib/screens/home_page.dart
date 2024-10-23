@@ -14,8 +14,9 @@ import 'package:c2s/constants.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../api_service.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:intl/intl.dart';
+
+import '../injection_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,12 +30,10 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
 
   void logout() async {
-    ApiService apiService = ApiService(DioClass.getDio());
     try {
-      var token =
-          (await Preferences.getPreferences()).getString('token').toString();
+      var token = getIt<Preferences>().getData('token').toString();
 
-      await apiService.logout(token);
+      await getIt<ApiService>().logout(token);
     } catch (e) {
       if (mounted) {
         Snackbar().showSnackBar(
@@ -44,12 +43,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getEntries() async {
-    ApiService apiService = ApiService(DioClass.getDio());
     try {
-      var token =
-          (await Preferences.getPreferences()).getString('token').toString();
-
-      entriesResponse = await apiService.getEntries(token);
+      var token = getIt<Preferences>().getData('token').toString();
+      entriesResponse = await getIt<ApiService>().getEntries(token);
       setState(() {
         isLoading = false;
       });

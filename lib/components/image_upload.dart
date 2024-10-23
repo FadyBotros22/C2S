@@ -2,10 +2,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:logger/logger.dart';
 import 'amplifyconfiguration.dart';
-
-var logger = Logger();
 
 Future<String> uploadFile(File file) async {
   try {
@@ -14,10 +11,8 @@ Future<String> uploadFile(File file) async {
       localFile: AWSFile.fromPath(file.path),
       path: StoragePath.fromString('public/$key.jpg'),
     ).result;
-
     return "https://$bucket.s3.us-east-2.amazonaws.com/public/$key.jpg";
-  } catch (e) {
-    logger.e('An unexpected error occurred: $e');
+  } catch (_) {
     return '';
   }
 }

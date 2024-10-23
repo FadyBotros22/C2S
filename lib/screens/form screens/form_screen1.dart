@@ -11,10 +11,9 @@ import 'package:c2s/data/post_entries_response_data.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
-
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
+import '../../injection_container.dart';
 
 class FormScreen1 extends StatefulWidget {
   const FormScreen1({super.key, this.id});
@@ -87,9 +86,7 @@ class _FormScreen1State extends State<FormScreen1> {
   }
 
   Future<String> postEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
 
     request.PostEntriesRequestData postEntriesRequestData =
         request.PostEntriesRequestData(
@@ -102,7 +99,7 @@ class _FormScreen1State extends State<FormScreen1> {
             jobId: jobId!);
     try {
       PostEntriesResponseData postEntriesResponseData =
-          await apiService.postEntry(token, postEntriesRequestData);
+          await getIt<ApiService>().postEntry(token, postEntriesRequestData);
       return postEntriesResponseData.data.id;
     } catch (e) {
       if (mounted) {
@@ -114,9 +111,8 @@ class _FormScreen1State extends State<FormScreen1> {
   }
 
   Future<bool> patchEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     PatchBaseData patchBaseData = PatchBaseData(
         baseData: BaseData(
             programType: programType!,
@@ -125,7 +121,8 @@ class _FormScreen1State extends State<FormScreen1> {
             city: city!,
             date: date!));
     try {
-      await apiService.patchBase(widget.id!, token, patchBaseData);
+      await getIt<ApiService>()
+          .patchEntry(widget.id!, token, patchBaseData.toJson());
       return true;
     } catch (e) {
       if (mounted) {
@@ -137,12 +134,11 @@ class _FormScreen1State extends State<FormScreen1> {
   }
 
   Future<void> getEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     try {
       GetEntryResponseData getEntryResponseData =
-          await apiService.getEntry(token, widget.id!);
+          await getIt<ApiService>().getEntry(token, widget.id!);
 
       setState(() {
         programType = getEntryResponseData.data?.programType;

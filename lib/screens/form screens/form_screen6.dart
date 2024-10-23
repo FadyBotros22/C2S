@@ -10,11 +10,10 @@ import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/constants.dart';
-
 import '../../components/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/statics/dio.dart';
 import 'package:c2s/api_service.dart';
+import '../../injection_container.dart';
 
 class FormScreen6 extends StatefulWidget {
   const FormScreen6({super.key, required this.id});
@@ -55,39 +54,40 @@ class _FormScreen6State extends State<FormScreen6> {
   }
 
   void patchEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
 
     final_walk.PatchFinalWalkthroughData patchFinalWalkthroughData =
         final_walk.PatchFinalWalkthroughData(
             finalWalkthrough: final_walk.FinalWalkthrough(
-                checklist: final_walk.Checklist(
-                    airSealing: '',
-                    zonalPressure: '',
-                    accuVents: '',
-                    finishedAttic: '',
-                    certificateofInsulation: '',
-                    generalQualityPictures: ''),
-                selfHelpImgs: ['https://www.google.co.uk/'],
-                contractChanges: false,
-                changeOrderBy: '',
-                changeOrdersSpecification: '',
-                changeOrderPics: ['https://www.google.co.uk/'],
-                notes: notes ?? '',
-                postBlowerDoor: 0,
-                postBlowerDoorPic: 'https://www.google.co.uk/',
-                certificateOfInsulationPostedNearElectricalPanel:
-                    'certificateOfInsulationPostedNearElectricalPanel',
-                leftConfirmation: isConfirmedNothingOnSite!,
-                bathroomConfirmation: isConfirmedBathroom!,
-                qualityPics: miscPics,
-                customerReview: 'customerReview',
-                contactMethod: 'contactMethod',
-                email: 'email',
-                phoneNumber: 'phoneNumber'));
+      checklist: final_walk.Checklist(
+        airSealing: '',
+        zonalPressure: '',
+        accuVents: '',
+        finishedAttic: '',
+        certificateofInsulation: '',
+        generalQualityPictures: '',
+      ),
+      selfHelpImgs: ['https://www.google.co.uk/'],
+      contractChanges: false,
+      changeOrderBy: '',
+      changeOrdersSpecification: '',
+      changeOrderPics: ['https://www.google.co.uk/'],
+      notes: notes ?? '',
+      postBlowerDoor: 0,
+      postBlowerDoorPic: 'https://www.google.co.uk/',
+      certificateOfInsulationPostedNearElectricalPanel:
+          'certificateOfInsulationPostedNearElectricalPanel',
+      leftConfirmation: isConfirmedNothingOnSite!,
+      bathroomConfirmation: isConfirmedBathroom!,
+      qualityPics: miscPics,
+      customerReview: 'customerReview',
+      contactMethod: 'contactMethod',
+      email: 'email',
+      phoneNumber: 'phoneNumber',
+    ));
     try {
-      await apiService.patchFinal(widget.id, token, patchFinalWalkthroughData);
+      await getIt<ApiService>()
+          .patchEntry(widget.id, token, patchFinalWalkthroughData.toJson());
     } catch (e) {
       if (mounted) {
         Snackbar().showSnackBar(
@@ -97,12 +97,11 @@ class _FormScreen6State extends State<FormScreen6> {
   }
 
   Future<void> getEntry() async {
-    ApiService apiService = ApiService(DioClass.getDio());
-    var token =
-        (await Preferences.getPreferences()).getString('token').toString();
+    var token = getIt<Preferences>().getData('token').toString();
+
     try {
       GetEntryResponseData getEntryResponseData =
-          await apiService.getEntry(token, widget.id);
+          await getIt<ApiService>().getEntry(token, widget.id);
 
       setState(() {
         notes = getEntryResponseData.data?.finalWalkthrough!.notes;

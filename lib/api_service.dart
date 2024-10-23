@@ -1,9 +1,4 @@
 import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_air_sealing_data.dart';
-import 'package:c2s/data/patch%20data/patch_attic_insulation_data.dart';
-import 'package:c2s/data/patch%20data/patch_final_walkthrough_data.dart';
-import 'package:c2s/data/patch%20data/patch_initial_walk_through_data.dart';
-import 'package:c2s/data/patch%20data/patch_wall_insulation_data.dart';
 import 'package:c2s/data/post_entries_request_data.dart';
 import 'package:c2s/data/entries_response_data.dart';
 import 'package:c2s/data/logout_response_data.dart';
@@ -12,8 +7,6 @@ import 'package:c2s/data/user_response_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'data/user_request_data.dart';
-import 'data/patch data/patch_base_data.dart';
-
 part 'api_service.g.dart'; // Ensure this part directive is present
 
 @RestApi(baseUrl: "http://3.21.176.77/v1/")
@@ -41,36 +34,8 @@ abstract class ApiService {
       @Body() PostEntriesRequestData postEntriesRequestData);
 
   @PATCH("/entries/{id}")
-  Future patchBase(@Path('id') String id, @Header('Authorization') String token,
-      @Body() PatchBaseData patchBaseData);
-
-  @PATCH("/entries/{id}")
-  Future patchInitial(
+  Future patchEntry(
       @Path('id') String id,
       @Header('Authorization') String token,
-      @Body() PatchInitialWalkThroughData patchInitialWalkThroughData);
-
-  @PATCH("/entries/{id}")
-  Future patchAirSealing(
-      @Path('id') String id,
-      @Header('Authorization') String token,
-      @Body() PatchAirSealingData patchAirSealingData);
-
-  @PATCH("/entries/{id}")
-  Future patchAtticInsulation(
-      @Path('id') String id,
-      @Header('Authorization') String token,
-      @Body() PatchAtticInsulationData patchAtticInsulationData);
-
-  @PATCH("/entries/{id}")
-  Future patchWallInsulation(
-      @Path('id') String id,
-      @Header('Authorization') String token,
-      @Body() PatchWallInsulationData patchWallInsulationData);
-
-  @PATCH("/entries/{id}")
-  Future patchFinal(
-      @Path('id') String id,
-      @Header('Authorization') String token,
-      @Body() PatchFinalWalkthroughData patchFinalWalkthroughData);
+      @Body() Map<String, dynamic> patchData);
 }
