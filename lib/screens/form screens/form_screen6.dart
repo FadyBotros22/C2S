@@ -12,8 +12,7 @@ import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/constants.dart';
 import '../../components/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../../domain/repositories/abstract_get_entries_repo.dart';
-import '../../domain/repositories/abstract_post_entry_repo.dart';
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen6 extends StatefulWidget {
@@ -84,7 +83,7 @@ class _FormScreen6State extends State<FormScreen6> {
       email: 'email',
       phoneNumber: 'phoneNumber',
     ));
-    return await getIt<AbstractPostEntryRepo>().patchEntry(
+    return await getIt<AbstractEntriesRepo>().patchEntry(
         context,
         getIt<Preferences>().getData('token').toString(),
         widget.id,
@@ -93,7 +92,7 @@ class _FormScreen6State extends State<FormScreen6> {
 
   Future<void> getEntry() async {
     GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractGetEntriesRepo>().getEntry(
+        await getIt<AbstractEntriesRepo>().getEntry(
             context,
             getIt<Preferences>().getData('token').toString(),
             widget.id.toString());

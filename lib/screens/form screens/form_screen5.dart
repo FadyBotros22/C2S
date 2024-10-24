@@ -1,5 +1,4 @@
 import 'package:c2s/components/bottom_buttons.dart';
-import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_wall_insulation_data.dart'
@@ -10,10 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/data/remote/api_service.dart';
-
-import '../../domain/repositories/abstract_get_entries_repo.dart';
-import '../../domain/repositories/abstract_post_entry_repo.dart';
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen5 extends StatefulWidget {
@@ -53,7 +49,7 @@ class _FormScreen5State extends State<FormScreen5> {
                     cornerBracesChecked: false,
                     blockersChecked: false),
                 notes: notes ?? ''));
-    return await getIt<AbstractPostEntryRepo>().patchEntry(
+    return await getIt<AbstractEntriesRepo>().patchEntry(
         context,
         getIt<Preferences>().getData('token').toString(),
         widget.id,
@@ -62,7 +58,7 @@ class _FormScreen5State extends State<FormScreen5> {
 
   Future<void> getEntry() async {
     GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractGetEntriesRepo>().getEntry(
+        await getIt<AbstractEntriesRepo>().getEntry(
             context,
             getIt<Preferences>().getData('token').toString(),
             widget.id.toString());

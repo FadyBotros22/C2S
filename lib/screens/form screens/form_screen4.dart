@@ -11,8 +11,8 @@ import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../domain/repositories/abstract_get_entries_repo.dart';
-import '../../domain/repositories/abstract_post_entry_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen4 extends StatefulWidget {
@@ -65,7 +65,7 @@ class _FormScreen4State extends State<FormScreen4> {
         atticInsulationPic: atticPics,
       ),
     );
-    return await getIt<AbstractPostEntryRepo>().patchEntry(
+    return await getIt<AbstractEntriesRepo>().patchEntry(
         context,
         getIt<Preferences>().getData('token').toString(),
         widget.id,
@@ -74,7 +74,7 @@ class _FormScreen4State extends State<FormScreen4> {
 
   Future<void> getEntry() async {
     GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractGetEntriesRepo>().getEntry(
+        await getIt<AbstractEntriesRepo>().getEntry(
             context,
             getIt<Preferences>().getData('token').toString(),
             widget.id.toString());

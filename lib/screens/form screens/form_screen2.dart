@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../domain/repositories/abstract_get_entries_repo.dart';
-import '../../domain/repositories/abstract_post_entry_repo.dart';
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen2 extends StatefulWidget {
@@ -71,7 +71,7 @@ class _FormScreen2State extends State<FormScreen2> {
           concernsPic:
               corners.isNotEmpty ? corners : ['https://www.google.co.uk/']),
     );
-    return await getIt<AbstractPostEntryRepo>().patchEntry(
+    return await getIt<AbstractEntriesRepo>().patchEntry(
         context,
         getIt<Preferences>().getData('token').toString(),
         widget.id,
@@ -131,7 +131,7 @@ class _FormScreen2State extends State<FormScreen2> {
 
   Future<void> getEntry() async {
     GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractGetEntriesRepo>().getEntry(
+        await getIt<AbstractEntriesRepo>().getEntry(
             context,
             getIt<Preferences>().getData('token').toString(),
             widget.id.toString());

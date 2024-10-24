@@ -2,18 +2,15 @@ import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/date_input.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
-import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_base_data.dart';
 import 'package:c2s/data/json_data/post_entries_request_data.dart' as request;
-import 'package:c2s/domain/repositories/abstract_post_entry_repo.dart';
+import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/data/remote/api_service.dart';
-import '../../domain/repositories/abstract_get_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen1 extends StatefulWidget {
@@ -99,7 +96,7 @@ class _FormScreen1State extends State<FormScreen1> {
             coordinates: request.Coordinates(latitude: 0, longitude: 0),
             jobId: jobId!);
 
-    String id = await getIt<AbstractPostEntryRepo>()
+    String id = await getIt<AbstractEntriesRepo>()
         .postEntry(context, token, postEntriesRequestData);
     return id;
   }
@@ -113,7 +110,7 @@ class _FormScreen1State extends State<FormScreen1> {
             city: city!,
             date: date!));
 
-    return await getIt<AbstractPostEntryRepo>().patchEntry(
+    return await getIt<AbstractEntriesRepo>().patchEntry(
         context,
         getIt<Preferences>().getData('token').toString(),
         widget.id!,
@@ -122,7 +119,7 @@ class _FormScreen1State extends State<FormScreen1> {
 
   Future<void> getEntry() async {
     GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractGetEntriesRepo>().getEntry(
+        await getIt<AbstractEntriesRepo>().getEntry(
             context,
             getIt<Preferences>().getData('token').toString(),
             widget.id.toString());

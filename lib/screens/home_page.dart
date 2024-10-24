@@ -1,8 +1,6 @@
 import 'package:c2s/components/empty_list.dart';
 import 'package:c2s/components/linear_progress.dart';
-import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/data/json_data/entries_response_data.dart';
-import 'package:c2s/domain/repositories/abstract_get_entries_repo.dart';
 import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
@@ -16,6 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:intl/intl.dart';
 import '../domain/repositories/abstract_auth_repo.dart';
+import '../domain/repositories/abstract_entries_repo.dart';
 import '../injection_container.dart';
 // import 'package:dartz/dartz.dart';
 
@@ -35,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getEntries() async {
-    entriesResponse = await getIt<AbstractGetEntriesRepo>()
+    entriesResponse = await getIt<AbstractEntriesRepo>()
         .getEntries(context, getIt<Preferences>().getData('token').toString());
     setState(() {
       isLoading = false;
