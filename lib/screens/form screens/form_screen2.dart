@@ -5,15 +5,16 @@ import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_initial_walk_through_data.dart'
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/patch%20data/patch_initial_walk_through_data.dart'
     as patch;
 import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
-import 'package:c2s/api_service.dart';
 import 'package:c2s/statics/preferences.dart';
+import '../../domain/repositories/abstract_get_entries_repo.dart';
+import '../../domain/repositories/abstract_post_entry_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen2 extends StatefulWidget {
@@ -47,8 +48,6 @@ class _FormScreen2State extends State<FormScreen2> {
   // bool
 
   Future<bool> patchEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
-
     patch.PatchInitialWalkThroughData patchInitialWalkThroughData =
         patch.PatchInitialWalkThroughData(
       initialWalkthrough: patch.InitialWalkthrough(
@@ -72,16 +71,11 @@ class _FormScreen2State extends State<FormScreen2> {
           concernsPic:
               corners.isNotEmpty ? corners : ['https://www.google.co.uk/']),
     );
-    try {
-      await getIt<ApiService>().patchEntry(
+    return await getIt<AbstractPostEntryRepo>().patchEntry(
+        context,
+        getIt<Preferences>().getData('token').toString(),
         widget.id,
-        token,
-        patchInitialWalkThroughData.toJson(),
-      );
-      return true;
-    } catch (e) {
-      return false;
-    }
+        patchInitialWalkThroughData.toJson());
   }
 
   bool validate() {
@@ -136,41 +130,33 @@ class _FormScreen2State extends State<FormScreen2> {
   }
 
   Future<void> getEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
+    GetEntryResponseData getEntryResponseData =
+        await getIt<AbstractGetEntriesRepo>().getEntry(
+            context,
+            getIt<Preferences>().getData('token').toString(),
+            widget.id.toString());
 
-    try {
-      GetEntryResponseData getEntryResponseData =
-          await getIt<ApiService>().getEntry(token, widget.id);
-
-      setState(() {
-        knob = getEntryResponseData
-            .data?.initialWalkthrough?.checklist?.knobAndTube;
-        abestos =
-            getEntryResponseData.data?.initialWalkthrough?.checklist?.abestos;
-        tiles = getEntryResponseData
-            .data?.initialWalkthrough?.checklist?.titlesOnSite;
-        dryers = getEntryResponseData
-            .data?.initialWalkthrough?.checklist?.unventedDryers;
-        moisture = getEntryResponseData
-            .data?.initialWalkthrough?.checklist?.moistureConcerns;
-        blowerDoor =
-            getEntryResponseData.data?.initialWalkthrough?.blowerDoorStatus;
-        blowerValue =
-            getEntryResponseData.data?.initialWalkthrough?.blowerStartingValue;
-        walkthroughNotes = getEntryResponseData.data?.initialWalkthrough?.notes;
-        heatPic =
-            getEntryResponseData.data?.initialWalkthrough?.heatingSystemPic;
-        waterPic =
-            getEntryResponseData.data?.initialWalkthrough?.waterHeaterPic;
-        corners =
-            getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    setState(() {
+      knob =
+          getEntryResponseData.data?.initialWalkthrough?.checklist?.knobAndTube;
+      abestos =
+          getEntryResponseData.data?.initialWalkthrough?.checklist?.abestos;
+      tiles = getEntryResponseData
+          .data?.initialWalkthrough?.checklist?.titlesOnSite;
+      dryers = getEntryResponseData
+          .data?.initialWalkthrough?.checklist?.unventedDryers;
+      moisture = getEntryResponseData
+          .data?.initialWalkthrough?.checklist?.moistureConcerns;
+      blowerDoor =
+          getEntryResponseData.data?.initialWalkthrough?.blowerDoorStatus;
+      blowerValue =
+          getEntryResponseData.data?.initialWalkthrough?.blowerStartingValue;
+      walkthroughNotes = getEntryResponseData.data?.initialWalkthrough?.notes;
+      heatPic = getEntryResponseData.data?.initialWalkthrough?.heatingSystemPic;
+      waterPic = getEntryResponseData.data?.initialWalkthrough?.waterHeaterPic;
+      corners =
+          getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
+    });
   }
 
   List<String> urlHandler(String? object) {

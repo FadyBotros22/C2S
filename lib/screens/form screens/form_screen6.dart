@@ -1,7 +1,7 @@
 import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_final_walkthrough_data.dart'
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/patch%20data/patch_final_walkthrough_data.dart'
     as final_walk;
 import 'package:c2s/screens/complete_form.dart';
 import 'package:c2s/screens/form%20screens/form_screen5.dart';
@@ -12,7 +12,8 @@ import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/constants.dart';
 import '../../components/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/api_service.dart';
+import '../../domain/repositories/abstract_get_entries_repo.dart';
+import '../../domain/repositories/abstract_post_entry_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen6 extends StatefulWidget {
@@ -53,9 +54,7 @@ class _FormScreen6State extends State<FormScreen6> {
     return true;
   }
 
-  void patchEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
-
+  Future<bool> patchEntry() async {
     final_walk.PatchFinalWalkthroughData patchFinalWalkthroughData =
         final_walk.PatchFinalWalkthroughData(
             finalWalkthrough: final_walk.FinalWalkthrough(
@@ -85,39 +84,28 @@ class _FormScreen6State extends State<FormScreen6> {
       email: 'email',
       phoneNumber: 'phoneNumber',
     ));
-    try {
-      await getIt<ApiService>()
-          .patchEntry(widget.id, token, patchFinalWalkthroughData.toJson());
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    return await getIt<AbstractPostEntryRepo>().patchEntry(
+        context,
+        getIt<Preferences>().getData('token').toString(),
+        widget.id,
+        patchFinalWalkthroughData.toJson());
   }
 
   Future<void> getEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
+    GetEntryResponseData getEntryResponseData =
+        await getIt<AbstractGetEntriesRepo>().getEntry(
+            context,
+            getIt<Preferences>().getData('token').toString(),
+            widget.id.toString());
 
-    try {
-      GetEntryResponseData getEntryResponseData =
-          await getIt<ApiService>().getEntry(token, widget.id);
-
-      setState(() {
-        notes = getEntryResponseData.data?.finalWalkthrough!.notes;
-        isConfirmedBathroom =
-            getEntryResponseData.data?.finalWalkthrough!.bathroomConfirmation;
-        isConfirmedNothingOnSite =
-            getEntryResponseData.data?.finalWalkthrough!.leftConfirmation;
-        miscPics =
-            getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    setState(() {
+      notes = getEntryResponseData.data?.finalWalkthrough!.notes;
+      isConfirmedBathroom =
+          getEntryResponseData.data?.finalWalkthrough!.bathroomConfirmation;
+      isConfirmedNothingOnSite =
+          getEntryResponseData.data?.finalWalkthrough!.leftConfirmation;
+      miscPics = getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
+    });
   }
 
   @override
