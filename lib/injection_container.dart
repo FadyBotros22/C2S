@@ -1,5 +1,4 @@
 import 'package:c2s/data/repositories/auth_repo_impl.dart';
-import 'package:c2s/data/repositories/get_entries_repo_impl.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
 import 'package:c2s/statics/dio.dart';

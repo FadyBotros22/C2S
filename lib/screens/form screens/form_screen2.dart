@@ -13,7 +13,6 @@ import 'package:c2s/screens/form%20screens/form_screen3.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../../domain/repositories/abstract_get_entries_repo.dart';
 import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 

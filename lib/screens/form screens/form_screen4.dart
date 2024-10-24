@@ -12,7 +12,6 @@ import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../domain/repositories/abstract_entries_repo.dart';
-import '../../domain/repositories/abstract_get_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen4 extends StatefulWidget {
