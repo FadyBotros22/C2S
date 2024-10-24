@@ -1,8 +1,7 @@
 import 'package:c2s/components/bottom_buttons.dart';
-import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_wall_insulation_data.dart'
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/patch%20data/patch_wall_insulation_data.dart'
     as insulation;
 import 'package:c2s/screens/form%20screens/form_screen4.dart';
 import 'package:c2s/screens/form%20screens/form_screen6.dart';
@@ -10,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/api_service.dart';
-
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen5 extends StatefulWidget {
@@ -40,8 +38,6 @@ class _FormScreen5State extends State<FormScreen5> {
   }
 
   Future<bool> patchEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
-
     insulation.PatchWallInsulationData patchWallInsulationData =
         insulation.PatchWallInsulationData(
             wallInsulation: insulation.WallInsulation(
@@ -53,36 +49,24 @@ class _FormScreen5State extends State<FormScreen5> {
                     cornerBracesChecked: false,
                     blockersChecked: false),
                 notes: notes ?? ''));
-    try {
-      await getIt<ApiService>()
-          .patchEntry(widget.id, token, patchWallInsulationData.toJson());
-      return true;
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-      return false;
-    }
+    return await getIt<AbstractEntriesRepo>().patchEntry(
+        context,
+        getIt<Preferences>().getData('token').toString(),
+        widget.id,
+        patchWallInsulationData.toJson());
   }
 
   Future<void> getEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
+    GetEntryResponseData getEntryResponseData =
+        await getIt<AbstractEntriesRepo>().getEntry(
+            context,
+            getIt<Preferences>().getData('token').toString(),
+            widget.id.toString());
 
-    try {
-      GetEntryResponseData getEntryResponseData =
-          await getIt<ApiService>().getEntry(token, widget.id);
-
-      setState(() {
-        onWorkOrder = getEntryResponseData.data?.wallInsulation?.onWorkOrder;
-        notes = getEntryResponseData.data?.wallInsulation?.notes;
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    setState(() {
+      onWorkOrder = getEntryResponseData.data?.wallInsulation?.onWorkOrder;
+      notes = getEntryResponseData.data?.wallInsulation?.notes;
+    });
   }
 
   @override

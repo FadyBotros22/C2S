@@ -1,12 +1,12 @@
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/post_entries_request_data.dart';
-import 'package:c2s/data/entries_response_data.dart';
-import 'package:c2s/data/logout_response_data.dart';
-import 'package:c2s/data/post_entries_response_data.dart';
-import 'package:c2s/data/user_response_data.dart';
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/post_entries_request_data.dart';
+import 'package:c2s/data/json_data/entries_response_data.dart';
+import 'package:c2s/data/json_data/logout_response_data.dart';
+import 'package:c2s/data/json_data/post_entries_response_data.dart';
+import 'package:c2s/data/json_data/user_response_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import 'data/user_request_data.dart';
+import '../json_data/user_request_data.dart';
 part 'api_service.g.dart'; // Ensure this part directive is present
 
 @RestApi(baseUrl: "http://3.21.176.77/v1/")

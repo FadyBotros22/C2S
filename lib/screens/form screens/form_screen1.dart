@@ -2,17 +2,15 @@ import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/date_input.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
-import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_base_data.dart';
-import 'package:c2s/data/post_entries_request_data.dart' as request;
-import 'package:c2s/data/post_entries_response_data.dart';
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/patch%20data/patch_base_data.dart';
+import 'package:c2s/data/json_data/post_entries_request_data.dart' as request;
+import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/api_service.dart';
 import '../../injection_container.dart';
 
 class FormScreen1 extends StatefulWidget {
@@ -97,22 +95,13 @@ class _FormScreen1State extends State<FormScreen1> {
             city: city!,
             coordinates: request.Coordinates(latitude: 0, longitude: 0),
             jobId: jobId!);
-    try {
-      PostEntriesResponseData postEntriesResponseData =
-          await getIt<ApiService>().postEntry(token, postEntriesRequestData);
-      return postEntriesResponseData.data.id;
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
-    return '';
+
+    String id = await getIt<AbstractEntriesRepo>()
+        .postEntry(context, token, postEntriesRequestData);
+    return id;
   }
 
   Future<bool> patchEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
-
     PatchBaseData patchBaseData = PatchBaseData(
         baseData: BaseData(
             programType: programType!,
@@ -120,44 +109,33 @@ class _FormScreen1State extends State<FormScreen1> {
             address: address!,
             city: city!,
             date: date!));
-    try {
-      await getIt<ApiService>()
-          .patchEntry(widget.id!, token, patchBaseData.toJson());
-      return true;
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-      return false;
-    }
+
+    return await getIt<AbstractEntriesRepo>().patchEntry(
+        context,
+        getIt<Preferences>().getData('token').toString(),
+        widget.id!,
+        patchBaseData.toJson());
   }
 
   Future<void> getEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
+    GetEntryResponseData getEntryResponseData =
+        await getIt<AbstractEntriesRepo>().getEntry(
+            context,
+            getIt<Preferences>().getData('token').toString(),
+            widget.id.toString());
 
-    try {
-      GetEntryResponseData getEntryResponseData =
-          await getIt<ApiService>().getEntry(token, widget.id!);
-
-      setState(() {
-        programType = getEntryResponseData.data?.programType;
-        doeJob = getEntryResponseData.data?.doeJob;
-        crew = "Fady";
-        date = getEntryResponseData.data?.date;
-        address = getEntryResponseData.data?.address;
-        city = getEntryResponseData.data?.city;
-        jobId = getEntryResponseData.data?.jobId;
-        if (programType == 'self_help') {
-          iSelfHelp = true;
-        }
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
+    setState(() {
+      programType = getEntryResponseData.data?.programType;
+      doeJob = getEntryResponseData.data?.doeJob;
+      crew = "Fady";
+      date = getEntryResponseData.data?.date;
+      address = getEntryResponseData.data?.address;
+      city = getEntryResponseData.data?.city;
+      jobId = getEntryResponseData.data?.jobId;
+      if (programType == 'self_help') {
+        iSelfHelp = true;
       }
-    }
+    });
   }
 
   void selfHelp(bool isSelfHelp) {

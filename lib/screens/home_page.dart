@@ -1,7 +1,6 @@
 import 'package:c2s/components/empty_list.dart';
 import 'package:c2s/components/linear_progress.dart';
-import 'package:c2s/components/snakbar.dart';
-import 'package:c2s/data/entries_response_data.dart';
+import 'package:c2s/data/json_data/entries_response_data.dart';
 import 'package:c2s/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/screens/form%20screens/form_screen2.dart';
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
@@ -13,10 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../api_service.dart';
 import 'package:intl/intl.dart';
-
+import '../domain/repositories/abstract_auth_repo.dart';
+import '../domain/repositories/abstract_entries_repo.dart';
 import '../injection_container.dart';
+// import 'package:dartz/dartz.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,35 +26,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late EntriesResponseData entriesResponse;
+  late EntriesResponseData? entriesResponse;
   bool isLoading = true;
 
   void logout() async {
-    try {
-      var token = getIt<Preferences>().getData('token').toString();
-
-      await getIt<ApiService>().logout(token);
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    await getIt<AbstractAuthRepository>().logout(context);
   }
 
   void getEntries() async {
-    try {
-      var token = getIt<Preferences>().getData('token').toString();
-      entriesResponse = await getIt<ApiService>().getEntries(token);
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    entriesResponse = await getIt<AbstractEntriesRepo>()
+        .getEntries(context, getIt<Preferences>().getData('token').toString());
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -86,9 +70,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                     iconSize: 35,
                     onSelected: (String value) {
-                      if (value == 'sort') {
+                      if (value == 'sort' && entriesResponse != null) {
                         setState(() {
-                          entriesResponse.data.entries.sort((a, b) =>
+                          entriesResponse?.data.entries.sort((a, b) =>
                               DateTime.parse(a.date.toString()).compareTo(
                                   DateTime.parse(b.date.toString())));
                         });
@@ -219,14 +203,15 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
                 child: !isLoading
-                    ? entriesResponse.data.entries.isEmpty
+                    ? (entriesResponse == null ||
+                            entriesResponse!.data.entries.isEmpty)
                         ? const EmptyList()
                         : ListView.builder(
                             padding: EdgeInsets.only(top: 10),
-                            itemCount: entriesResponse.data.entries.length,
+                            itemCount: entriesResponse!.data.entries.length,
                             itemBuilder: (context, index) {
                               final project =
-                                  entriesResponse.data.entries[index];
+                                  entriesResponse!.data.entries[index];
                               return Card(
                                 color: const Color(0xFFF5F5F5),
                                 margin: const EdgeInsets.only(

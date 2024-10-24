@@ -1,15 +1,9 @@
-import 'dart:io';
-
 import 'package:c2s/components/action_button.dart';
-import 'package:c2s/components/snakbar.dart';
-import 'package:c2s/statics/preferences.dart';
-import 'package:dio/dio.dart';
+import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
+import 'package:c2s/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
-import '../injection_container.dart';
 import 'home_page.dart';
-import 'package:c2s/api_service.dart';
-import 'package:c2s/data/user_request_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +22,9 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoading = true;
     });
-    String status = await fetchUserData(username, password);
+    String status = await getIt<AbstractAuthRepository>()
+        .login(username, password, context);
+
     if (status == 'true' && mounted) {
       errorMessage = '';
       Navigator.pushAndRemoveUntil(
@@ -44,34 +40,6 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoading = false;
     });
-  }
-
-  Future<String> fetchUserData(String userName, String password) async {
-    try {
-      // ApiService apiService = ApiService(DioClass.getDio());
-      UserRequestData userRequest = UserRequestData(
-          user: User(userName: userName, password: password),
-          device: Device(deviceId: "deviceId", os: "IOS"));
-
-      final fetchedUser = await getIt<ApiService>().login(userRequest);
-      getIt<Preferences>().saveData('token', fetchedUser.data.authToken);
-
-      return "true";
-    } on SocketException catch (_) {
-      if (mounted) {
-        Snackbar().showSnackBar(context, 'socket error');
-      }
-      return "";
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.badResponse) {
-        return "false";
-      } else if (e.type == DioExceptionType.connectionError && mounted) {
-        Snackbar().showSnackBar(context, "Network error");
-      } else if (mounted) {
-        Snackbar().showSnackBar(context, "unknown error");
-      }
-      return "";
-    }
   }
 
   @override

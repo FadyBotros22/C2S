@@ -1,8 +1,8 @@
 import 'package:c2s/components/bottom_buttons.dart';
 import 'package:c2s/components/snakbar.dart';
 import 'package:c2s/components/title_component.dart';
-import 'package:c2s/data/get_entry_response_data.dart';
-import 'package:c2s/data/patch%20data/patch_attic_insulation_data.dart'
+import 'package:c2s/data/json_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/patch%20data/patch_attic_insulation_data.dart'
     as attic;
 import 'package:c2s/screens/form%20screens/form_screen3.dart';
 import 'package:c2s/screens/form%20screens/form_screen5.dart';
@@ -11,8 +11,7 @@ import 'package:c2s/components/image_input_field.dart';
 import 'package:c2s/components/input_field.dart';
 import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import 'package:c2s/api_service.dart';
-
+import '../../domain/repositories/abstract_entries_repo.dart';
 import '../../injection_container.dart';
 
 class FormScreen4 extends StatefulWidget {
@@ -48,8 +47,6 @@ class _FormScreen4State extends State<FormScreen4> {
   }
 
   Future<bool> patchEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
-
     attic.PatchAtticInsulationData patchAtticInsulationData =
         attic.PatchAtticInsulationData(
       atticInsulation: attic.AtticInsulation(
@@ -67,41 +64,29 @@ class _FormScreen4State extends State<FormScreen4> {
         atticInsulationPic: atticPics,
       ),
     );
-    try {
-      await getIt<ApiService>()
-          .patchEntry(widget.id, token, patchAtticInsulationData.toJson());
-      return true;
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-      return false;
-    }
+    return await getIt<AbstractEntriesRepo>().patchEntry(
+        context,
+        getIt<Preferences>().getData('token').toString(),
+        widget.id,
+        patchAtticInsulationData.toJson());
   }
 
   Future<void> getEntry() async {
-    var token = getIt<Preferences>().getData('token').toString();
+    GetEntryResponseData getEntryResponseData =
+        await getIt<AbstractEntriesRepo>().getEntry(
+            context,
+            getIt<Preferences>().getData('token').toString(),
+            widget.id.toString());
 
-    try {
-      GetEntryResponseData getEntryResponseData =
-          await getIt<ApiService>().getEntry(token, widget.id);
-      setState(() {
-        onWorkOrder = getEntryResponseData.data?.atticInsulation?.onWorkOrder;
-        notesOnMeasurements = getEntryResponseData
-            .data?.atticInsulation?.inaccurateMeasurementsNotes;
-        notesOnAtticInsulation =
-            getEntryResponseData.data?.atticInsulation?.notes;
-        atticPics =
-            getEntryResponseData.data?.atticInsulation?.atticInsulationPic ??
-                [];
-      });
-    } catch (e) {
-      if (mounted) {
-        Snackbar().showSnackBar(
-            context, "Error occurred, try connecting to active Network");
-      }
-    }
+    setState(() {
+      onWorkOrder = getEntryResponseData.data?.atticInsulation?.onWorkOrder;
+      notesOnMeasurements = getEntryResponseData
+          .data?.atticInsulation?.inaccurateMeasurementsNotes;
+      notesOnAtticInsulation =
+          getEntryResponseData.data?.atticInsulation?.notes;
+      atticPics =
+          getEntryResponseData.data?.atticInsulation?.atticInsulationPic ?? [];
+    });
   }
 
   @override
