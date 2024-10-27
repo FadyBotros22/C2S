@@ -1,8 +1,8 @@
-import 'package:c2s/screens/home_page.dart';
+import 'home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:c2s/constants.dart';
-import 'package:c2s/components/action_button.dart';
+import '../widgets/action_button.dart';
 
 class CompleteForm extends StatelessWidget {
   const CompleteForm({super.key});

@@ -1,6 +1,6 @@
-import 'package:c2s/components/snakbar.dart';
-import 'package:c2s/screens/form%20screens/form_screen2.dart';
-import 'package:c2s/screens/home_page.dart';
+import 'snakbar.dart';
+import '../screens/form screens/form_screen2.dart';
+import '../screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'action_button.dart';
 import 'transparent_action_button.dart';

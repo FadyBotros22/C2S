@@ -1,16 +1,16 @@
-import 'package:c2s/components/bottom_buttons.dart';
-import 'package:c2s/components/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_wall_insulation_data.dart'
     as insulation;
-import 'package:c2s/screens/form%20screens/form_screen4.dart';
-import 'package:c2s/screens/form%20screens/form_screen6.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/components/input_field.dart';
-import 'package:c2s/components/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../../domain/repositories/abstract_entries_repo.dart';
-import '../../injection_container.dart';
+import '../../../domain/repositories/abstract_entries_repo.dart';
+import '../../../injection_container.dart';
+import '../../widgets/bottom_buttons.dart';
+import '../../widgets/title_component.dart';
+import '../../widgets/input_field.dart';
+import '../../widgets/radio_buttons.dart';
+import 'form_screen4.dart';
+import 'form_screen6.dart';
 
 class FormScreen5 extends StatefulWidget {
   const FormScreen5({super.key, required this.id});

@@ -4,7 +4,7 @@ import 'package:c2s/injection_container.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../components/snakbar.dart';
+import '../../presentation//widgets/snakbar.dart';
 import '../../statics/preferences.dart';
 import '../json_data/user_request_data.dart';
 

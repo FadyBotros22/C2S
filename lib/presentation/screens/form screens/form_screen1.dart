@@ -1,17 +1,17 @@
-import 'package:c2s/components/bottom_buttons.dart';
-import 'package:c2s/components/date_input.dart';
-import 'package:c2s/components/input_field.dart';
-import 'package:c2s/components/radio_buttons.dart';
-import 'package:c2s/components/title_component.dart';
+import '../../widgets/bottom_buttons.dart';
+import '../../widgets/date_input.dart';
+import '../../widgets/input_field.dart';
+import '../../widgets/radio_buttons.dart';
+import '../../widgets/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_base_data.dart';
 import 'package:c2s/data/json_data/post_entries_request_data.dart' as request;
 import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
-import 'package:c2s/screens/form%20screens/form_screen2.dart';
-import 'package:c2s/screens/home_page.dart';
+import 'form_screen2.dart';
+import '../home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../../injection_container.dart';
+import '../../../injection_container.dart';
 
 class FormScreen1 extends StatefulWidget {
   const FormScreen1({super.key, this.id});

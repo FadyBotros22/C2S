@@ -1,21 +1,21 @@
-import 'package:c2s/components/empty_list.dart';
-import 'package:c2s/components/linear_progress.dart';
+import '../widgets/empty_list.dart';
+import '../widgets/linear_progress.dart';
 import 'package:c2s/data/json_data/entries_response_data.dart';
-import 'package:c2s/screens/form%20screens/form_screen1.dart';
-import 'package:c2s/screens/form%20screens/form_screen2.dart';
-import 'package:c2s/screens/form%20screens/form_screen3.dart';
-import 'package:c2s/screens/form%20screens/form_screen4.dart';
-import 'package:c2s/screens/form%20screens/form_screen5.dart';
-import 'package:c2s/screens/form%20screens/form_screen6.dart';
-import 'package:c2s/screens/login_page.dart';
+import 'form screens/form_screen1.dart';
+import 'form screens/form_screen2.dart';
+import 'form screens/form_screen3.dart';
+import 'form screens/form_screen4.dart';
+import 'form screens/form_screen5.dart';
+import 'form screens/form_screen6.dart';
+import 'login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:intl/intl.dart';
-import '../domain/repositories/abstract_auth_repo.dart';
-import '../domain/repositories/abstract_entries_repo.dart';
-import '../injection_container.dart';
+import '../../domain/repositories/abstract_auth_repo.dart';
+import '../../domain/repositories/abstract_entries_repo.dart';
+import '../../injection_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,13 +1,12 @@
-import 'package:c2s/screens/login_page.dart';
+import 'package:c2s/presentation/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'components/amplifyconfiguration.dart';
+import 'presentation/widgets//amplifyconfiguration.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

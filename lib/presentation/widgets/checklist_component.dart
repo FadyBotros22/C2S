@@ -1,4 +1,4 @@
-import 'package:c2s/components/radio_buttons.dart';
+import 'radio_buttons.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter/material.dart';
 

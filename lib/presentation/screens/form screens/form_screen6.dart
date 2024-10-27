@@ -1,19 +1,19 @@
-import 'package:c2s/components/snakbar.dart';
-import 'package:c2s/components/title_component.dart';
+import '../../widgets/snakbar.dart';
+import '../../widgets/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_final_walkthrough_data.dart'
     as final_walk;
-import 'package:c2s/screens/complete_form.dart';
-import 'package:c2s/screens/form%20screens/form_screen5.dart';
+import '../complete_form.dart';
+import 'form_screen5.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/components/image_input_field.dart';
-import 'package:c2s/components/input_field.dart';
-import 'package:c2s/components/radio_buttons.dart';
+import '../../widgets/image_input_field.dart';
+import '../../widgets/input_field.dart';
+import '../../widgets/radio_buttons.dart';
 import 'package:c2s/constants.dart';
-import '../../components/action_button.dart';
+import '../../widgets/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
-import '../../domain/repositories/abstract_entries_repo.dart';
-import '../../injection_container.dart';
+import '../../../domain/repositories/abstract_entries_repo.dart';
+import '../../../injection_container.dart';
 
 class FormScreen6 extends StatefulWidget {
   const FormScreen6({super.key, required this.id});

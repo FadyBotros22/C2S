@@ -1,4 +1,4 @@
-import 'package:c2s/components/action_button.dart';
+import '../widgets/action_button.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/injection_container.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:c2s/components/image_display.dart';
+import 'image_display.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';

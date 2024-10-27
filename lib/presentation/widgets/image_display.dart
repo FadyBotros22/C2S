@@ -1,4 +1,4 @@
-import 'package:c2s/components/snakbar.dart';
+import 'snakbar.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_svg/svg.dart';
