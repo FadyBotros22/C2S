@@ -52,7 +52,8 @@ class _InputFieldState extends State<InputField> {
               style: kQuestionTitleTextStyle,
             ),
           const SizedBox(height: 10),
-          TextField(
+          TextFormField(
+            initialValue: widget.hintText ?? '',
             keyboardType: widget.isNumber != null
                 ? TextInputType.number
                 : TextInputType.text,
@@ -61,7 +62,6 @@ class _InputFieldState extends State<InputField> {
             textAlign: TextAlign.start,
             maxLines: widget.maxLines ?? 1,
             decoration: InputDecoration(
-              hintText: widget.hintText ?? '',
               contentPadding: const EdgeInsets.symmetric(
                   vertical: 14.0, horizontal: 12), // Adjust the padding
               enabledBorder: OutlineInputBorder(
@@ -82,6 +82,7 @@ class _InputFieldState extends State<InputField> {
               'This field is required',
               style: TextStyle(color: Colors.red),
             ),
+          SizedBox(height: 10),
         ],
       ),
     );

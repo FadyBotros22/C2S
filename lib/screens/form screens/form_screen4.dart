@@ -107,94 +107,109 @@ class _FormScreen4State extends State<FormScreen4> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            TitleComponent(
-                screen: FormScreen3(id: widget.id),
-                title: 'Attic Insulation',
-                linearProgressValue: 4.0),
-            isLoading
-                ? const Center(
-                    heightFactor: 15,
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RadioButtons(
-                            chooseButton: (value) {
-                              setState(() {
-                                isEmptyOnWorkOrder = false;
-                                onWorkOrder = (value == "Yes");
-                              });
-                            },
-                            isRequired: isEmptyOnWorkOrder,
-                            labels: const ['Yes', 'No'],
-                            isColumn: false,
-                            isSquare: false,
-                            title: 'Attic insulation on work order *',
-                            activeChoice: onWorkOrder == null
-                                ? 0
-                                : onWorkOrder!
-                                    ? 1
-                                    : 2,
-                          ),
-                          InputField(
-                            title: 'Notes on inaccurate measurements',
-                            maxLines: 5,
-                            hintText: notesOnMeasurements,
-                            onChanged: (value) {
-                              setState(() {
-                                notesOnMeasurements = value;
-                              });
-                            },
-                          ),
-                          InputField(
-                            title: 'Attic insulation notes',
-                            maxLines: 5,
-                            hintText: notesOnAtticInsulation,
-                            onChanged: (value) {
-                              setState(() {
-                                notesOnAtticInsulation = value;
-                              });
-                            },
-                          ),
-                          ImageInputField(
-                              deleteImage: (index) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen3(id: widget.id),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleComponent(
+                  screen: FormScreen3(id: widget.id),
+                  title: 'Attic Insulation',
+                  linearProgressValue: 4.0),
+              isLoading
+                  ? const Center(
+                      heightFactor: 15,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              chooseButton: (value) {
                                 setState(() {
-                                  atticPics.removeAt(index);
+                                  isEmptyOnWorkOrder = false;
+                                  onWorkOrder = (value == "Yes");
                                 });
                               },
-                              url: atticPics,
-                              addImage: (String url) {
+                              isRequired: isEmptyOnWorkOrder,
+                              labels: const ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title: 'Attic insulation on work order *',
+                              activeChoice: onWorkOrder == null
+                                  ? 0
+                                  : onWorkOrder!
+                                      ? 1
+                                      : 2,
+                            ),
+                            InputField(
+                              title: 'Notes on inaccurate measurements',
+                              maxLines: 5,
+                              hintText: notesOnMeasurements,
+                              onChanged: (value) {
                                 setState(() {
-                                  atticPics.add(url);
+                                  notesOnMeasurements = value;
                                 });
                               },
-                              isImageLoading: (bool isLoading) {
+                            ),
+                            InputField(
+                              title: 'Attic insulation notes',
+                              maxLines: 5,
+                              hintText: notesOnAtticInsulation,
+                              onChanged: (value) {
                                 setState(() {
-                                  isImageLoading = isLoading;
+                                  notesOnAtticInsulation = value;
                                 });
                               },
-                              isRequired: false,
-                              label: 'Attic Insulation Quality - Misc Pictures',
-                              doesItExpand: true),
-                        ],
+                            ),
+                            ImageInputField(
+                                deleteImage: (index) {
+                                  setState(() {
+                                    atticPics.removeAt(index);
+                                  });
+                                },
+                                url: atticPics,
+                                addImage: (String url) {
+                                  setState(() {
+                                    atticPics.add(url);
+                                  });
+                                },
+                                isImageLoading: (bool isLoading) {
+                                  setState(() {
+                                    isImageLoading = isLoading;
+                                  });
+                                },
+                                isRequired: false,
+                                label:
+                                    'Attic Insulation Quality - Misc Pictures',
+                                doesItExpand: true),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            BottomButtons(
-              validate: validate,
-              patchEntry: patchEntry,
-              nextScreen: FormScreen5(id: widget.id),
-              id: widget.id,
-            ),
-          ],
+              BottomButtons(
+                validate: validate,
+                patchEntry: patchEntry,
+                nextScreen: FormScreen5(id: widget.id),
+                id: widget.id,
+              ),
+            ],
+          ),
         ),
       ),
     );

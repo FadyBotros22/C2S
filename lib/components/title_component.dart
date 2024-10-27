@@ -43,8 +43,7 @@ class TitleComponent extends StatelessWidget {
               const SizedBox(width: 5),
               Text(
                 title,
-                style: kAppBarSecondaryTitleTextStyle.copyWith(
-                    color: Colors.black),
+                style: kTitleTextStyle,
               ),
             ],
           ),

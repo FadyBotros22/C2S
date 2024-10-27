@@ -26,7 +26,7 @@ class _ChecklistComponentState extends State<ChecklistComponent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            margin: const EdgeInsets.only(top: 14, left: 16, right: 16),
             child: Text(
               widget.title,
               style: kParagraphTextStyle.copyWith(color: Colors.black),

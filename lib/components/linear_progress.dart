@@ -14,11 +14,11 @@ class LinearProgress extends StatelessWidget {
       children: [
         // Linear progress indicator
         SizedBox(
-          height: 30,
+          height: 18,
           child: LinearProgressIndicator(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(5),
             value: linearProgressValue / 6.0, // Value for progress
-            backgroundColor: const Color(0xffECECEC),
+            backgroundColor: color == null ? Color(0xffECECEC) : Colors.white,
             valueColor:
                 AlwaysStoppedAnimation<Color>(color ?? Color(0xff0066FF)),
           ),
@@ -26,21 +26,32 @@ class LinearProgress extends StatelessWidget {
         // Clip the text to match progress width
         LayoutBuilder(
           builder: (context, constraints) {
-            final width = constraints.maxWidth *
-                linearProgressValue /
-                6; // Get the maximum width available
+            final width = constraints.maxWidth * linearProgressValue / 6;
 
-            return SizedBox(
-              width: width,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  color != null
-                      ? '${(linearProgressValue / 6.0 * 100).toStringAsFixed(0)}%'
-                      : '${linearProgressValue.toInt()} of 6', // Display percentage
-                  style: kProgressBarTextStyle,
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: width,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      color != null
+                          ? '${(linearProgressValue / 6.0 * 100).toStringAsFixed(0)}%'
+                          : '${linearProgressValue.toInt()} of 6', // Display percentage
+                      style: kProgressBarTextStyle,
+                    ),
+                  ),
                 ),
-              ),
+                if (color != null)
+                  Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: Text(
+                      'Inprogress',
+                      style: kMcqLabelTextStyle,
+                    ),
+                  ),
+              ],
             );
           },
         ),

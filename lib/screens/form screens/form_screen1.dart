@@ -127,8 +127,8 @@ class _FormScreen1State extends State<FormScreen1> {
     setState(() {
       programType = getEntryResponseData.data?.programType;
       doeJob = getEntryResponseData.data?.doeJob;
-      crew = "Fady";
       date = getEntryResponseData.data?.date;
+      date = date?.substring(0, date?.indexOf('T'));
       address = getEntryResponseData.data?.address;
       city = getEntryResponseData.data?.city;
       jobId = getEntryResponseData.data?.jobId;
@@ -182,151 +182,167 @@ class _FormScreen1State extends State<FormScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            TitleComponent(
-                screen: HomePage(),
-                title: 'Create new form',
-                linearProgressValue: 1.0),
-            loading
-                ? const Center(
-                    heightFactor: 15,
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RadioButtons(
-                            isRequired: isEmptyProg,
-                            chooseButton: (value) {
-                              setState(
-                                () {
-                                  if (value == 'CLEAResult') {
-                                    programType = 'clearesult';
-                                  } else if (value == 'RISE') {
-                                    programType = 'rise';
-                                  } else if (value == 'Self Help') {
-                                    programType = 'self_help';
-                                  } else {
-                                    programType = 'cfc';
-                                  }
-                                  if (programType != null) {
-                                    isEmptyProg = false;
-                                  }
-                                },
-                              );
-                            },
-                            title:
-                                'What Program are you filling out a job checklist for?',
-                            labels: const [
-                              "CLEAResult",
-                              "RISE",
-                              "Self Help",
-                              "Citizens for Citizens (CFC)"
-                            ],
-                            isColumn: true,
-                            isSelfHelp: selfHelp,
-                            isSquare: false,
-                            activeChoice: getActiveChoiceForProgramType(),
-                          ),
-                          const Divider(
-                            color: Color(0xffDCDCDC),
-                          ),
-                          if (iSelfHelp)
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleComponent(
+                  screen: HomePage(),
+                  title: 'Create new form',
+                  linearProgressValue: 1.0),
+              loading
+                  ? const Center(
+                      heightFactor: 15,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             RadioButtons(
-                              isRequired: isEmptyDoe,
+                              isRequired: isEmptyProg,
                               chooseButton: (value) {
-                                setState(() {
-                                  if (value == "Yes") {
-                                    doeJob = true;
-                                  } else if (value == 'No') {
-                                    doeJob = false;
-                                  }
-                                  if (doeJob != null) {
-                                    isEmptyDoe = false;
-                                  }
-                                });
+                                setState(
+                                  () {
+                                    if (value == 'CLEAResult') {
+                                      programType = 'clearesult';
+                                    } else if (value == 'RISE') {
+                                      programType = 'rise';
+                                    } else if (value == 'Self Help') {
+                                      programType = 'self_help';
+                                    } else {
+                                      programType = 'cfc';
+                                    }
+                                    if (programType != null) {
+                                      isEmptyProg = false;
+                                    }
+                                  },
+                                );
                               },
-                              title: 'DOE Job? *',
-                              labels: const ['Yes', 'No'],
-                              isColumn: false,
+                              title:
+                                  'What Program are you filling out a job checklist for?',
+                              labels: const [
+                                "CLEAResult",
+                                "RISE",
+                                "Self Help",
+                                "Citizens for Citizens (CFC)"
+                              ],
+                              isColumn: true,
+                              isSelfHelp: selfHelp,
                               isSquare: false,
-                              activeChoice: (doeJob == null)
-                                  ? 0
-                                  : doeJob!
-                                      ? 1
-                                      : 2,
+                              activeChoice: getActiveChoiceForProgramType(),
                             ),
-                          InputField(
-                            color: isEmptyCrew ? Colors.red : null,
-                            title: 'Crew Chief Submitting Form *',
-                            hintText: crew,
-                            onChanged: (value) {
-                              setState(() {
-                                crew = value;
-                                isEmptyCrew = false;
-                              });
-                            },
-                          ),
-                          DateInput(
-                            onChanged: (value) {
-                              setState(() {
-                                date = value;
-                                isEmptyDate = false;
-                              });
-                            },
-                            color: isEmptyDate ? Colors.red : null,
-                            hintText: date,
-                          ),
-                          InputField(
-                            title: 'Address line 1 *',
-                            color: isEmptyAdd ? Colors.red : null,
-                            hintText: address ?? '',
-                            onChanged: (value) {
-                              setState(() {
-                                address = value;
-                                isEmptyAdd = false;
-                              });
-                            },
-                          ),
-                          InputField(
-                            title: 'City *',
-                            color: isEmptyCity ? Colors.red : null,
-                            hintText: city ?? '',
-                            onChanged: (value) {
-                              setState(() {
-                                city = value;
-                                isEmptyCity = false;
-                              });
-                            },
-                          ),
-                          if (widget.id == null)
+                            const Divider(
+                              color: Color(0xffDCDCDC),
+                            ),
+                            SizedBox(height: 8),
+                            if (iSelfHelp)
+                              RadioButtons(
+                                isRequired: isEmptyDoe,
+                                chooseButton: (value) {
+                                  setState(() {
+                                    if (value == "Yes") {
+                                      doeJob = true;
+                                    } else if (value == 'No') {
+                                      doeJob = false;
+                                    }
+                                    if (doeJob != null) {
+                                      isEmptyDoe = false;
+                                    }
+                                  });
+                                },
+                                title: 'DOE Job? *',
+                                labels: const ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                activeChoice: (doeJob == null)
+                                    ? 0
+                                    : doeJob!
+                                        ? 1
+                                        : 2,
+                              ),
+                            if (iSelfHelp) SizedBox(height: 8),
                             InputField(
-                              title: 'Job ID *',
-                              color: isEmptyJobId ? Colors.red : null,
+                              color: isEmptyCrew ? Colors.red : null,
+                              title: 'Crew Chief Submitting Form *',
+                              hintText: crew,
                               onChanged: (value) {
                                 setState(() {
-                                  jobId = value;
-                                  isEmptyJobId = false;
+                                  crew = value;
+                                  isEmptyCrew = false;
                                 });
                               },
                             ),
-                        ],
+                            DateInput(
+                              onChanged: (value) {
+                                setState(() {
+                                  date = value;
+                                  isEmptyDate = false;
+                                });
+                              },
+                              color: isEmptyDate ? Colors.red : null,
+                              hintText: date,
+                            ),
+                            InputField(
+                              title: 'Address line 1 *',
+                              color: isEmptyAdd ? Colors.red : null,
+                              hintText: address ?? '',
+                              onChanged: (value) {
+                                setState(() {
+                                  address = value;
+                                  isEmptyAdd = false;
+                                });
+                              },
+                            ),
+                            InputField(
+                              title: 'City *',
+                              color: isEmptyCity ? Colors.red : null,
+                              hintText: city ?? '',
+                              onChanged: (value) {
+                                setState(() {
+                                  city = value;
+                                  isEmptyCity = false;
+                                });
+                              },
+                            ),
+                            if (widget.id == null)
+                              InputField(
+                                title: 'Job ID *',
+                                color: isEmptyJobId ? Colors.red : null,
+                                onChanged: (value) {
+                                  setState(() {
+                                    jobId = value;
+                                    isEmptyJobId = false;
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            BottomButtons(
-              validate: validate,
-              patchEntry: widget.id == null ? postEntry : patchEntry,
-              nextScreen: FormScreen2(id: widget.id ?? ''),
-              id: widget.id,
-            ),
-          ],
+              BottomButtons(
+                validate: validate,
+                patchEntry: widget.id == null ? postEntry : patchEntry,
+                nextScreen: FormScreen2(id: widget.id ?? ''),
+                id: widget.id,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -87,68 +87,82 @@ class _FormScreen5State extends State<FormScreen5> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            TitleComponent(
-                screen: FormScreen4(id: widget.id),
-                title: 'Wall Insulation',
-                linearProgressValue: 5.0),
-            isLoading
-                ? const Center(
-                    heightFactor: 15,
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RadioButtons(
-                            chooseButton: (value) {
-                              setState(() {
-                                isEmptyOnWorkOrder = false;
-                                if (value == "Yes") {
-                                  onWorkOrder = true;
-                                } else {
-                                  onWorkOrder = false;
-                                }
-                              });
-                            },
-                            isRequired: isEmptyOnWorkOrder,
-                            labels: ['Yes', 'No'],
-                            isColumn: false,
-                            isSquare: false,
-                            title: 'Wall insulation on work order *',
-                            activeChoice: onWorkOrder == null
-                                ? 0
-                                : onWorkOrder!
-                                    ? 1
-                                    : 2,
-                          ),
-                          InputField(
-                            title: 'Inaccurate wall measurement notes',
-                            maxLines: 6,
-                            hintText: notes,
-                            onChanged: (value) {
-                              setState(() {
-                                notes = value;
-                              });
-                            },
-                          ),
-                        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen4(id: widget.id),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleComponent(
+                  screen: FormScreen4(id: widget.id),
+                  title: 'Wall Insulation',
+                  linearProgressValue: 5.0),
+              isLoading
+                  ? const Center(
+                      heightFactor: 15,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyOnWorkOrder = false;
+                                  if (value == "Yes") {
+                                    onWorkOrder = true;
+                                  } else {
+                                    onWorkOrder = false;
+                                  }
+                                });
+                              },
+                              isRequired: isEmptyOnWorkOrder,
+                              labels: ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title: 'Wall insulation on work order *',
+                              activeChoice: onWorkOrder == null
+                                  ? 0
+                                  : onWorkOrder!
+                                      ? 1
+                                      : 2,
+                            ),
+                            InputField(
+                              title: 'Inaccurate wall measurement notes',
+                              maxLines: 6,
+                              hintText: notes,
+                              onChanged: (value) {
+                                setState(() {
+                                  notes = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            BottomButtons(
-              validate: validate,
-              patchEntry: patchEntry,
-              nextScreen: FormScreen6(id: widget.id),
-              id: widget.id,
-            ),
-          ],
+              BottomButtons(
+                validate: validate,
+                patchEntry: patchEntry,
+                nextScreen: FormScreen6(id: widget.id),
+                id: widget.id,
+              ),
+            ],
+          ),
         ),
       ),
     );

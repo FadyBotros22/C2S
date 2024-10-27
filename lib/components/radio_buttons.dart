@@ -66,9 +66,7 @@ class _RadioButtonsState extends State<RadioButtons> {
     );
 
     return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: widget.isChecklistComponent == null ? 14 : 0),
+      margin: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -90,8 +88,10 @@ class _RadioButtonsState extends State<RadioButtons> {
           if (widget.title != null && !widget.title!.contains('*'))
             Text(
               widget.title!,
-              style: kQuestionTitleTextStyle,
+              style:
+                  widget.isColumn ? kTitleTextStyle : kQuestionTitleTextStyle,
             ),
+          SizedBox(height: 10),
           Container(
             child:
                 widget.isColumn ? Column(children: body) : Row(children: body),
@@ -101,6 +101,7 @@ class _RadioButtonsState extends State<RadioButtons> {
               'This field is Required',
               style: TextStyle(color: Colors.red),
             ),
+          SizedBox(height: 5),
         ],
       ),
     );

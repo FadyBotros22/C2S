@@ -25,6 +25,7 @@ class ImageDisplay extends StatelessWidget {
               url!,
               height: 66,
               width: 66,
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Snackbar().showSnackBar(context, "Network Error, try again");

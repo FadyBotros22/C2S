@@ -3,20 +3,27 @@ import 'package:flutter/material.dart';
 const kAppBarTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
   fontWeight: FontWeight.w700,
-  fontSize: 25,
-  height: 25 / 20,
+  fontSize: 20,
+  height: 20 / 20,
   color: Colors.black,
 );
 
 const kAppBarSecondaryTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w500,
   fontSize: 16,
   height: 21 / 16,
   color: Color(0xFF606060),
 );
 
 const kQuestionTitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontWeight: FontWeight.w600,
+  fontSize: 14,
+  height: 20 / 16,
+  color: Colors.black,
+);
+const kTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
   fontWeight: FontWeight.w600,
   fontSize: 16,
@@ -85,7 +92,7 @@ const kNameTextStyle = TextStyle(
 );
 
 const kProjectNameTextStyle = TextStyle(
-  fontFamily: 'Roboto',
+  fontFamily: 'SF Pro Display',
   fontWeight: FontWeight.w400,
   fontSize: 12,
   height: 12 / 14,

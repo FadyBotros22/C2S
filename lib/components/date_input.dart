@@ -73,13 +73,13 @@ class _DateInputState extends State<DateInput> {
             ),
           ),
           const SizedBox(height: 10),
-          TextField(
+          TextFormField(
+            initialValue: widget.hintText,
             readOnly: true,
             onTap: () async {
               widget.onChanged(await _selectDateAndTime());
             },
             decoration: InputDecoration(
-              hintText: widget.hintText,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(

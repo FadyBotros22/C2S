@@ -78,9 +78,12 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (errorMessage.isNotEmpty)
-                      Text(
-                        errorMessage,
-                        style: kErrorMessageTextStyle,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          errorMessage,
+                          style: kErrorMessageTextStyle,
+                        ),
                       ),
                     SizedBox(
                       height: 24,

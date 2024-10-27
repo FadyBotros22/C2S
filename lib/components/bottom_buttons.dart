@@ -33,6 +33,8 @@ class BottomButtons extends StatelessWidget {
                 if (validate()) {
                   String id = await patchEntry();
                   if (context.mounted) {
+                    FocusScope.of(context).unfocus();
+                    await Future.delayed(Duration(milliseconds: 500));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -45,6 +47,9 @@ class BottomButtons extends StatelessWidget {
                 if (validate()) {
                   bool isComplete = await patchEntry();
                   if (context.mounted) {
+                    FocusScope.of(context).unfocus();
+                    await Future.delayed(Duration(milliseconds: 500));
+
                     isComplete
                         ? Navigator.push(
                             context,
@@ -64,6 +69,8 @@ class BottomButtons extends StatelessWidget {
               if (validate()) {
                 bool isComplete = await patchEntry();
                 if (context.mounted) {
+                  FocusScope.of(context).unfocus();
+                  await Future.delayed(Duration(milliseconds: 500));
                   isComplete
                       ? Navigator.push(
                           context,

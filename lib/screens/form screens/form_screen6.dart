@@ -125,118 +125,132 @@ class _FormScreen6State extends State<FormScreen6> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            TitleComponent(
-                screen: FormScreen5(id: widget.id),
-                title: 'Final Walkthrough',
-                linearProgressValue: 6.0),
-            isLoading
-                ? const Center(
-                    heightFactor: 15,
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InputField(
-                            title:
-                                'Final notes on job and anything the office may need to know',
-                            maxLines: 5,
-                            hintText: notes,
-                            onChanged: (value) {
-                              setState(() {
-                                notes = value;
-                              });
-                            },
-                          ),
-                          RadioButtons(
-                            chooseButton: (value) {
-                              setState(() {
-                                isEmptyIsConfirmedNothingOnSite = false;
-                                isConfirmedNothingOnSite = (value == "Yes");
-                              });
-                            },
-                            isRequired: isEmptyIsConfirmedNothingOnSite,
-                            labels: ['Yes', 'No'],
-                            isColumn: false,
-                            isSquare: false,
-                            title:
-                                'I confirm nothing was left behind at customers house and all areas of home were checked *',
-                            activeChoice: isConfirmedNothingOnSite == null
-                                ? 0
-                                : isConfirmedNothingOnSite!
-                                    ? 1
-                                    : 2,
-                          ),
-                          RadioButtons(
-                            chooseButton: (value) {
-                              setState(() {
-                                isEmptyIsConfirmedBathroom = false;
-                                isConfirmedBathroom = (value == "Yes");
-                              });
-                            },
-                            isRequired: isEmptyIsConfirmedBathroom,
-                            labels: ['Yes', 'No'],
-                            isColumn: false,
-                            isSquare: false,
-                            activeChoice: isConfirmedBathroom == null
-                                ? 0
-                                : isConfirmedBathroom!
-                                    ? 1
-                                    : 2,
-                            title:
-                                'I confirm that the bathroom fan is in working order and checked before leaving job site *',
-                          ),
-                          ImageInputField(
-                            deleteImage: (index) {
-                              setState(() {
-                                miscPics.removeAt(index);
-                              });
-                            },
-                            isRequired: false,
-                            label: 'Misc Quality Pictures',
-                            doesItExpand: true,
-                            url: miscPics,
-                            addImage: (url) {
-                              setState(() {
-                                miscPics.add(url);
-                              });
-                            },
-                            isImageLoading: (bool isLoading) {
-                              setState(() {
-                                isImageLoading = isLoading;
-                              });
-                            },
-                          ),
-                        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen5(id: widget.id),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleComponent(
+                  screen: FormScreen5(id: widget.id),
+                  title: 'Final Walkthrough',
+                  linearProgressValue: 6.0),
+              isLoading
+                  ? const Center(
+                      heightFactor: 15,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InputField(
+                              title:
+                                  'Final notes on job and anything the office may need to know',
+                              maxLines: 5,
+                              hintText: notes,
+                              onChanged: (value) {
+                                setState(() {
+                                  notes = value;
+                                });
+                              },
+                            ),
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyIsConfirmedNothingOnSite = false;
+                                  isConfirmedNothingOnSite = (value == "Yes");
+                                });
+                              },
+                              isRequired: isEmptyIsConfirmedNothingOnSite,
+                              labels: ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title:
+                                  'I confirm nothing was left behind at customers house and all areas of home were checked *',
+                              activeChoice: isConfirmedNothingOnSite == null
+                                  ? 0
+                                  : isConfirmedNothingOnSite!
+                                      ? 1
+                                      : 2,
+                            ),
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyIsConfirmedBathroom = false;
+                                  isConfirmedBathroom = (value == "Yes");
+                                });
+                              },
+                              isRequired: isEmptyIsConfirmedBathroom,
+                              labels: ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              activeChoice: isConfirmedBathroom == null
+                                  ? 0
+                                  : isConfirmedBathroom!
+                                      ? 1
+                                      : 2,
+                              title:
+                                  'I confirm that the bathroom fan is in working order and checked before leaving job site *',
+                            ),
+                            ImageInputField(
+                              deleteImage: (index) {
+                                setState(() {
+                                  miscPics.removeAt(index);
+                                });
+                              },
+                              isRequired: false,
+                              label: 'Misc Quality Pictures',
+                              doesItExpand: true,
+                              url: miscPics,
+                              addImage: (url) {
+                                setState(() {
+                                  miscPics.add(url);
+                                });
+                              },
+                              isImageLoading: (bool isLoading) {
+                                setState(() {
+                                  isImageLoading = isLoading;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            Container(
-              margin: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 44, top: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ActionButton(
-                    label: 'Complete Checklist',
-                    onPressed: () {
-                      if (validate()) {
-                        _showSubmitConfirmationDialog(context);
-                      }
-                    },
-                  ),
-                ],
+              Container(
+                margin: const EdgeInsets.only(
+                    left: 16, right: 16, bottom: 44, top: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ActionButton(
+                      label: 'Complete Checklist',
+                      onPressed: () {
+                        if (validate()) {
+                          _showSubmitConfirmationDialog(context);
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

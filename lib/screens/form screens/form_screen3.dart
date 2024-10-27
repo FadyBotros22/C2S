@@ -107,90 +107,104 @@ class _FormScreen3State extends State<FormScreen3> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            TitleComponent(
-                screen: FormScreen2(id: widget.id),
-                title: 'Air Sealing',
-                linearProgressValue: 3.0),
-            isLoading
-                ? const Center(
-                    heightFactor: 15,
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RadioButtons(
-                            chooseButton: (value) {
-                              setState(() {
-                                isEmptyOnWorkOrder = false;
-                                if (value == "Yes") {
-                                  onWorkOrder = true;
-                                } else {
-                                  onWorkOrder = false;
-                                }
-                              });
-                            },
-                            isRequired: isEmptyOnWorkOrder,
-                            labels: ['Yes', 'No'],
-                            isColumn: false,
-                            isSquare: false,
-                            title: 'Air Sealing on work order? *',
-                            activeChoice: onWorkOrder == null
-                                ? 0
-                                : onWorkOrder!
-                                    ? 1
-                                    : 2,
-                          ),
-                          InputField(
-                            title: 'Air sealing notes',
-                            hintText: sealingNotes,
-                            maxLines: 5,
-                            onChanged: (value) {
-                              setState(() {
-                                sealingNotes = value;
-                              });
-                            },
-                          ),
-                          ImageInputField(
-                            isRequired: isEmptyAirSealingPics,
-                            label: 'Air sealing quality pictures *',
-                            doesItExpand: true,
-                            url: airSealingPics,
-                            addImage: (String url) {
-                              setState(() {
-                                airSealingPics.add(url);
-                                isEmptyAirSealingPics = false;
-                              });
-                            },
-                            deleteImage: (index) {
-                              setState(() {
-                                airSealingPics.removeAt(index);
-                              });
-                            },
-                            isImageLoading: (bool isLoading) {
-                              setState(() {
-                                isImageLoading = isLoading;
-                              });
-                            },
-                          ),
-                        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen2(id: widget.id),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              TitleComponent(
+                  screen: FormScreen2(id: widget.id),
+                  title: 'Air Sealing',
+                  linearProgressValue: 3.0),
+              isLoading
+                  ? const Center(
+                      heightFactor: 15,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyOnWorkOrder = false;
+                                  if (value == "Yes") {
+                                    onWorkOrder = true;
+                                  } else {
+                                    onWorkOrder = false;
+                                  }
+                                });
+                              },
+                              isRequired: isEmptyOnWorkOrder,
+                              labels: ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title: 'Air Sealing on work order? *',
+                              activeChoice: onWorkOrder == null
+                                  ? 0
+                                  : onWorkOrder!
+                                      ? 1
+                                      : 2,
+                            ),
+                            InputField(
+                              title: 'Air sealing notes',
+                              hintText: sealingNotes,
+                              maxLines: 5,
+                              onChanged: (value) {
+                                setState(() {
+                                  sealingNotes = value;
+                                });
+                              },
+                            ),
+                            ImageInputField(
+                              isRequired: isEmptyAirSealingPics,
+                              label: 'Air sealing quality pictures *',
+                              doesItExpand: true,
+                              url: airSealingPics,
+                              addImage: (String url) {
+                                setState(() {
+                                  airSealingPics.add(url);
+                                  isEmptyAirSealingPics = false;
+                                });
+                              },
+                              deleteImage: (index) {
+                                setState(() {
+                                  airSealingPics.removeAt(index);
+                                });
+                              },
+                              isImageLoading: (bool isLoading) {
+                                setState(() {
+                                  isImageLoading = isLoading;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            BottomButtons(
-              validate: validate,
-              patchEntry: patchEntry,
-              nextScreen: FormScreen4(id: widget.id),
-              id: widget.id,
-            ),
-          ],
+              BottomButtons(
+                validate: validate,
+                patchEntry: patchEntry,
+                nextScreen: FormScreen4(id: widget.id),
+                id: widget.id,
+              ),
+            ],
+          ),
         ),
       ),
     );

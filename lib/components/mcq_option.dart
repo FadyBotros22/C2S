@@ -27,38 +27,39 @@ class _McqOptionState extends State<McqOption> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          child: TextButton(
-            onPressed: () {
-              widget.onPressed();
-            },
-            style: TextButton.styleFrom(
-              alignment: AlignmentDirectional.centerStart,
-              overlayColor: Colors.transparent,
-              padding: const EdgeInsets.all(0),
-            ),
-            child: Row(
-              children: [
-                SvgPicture.asset(widget.isSquare
-                    ? widget.isActive
-                        ? selectedSquareButton
-                        : unSelectedSquareButton
-                    : widget.isActive
-                        ? selectedButton
-                        : unSelectedButton),
-                const SizedBox(width: 20),
-                Text(
-                  widget.questionLabel,
-                  style: kMcqLabelTextStyle,
-                ),
-              ],
-            ),
-          ),
+    return SizedBox(
+      height: 30,
+      child: TextButton(
+        onPressed: () {
+          widget.onPressed();
+        },
+        style: TextButton.styleFrom(
+          alignment: AlignmentDirectional.centerStart,
+          overlayColor: Colors.transparent,
+          padding: const EdgeInsets.all(0),
         ),
-        const SizedBox(width: 40),
-      ],
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              widget.isSquare
+                  ? widget.isActive
+                      ? selectedSquareButton
+                      : unSelectedSquareButton
+                  : widget.isActive
+                      ? selectedButton
+                      : unSelectedButton,
+              height: 15,
+              width: 15,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              widget.questionLabel,
+              style: kMcqLabelTextStyle,
+            ),
+            const SizedBox(width: 20),
+          ],
+        ),
+      ),
     );
   }
 }
