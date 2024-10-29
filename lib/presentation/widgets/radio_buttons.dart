@@ -7,7 +7,6 @@ class RadioButtons extends StatefulWidget {
       {super.key,
       required this.labels,
       required this.isColumn,
-      this.isSelfHelp,
       required this.isSquare,
       this.title,
       required this.chooseButton,
@@ -16,7 +15,6 @@ class RadioButtons extends StatefulWidget {
       this.isChecklistComponent});
 
   final List<String> labels;
-  final Function? isSelfHelp;
   final bool isColumn;
   final bool isSquare;
   final String? title;
@@ -52,11 +50,6 @@ class _RadioButtonsState extends State<RadioButtons> {
           onPressed: () {
             widget.chooseButton(widget.labels[index]);
             setState(() {
-              if (widget.labels[index] == "Self Help") {
-                widget.isSelfHelp!(true);
-              } else {
-                widget.isSelfHelp?.call(false);
-              }
               pressButton(index + 1);
             });
           },

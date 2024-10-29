@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     String status = await getIt<AbstractAuthRepository>()
-        .login(username, password, context);
+        .login('ismail', '12345678', context);
 
     if (status == 'true' && mounted) {
       errorMessage = '';

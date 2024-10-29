@@ -29,24 +29,24 @@ class PatchInitialWalkThroughData {
 }
 
 class InitialWalkthrough {
-  Checklist checklist;
-  bool blowerDoorStatus;
-  int blowerStartingValue;
-  String startingBlowerDoorPic;
-  String notes;
-  String heatingSystemPic;
-  String waterHeaterPic;
-  List<String> concernsPic;
+  Checklist? checklist;
+  bool? blowerDoorStatus;
+  int? blowerStartingValue;
+  String? startingBlowerDoorPic;
+  String? notes;
+  String? heatingSystemPic;
+  String? waterHeaterPic;
+  List<String>? concernsPic;
 
   InitialWalkthrough({
-    required this.checklist,
-    required this.blowerDoorStatus,
-    required this.blowerStartingValue,
-    required this.startingBlowerDoorPic,
-    required this.notes,
-    required this.heatingSystemPic,
-    required this.waterHeaterPic,
-    required this.concernsPic,
+    this.checklist,
+    this.blowerDoorStatus,
+    this.blowerStartingValue,
+    this.startingBlowerDoorPic,
+    this.notes,
+    this.heatingSystemPic,
+    this.waterHeaterPic,
+    this.concernsPic,
   });
 
   factory InitialWalkthrough.fromJson(Map<String, dynamic> json) =>
@@ -62,40 +62,40 @@ class InitialWalkthrough {
       );
 
   Map<String, dynamic> toJson() => {
-        "checklist": checklist.toJson(),
+        "checklist": checklist?.toJson(),
         "blowerDoorStatus": blowerDoorStatus,
         "blowerStartingValue": blowerStartingValue,
         "startingBlowerDoorPic": startingBlowerDoorPic,
         "notes": notes,
         "heatingSystemPic": heatingSystemPic,
         "waterHeaterPic": waterHeaterPic,
-        "concernsPic": List<dynamic>.from(concernsPic.map((x) => x)),
+        "concernsPic": List<dynamic>.from(concernsPic!.map((x) => x)),
       };
 }
 
 class Checklist {
-  bool knobAndTube;
-  String knobAndTubeImg;
-  bool abestos;
-  String abestosImg;
-  bool titlesOnSite;
-  String titlesOnSiteImg;
-  bool unventedDryers;
-  String unventedDryersImg;
-  bool moistureConcerns;
-  String moistureConcernsImg;
+  bool? knobAndTube;
+  String? knobAndTubeImg;
+  bool? abestos;
+  String? abestosImg;
+  bool? titlesOnSite;
+  String? titlesOnSiteImg;
+  bool? unventedDryers;
+  String? unventedDryersImg;
+  bool? moistureConcerns;
+  String? moistureConcernsImg;
 
   Checklist({
-    required this.knobAndTube,
-    required this.knobAndTubeImg,
-    required this.abestos,
-    required this.abestosImg,
-    required this.titlesOnSite,
-    required this.titlesOnSiteImg,
-    required this.unventedDryers,
-    required this.unventedDryersImg,
-    required this.moistureConcerns,
-    required this.moistureConcernsImg,
+    this.knobAndTube,
+    this.knobAndTubeImg,
+    this.abestos,
+    this.abestosImg,
+    this.titlesOnSite,
+    this.titlesOnSiteImg,
+    this.unventedDryers,
+    this.unventedDryersImg,
+    this.moistureConcerns,
+    this.moistureConcernsImg,
   });
 
   factory Checklist.fromJson(Map<String, dynamic> json) => Checklist(

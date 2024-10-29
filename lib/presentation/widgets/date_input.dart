@@ -20,6 +20,8 @@ class DateInput extends StatefulWidget {
 
 class _DateInputState extends State<DateInput> {
   DateTime? selectedDateTime;
+  String? date;
+  final TextEditingController _controller = TextEditingController();
 
   Future<String> _selectDateAndTime() async {
     final DateTime? pickedDate = await showDatePicker(
@@ -47,11 +49,21 @@ class _DateInputState extends State<DateInput> {
             pickedTime.minute,
           );
         });
-        String date = DateFormat('yyyy-MM-dd').format(selectedDateTime!);
-        return date;
+        setState(() {
+          date = DateFormat('yyyy-MM-dd').format(selectedDateTime!);
+          _controller.text = date!;
+        });
+        String dateSend = DateFormat('yyyy-MM-dd').format(selectedDateTime!);
+        return dateSend;
       }
     }
     return '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = date ?? widget.hintText ?? '';
   }
 
   @override
@@ -74,7 +86,8 @@ class _DateInputState extends State<DateInput> {
           ),
           const SizedBox(height: 10),
           TextFormField(
-            initialValue: widget.hintText,
+            controller: _controller,
+            // initialValue: widget.hintText,
             readOnly: true,
             onTap: () async {
               widget.onChanged(await _selectDateAndTime());

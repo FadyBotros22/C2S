@@ -7,12 +7,17 @@ import '../../widgets/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_air_sealing_data.dart'
     as air_sealing;
+import '../home_page.dart';
 import 'form_screen2.dart';
 import 'form_screen4.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../injection_container.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/blocs/form_bloc/form_bloc.dart';
+import '../../../domain/blocs/form_bloc/form_event.dart';
+import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
 
 class FormScreen3 extends StatefulWidget {
   const FormScreen3({super.key, required this.id});
@@ -23,90 +28,75 @@ class FormScreen3 extends StatefulWidget {
 }
 
 class _FormScreen3State extends State<FormScreen3> {
-  bool? onWorkOrder;
-  String? sealingNotes;
-  List<String> airSealingPics = [];
-
   bool isEmptyOnWorkOrder = false;
   bool isEmptyAirSealingPics = false;
-
-  bool isLoading = true;
   bool isImageLoading = false;
-
-  bool validate() {
-    if (onWorkOrder == null) {
-      setState(() {
-        isEmptyOnWorkOrder = true;
-      });
-      return false;
-    } else if (isImageLoading) {
-      Snackbar().showSnackBar(context, "Image is uploading, please wait");
-      return false;
-    } else if (airSealingPics.isEmpty) {
-      setState(() {
-        isEmptyAirSealingPics = true;
-      });
-      return false;
-    }
-    return true;
-  }
-
-  Future<bool> patchEntry() async {
-    air_sealing.PatchAirSealingData patchAirSealingData =
-        air_sealing.PatchAirSealingData(
-            airSealing: air_sealing.AirSealing(
-                onWorkOrder: onWorkOrder!,
-                checklist: air_sealing.Checklist(
-                    mainTopPlateSealed: '',
-                    wetWallSealed: '',
-                    chimneySealed: '',
-                    exteriorPlatesSealed: '',
-                    bhatroomFansSealed: '',
-                    gableEndsSealed: '',
-                    atticAccessSealed: '',
-                    basementSealed: ''),
-                notes: sealingNotes ?? '',
-                sealingQualityPic: airSealingPics));
-    return await getIt<AbstractEntriesRepo>().patchEntry(
-        context,
-        getIt<Preferences>().getData('token').toString(),
-        widget.id,
-        patchAirSealingData.toJson());
-  }
-
-  Future<void> getEntry() async {
-    GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractEntriesRepo>().getEntry(
-            context,
-            getIt<Preferences>().getData('token').toString(),
-            widget.id.toString());
-
-    setState(() {
-      onWorkOrder = getEntryResponseData.data?.airSealing?.onWorkOrder;
-      sealingNotes = getEntryResponseData.data?.airSealing?.notes;
-      airSealingPics =
-          getEntryResponseData.data?.airSealing?.sealingQualityPic ?? [];
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEntry();
-  }
-
-  Future<void> _loadEntry() async {
-    setState(() {
-      isLoading = true;
-    });
-    await getEntry();
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
+        ..add(
+          LoadEntryEvent(
+            getIt<Preferences>().getData('token').toString(),
+            widget.id,
+          ),
+        ),
+      child: BlocConsumer<FormBloc, form_state.FormState>(
+        listener: (context, state) async {
+          if (state is form_state.FormError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is form_state.FormSubmitted) {
+            FocusScope.of(context).unfocus();
+            await Future.delayed(Duration(milliseconds: 500));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => state.screen == 'next'
+                      ? FormScreen4(
+                          id: widget.id,
+                        )
+                      : HomePage()),
+              (route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is form_state.FormLoading) {
+            return Scaffold(
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()));
+          } else if (state is form_state.FormLoaded) {
+            return body(context, state.entryData);
+          }
+          return Scaffold(backgroundColor: Colors.white);
+        },
+      ),
+    );
+  }
+
+  Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    final data = entryData?.data?.airSealing;
+    bool validate() {
+      if (data?.onWorkOrder == null) {
+        setState(() {
+          isEmptyOnWorkOrder = true;
+        });
+        return false;
+      } else if (isImageLoading) {
+        Snackbar().showSnackBar(context, "Image is uploading, please wait");
+        return false;
+      } else if (data?.sealingQualityPic == null ||
+          data!.sealingQualityPic!.isEmpty) {
+        setState(() {
+          isEmptyAirSealingPics = true;
+        });
+        return false;
+      }
+      return true;
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, _) {
@@ -129,79 +119,78 @@ class _FormScreen3State extends State<FormScreen3> {
                   screen: FormScreen2(id: widget.id),
                   title: 'Air Sealing',
                   linearProgressValue: 3.0),
-              isLoading
-                  ? const Center(
-                      heightFactor: 15,
-                      child: CircularProgressIndicator(),
-                    )
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyOnWorkOrder = false;
-                                  if (value == "Yes") {
-                                    onWorkOrder = true;
-                                  } else {
-                                    onWorkOrder = false;
-                                  }
-                                });
-                              },
-                              isRequired: isEmptyOnWorkOrder,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              title: 'Air Sealing on work order? *',
-                              activeChoice: onWorkOrder == null
-                                  ? 0
-                                  : onWorkOrder!
-                                      ? 1
-                                      : 2,
-                            ),
-                            InputField(
-                              title: 'Air sealing notes',
-                              hintText: sealingNotes,
-                              maxLines: 5,
-                              onChanged: (value) {
-                                setState(() {
-                                  sealingNotes = value;
-                                });
-                              },
-                            ),
-                            ImageInputField(
-                              isRequired: isEmptyAirSealingPics,
-                              label: 'Air sealing quality pictures *',
-                              doesItExpand: true,
-                              url: airSealingPics,
-                              addImage: (String url) {
-                                setState(() {
-                                  airSealingPics.add(url);
-                                  isEmptyAirSealingPics = false;
-                                });
-                              },
-                              deleteImage: (index) {
-                                setState(() {
-                                  airSealingPics.removeAt(index);
-                                });
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RadioButtons(
+                        chooseButton: (value) {
+                          setState(() {
+                            isEmptyOnWorkOrder = false;
+                            entryData?.data?.airSealing?.onWorkOrder =
+                                (value == "Yes");
+                          });
+                        },
+                        isRequired: isEmptyOnWorkOrder,
+                        labels: ['Yes', 'No'],
+                        isColumn: false,
+                        isSquare: false,
+                        title: 'Air Sealing on work order? *',
+                        activeChoice: data?.onWorkOrder == null
+                            ? 0
+                            : data!.onWorkOrder!
+                                ? 1
+                                : 2,
                       ),
-                    ),
+                      InputField(
+                        title: 'Air sealing notes',
+                        hintText: data?.notes,
+                        maxLines: 5,
+                        onChanged: (value) {
+                          setState(() {
+                            entryData?.data?.airSealing?.notes = value;
+                          });
+                        },
+                      ),
+                      ImageInputField(
+                        isRequired: isEmptyAirSealingPics,
+                        label: 'Air sealing quality pictures *',
+                        doesItExpand: true,
+                        url: data?.sealingQualityPic,
+                        addImage: (String url) {
+                          setState(() {
+                            entryData?.data?.airSealing?.sealingQualityPic
+                                ?.add(url);
+                            isEmptyAirSealingPics = false;
+                          });
+                        },
+                        deleteImage: (index) {
+                          setState(() {
+                            entryData?.data?.airSealing?.sealingQualityPic
+                                ?.removeAt(index);
+                          });
+                        },
+                        isImageLoading: (bool isLoading) {
+                          setState(() {
+                            isImageLoading = isLoading;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               BottomButtons(
                 validate: validate,
-                patchEntry: patchEntry,
-                nextScreen: FormScreen4(id: widget.id),
                 id: widget.id,
+                patchData: air_sealing.PatchAirSealingData(
+                  airSealing: air_sealing.AirSealing(
+                    onWorkOrder: data?.onWorkOrder,
+                    notes: data?.notes,
+                    sealingQualityPic: data?.sealingQualityPic!,
+                  ),
+                ).toJson(),
               ),
             ],
           ),

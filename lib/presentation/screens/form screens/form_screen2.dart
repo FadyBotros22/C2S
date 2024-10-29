@@ -1,3 +1,7 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/blocs/form_bloc/form_bloc.dart';
+import '../../../domain/blocs/form_bloc/form_event.dart';
+import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
 import '../../widgets/bottom_buttons.dart';
 import '../../widgets/checklist_component.dart';
 import '../../widgets/image_input_field.dart';
@@ -9,6 +13,7 @@ import '../../widgets/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_initial_walk_through_data.dart'
     as patch;
+import '../home_page.dart';
 import 'form_screen1.dart';
 import 'form_screen3.dart';
 import 'package:flutter/material.dart';
@@ -26,165 +31,123 @@ class FormScreen2 extends StatefulWidget {
 }
 
 class _FormScreen2State extends State<FormScreen2> {
-  bool? knob;
-  bool? abestos;
-  bool? tiles;
-  bool? dryers;
-  bool? moisture;
-  bool? blowerDoor;
-  int? blowerValue;
-  String? walkthroughNotes;
-  String? heatPic;
-  String? waterPic;
-  List<String> corners = [];
+  String? crew;
 
   bool isEmptyHeatPic = false;
   bool isEmptyWaterPic = false;
   bool isEmptyCheckList = false;
   bool isEmptyBlowerValue = false;
 
-  bool isLoading = true;
   bool isImageLoading = false;
-  // bool
-
-  Future<bool> patchEntry() async {
-    patch.PatchInitialWalkThroughData patchInitialWalkThroughData =
-        patch.PatchInitialWalkThroughData(
-      initialWalkthrough: patch.InitialWalkthrough(
-          checklist: patch.Checklist(
-              knobAndTube: knob ?? false,
-              knobAndTubeImg: 'https://www.google.co.uk/',
-              abestos: abestos ?? false,
-              abestosImg: 'https://www.google.co.uk/',
-              titlesOnSite: tiles ?? false,
-              titlesOnSiteImg: 'https://www.google.co.uk/',
-              unventedDryers: dryers ?? false,
-              unventedDryersImg: 'https://www.google.co.uk/',
-              moistureConcerns: moisture ?? false,
-              moistureConcernsImg: 'https://www.google.co.uk/'),
-          blowerDoorStatus: blowerDoor ?? false,
-          blowerStartingValue: blowerValue!,
-          startingBlowerDoorPic: 'https://www.google.co.uk/',
-          notes: walkthroughNotes ?? '',
-          heatingSystemPic: heatPic!,
-          waterHeaterPic: waterPic!,
-          concernsPic:
-              corners.isNotEmpty ? corners : ['https://www.google.co.uk/']),
-    );
-    return await getIt<AbstractEntriesRepo>().patchEntry(
-        context,
-        getIt<Preferences>().getData('token').toString(),
-        widget.id,
-        patchInitialWalkThroughData.toJson());
-  }
-
-  bool validate() {
-    if (knob == null ||
-        abestos == null ||
-        tiles == null ||
-        dryers == null ||
-        moisture == null) {
-      setState(() {
-        isEmptyCheckList = true;
-      });
-      return false;
-    } else if (blowerValue == null) {
-      setState(() {
-        isEmptyBlowerValue = true;
-      });
-      return false;
-    } else if (isImageLoading) {
-      Snackbar().showSnackBar(context, "Image is uploading, please wait");
-      return false;
-    } else if (heatPic == null) {
-      setState(() {
-        isEmptyHeatPic = true;
-      });
-      return false;
-    } else if (waterPic == null) {
-      setState(() {
-        isEmptyWaterPic = true;
-      });
-      return false;
-    }
-    return true;
-  }
-
-  int getActiveChoice(bool? object) {
-    return object == null
-        ? 0
-        : object
-            ? 1
-            : 2;
-  }
-
-  bool updateChoice(value) {
-    setState(() {
-      isEmptyCheckList = false;
-    });
-    if (value == "Yes") {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<void> getEntry() async {
-    GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractEntriesRepo>().getEntry(
-            context,
-            getIt<Preferences>().getData('token').toString(),
-            widget.id.toString());
-
-    setState(() {
-      knob =
-          getEntryResponseData.data?.initialWalkthrough?.checklist?.knobAndTube;
-      abestos =
-          getEntryResponseData.data?.initialWalkthrough?.checklist?.abestos;
-      tiles = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.titlesOnSite;
-      dryers = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.unventedDryers;
-      moisture = getEntryResponseData
-          .data?.initialWalkthrough?.checklist?.moistureConcerns;
-      blowerDoor =
-          getEntryResponseData.data?.initialWalkthrough?.blowerDoorStatus;
-      blowerValue =
-          getEntryResponseData.data?.initialWalkthrough?.blowerStartingValue;
-      walkthroughNotes = getEntryResponseData.data?.initialWalkthrough?.notes;
-      heatPic = getEntryResponseData.data?.initialWalkthrough?.heatingSystemPic;
-      waterPic = getEntryResponseData.data?.initialWalkthrough?.waterHeaterPic;
-      corners =
-          getEntryResponseData.data?.initialWalkthrough?.concernsPic ?? [];
-    });
-  }
-
-  List<String> urlHandler(String? object) {
-    if (object == null) {
-      return [];
-    } else {
-      return [object];
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEntry();
-  }
-
-  Future<void> _loadEntry() async {
-    setState(() {
-      isLoading = true;
-    });
-    await getEntry();
-    setState(() {
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
+        ..add(
+          LoadEntryEvent(
+            getIt<Preferences>().getData('token').toString(),
+            widget.id,
+          ),
+        ),
+      child: BlocConsumer<FormBloc, form_state.FormState>(
+        listener: (context, state) async {
+          if (state is form_state.FormError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is form_state.FormSubmitted) {
+            FocusScope.of(context).unfocus();
+            await Future.delayed(Duration(milliseconds: 500));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => state.screen == 'next'
+                      ? FormScreen3(
+                          id: widget.id,
+                        )
+                      : HomePage()),
+              (route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is form_state.FormLoading) {
+            return Scaffold(
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()));
+          } else if (state is form_state.FormLoaded) {
+            return body(context, state.entryData);
+          }
+
+          return Scaffold(backgroundColor: Colors.white);
+        },
+      ),
+    );
+  }
+
+  Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    final data = entryData?.data?.initialWalkthrough;
+
+    bool validate() {
+      if (data?.checklist?.knobAndTube == null ||
+          data?.checklist?.abestos == null ||
+          data?.checklist?.titlesOnSite == null ||
+          data?.checklist?.unventedDryers == null ||
+          data?.checklist?.moistureConcerns == null) {
+        setState(() {
+          isEmptyCheckList = true;
+        });
+        return false;
+      } else if (data?.blowerStartingValue == null) {
+        setState(() {
+          isEmptyBlowerValue = true;
+        });
+        return false;
+      } else if (isImageLoading) {
+        Snackbar().showSnackBar(context, "Image is uploading, please wait");
+        return false;
+      } else if (entryData?.data?.initialWalkthrough?.heatingSystemPic ==
+          null) {
+        setState(() {
+          isEmptyHeatPic = true;
+        });
+        return false;
+      } else if (entryData?.data?.initialWalkthrough?.waterHeaterPic == null) {
+        setState(() {
+          isEmptyWaterPic = true;
+        });
+        return false;
+      }
+      return true;
+    }
+
+    int getActiveChoice(bool? object) {
+      return object == null
+          ? 0
+          : object
+              ? 1
+              : 2;
+    }
+
+    bool updateChoice(value) {
+      setState(() {
+        isEmptyCheckList = false;
+      });
+      if (value == "Yes") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    List<String> urlHandler(String? object) {
+      if (object == null) {
+        return [];
+      } else {
+        return [object];
+      }
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, _) {
@@ -207,202 +170,235 @@ class _FormScreen2State extends State<FormScreen2> {
                   screen: FormScreen1(id: widget.id),
                   title: 'Initial Walkthrough',
                   linearProgressValue: 2.0),
-              isLoading
-                  ? const Center(
-                      heightFactor: 15,
-                      child: CircularProgressIndicator(),
-                    )
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: const Text(
-                                'It\'s incredibly important to ensure a proper initial walk through is conducted. Please ensure the following barriers will not be an issue to completing work.',
-                                style: kParagraphTextStyle,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, top: 16, bottom: 5),
-                              child: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    if (isEmptyCheckList)
-                                      TextSpan(
-                                        text: 'This field is Required\n',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    TextSpan(
-                                        text: 'Checklist ',
-                                        style: kQuestionTitleTextStyle),
-                                    TextSpan(
-                                        text: '*',
-                                        style: TextStyle(color: Colors.red)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            ChecklistComponent(
-                              chooseButtons: (value) {
-                                setState(() {
-                                  knob = updateChoice(value);
-                                });
-                              },
-                              title: 'Knob & Tube',
-                              activeChoice: getActiveChoice(knob),
-                            ),
-                            ChecklistComponent(
-                              chooseButtons: (value) {
-                                setState(() {
-                                  abestos = updateChoice(value);
-                                });
-                              },
-                              title: 'Abestos',
-                              activeChoice: getActiveChoice(abestos),
-                            ),
-                            ChecklistComponent(
-                              chooseButtons: (value) {
-                                setState(() {
-                                  tiles = updateChoice(value);
-                                });
-                              },
-                              title: '12 x 12 tiles on site',
-                              activeChoice: getActiveChoice(tiles),
-                            ),
-                            ChecklistComponent(
-                              chooseButtons: (value) {
-                                setState(() {
-                                  dryers = updateChoice(value);
-                                });
-                              },
-                              title: 'Unvented dryers',
-                              activeChoice: getActiveChoice(dryers),
-                            ),
-                            ChecklistComponent(
-                              chooseButtons: (value) {
-                                setState(() {
-                                  moisture = updateChoice(value);
-                                });
-                              },
-                              title: 'Moisture concerns',
-                              activeChoice: getActiveChoice(moisture),
-                            ),
-                            SizedBox(height: 20),
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  blowerDoor = updateChoice(value);
-                                });
-                              },
-                              isRequired: false,
-                              title: 'Was blower door completed?',
-                              labels: const ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              activeChoice: getActiveChoice(blowerDoor),
-                            ),
-                            SizedBox(height: 10),
-                            InputField(
-                              title: 'Blower door starting value *',
-                              color: isEmptyBlowerValue ? Colors.red : null,
-                              hintText: '${blowerValue ?? ''}',
-                              onChanged: (value) {
-                                setState(() {
-                                  blowerValue = int.parse(value);
-                                  isEmptyBlowerValue = false;
-                                });
-                              },
-                              isNumber: true,
-                            ),
-                            InputField(
-                              title: 'Initial walkthrough notes',
-                              maxLines: 5,
-                              hintText: walkthroughNotes,
-                              onChanged: (value) {
-                                setState(() {
-                                  walkthroughNotes = value;
-                                });
-                              },
-                            ),
-                            // SizedBox(height: -10),
-                            ImageInputField(
-                              deleteImage: (index) {
-                                setState(() {
-                                  heatPic = null;
-                                });
-                              },
-                              isRequired: isEmptyHeatPic,
-                              label: 'Picture of heating system *',
-                              url: urlHandler(heatPic),
-                              doesItExpand: false,
-                              addImage: (url) {
-                                setState(() {
-                                  isEmptyHeatPic = false;
-                                  heatPic = url;
-                                });
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                            ImageInputField(
-                              deleteImage: (index) {
-                                setState(() {
-                                  waterPic = null;
-                                });
-                              },
-                              isRequired: isEmptyWaterPic,
-                              url: urlHandler(waterPic),
-                              label: 'Picture of water heater *',
-                              doesItExpand: false,
-                              addImage: (url) {
-                                setState(() {
-                                  isEmptyWaterPic = false;
-                                  waterPic = url;
-                                });
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                            ImageInputField(
-                              isRequired: isEmptyWaterPic,
-                              label: 'Photos of pre walkthrough concerns',
-                              url: corners,
-                              doesItExpand: true,
-                              addImage: (url) {
-                                setState(() {
-                                  corners.add(url);
-                                });
-                              },
-                              deleteImage: (index) {
-                                setState(() {
-                                  corners.removeAt(index);
-                                });
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                          ],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: const Text(
+                          'It\'s incredibly important to ensure a proper initial walk through is conducted. Please ensure the following barriers will not be an issue to completing work.',
+                          style: kParagraphTextStyle,
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 16, top: 16, bottom: 5),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              if (isEmptyCheckList)
+                                TextSpan(
+                                  text: 'This field is Required\n',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              TextSpan(
+                                  text: 'Checklist ',
+                                  style: kQuestionTitleTextStyle),
+                              TextSpan(
+                                  text: '*',
+                                  style: TextStyle(color: Colors.red)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      ChecklistComponent(
+                        chooseButtons: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.checklist
+                                ?.knobAndTube = updateChoice(value);
+                          });
+                        },
+                        title: 'Knob & Tube',
+                        activeChoice:
+                            getActiveChoice(data?.checklist?.knobAndTube),
+                      ),
+                      ChecklistComponent(
+                        chooseButtons: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.checklist
+                                ?.abestos = updateChoice(value);
+                          });
+                        },
+                        title: 'Abestos',
+                        activeChoice: getActiveChoice(data?.checklist?.abestos),
+                      ),
+                      ChecklistComponent(
+                        chooseButtons: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.checklist
+                                ?.titlesOnSite = updateChoice(value);
+                          });
+                        },
+                        title: '12 x 12 tiles on site',
+                        activeChoice:
+                            getActiveChoice(data?.checklist?.titlesOnSite),
+                      ),
+                      ChecklistComponent(
+                        chooseButtons: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.checklist
+                                ?.unventedDryers = updateChoice(value);
+                          });
+                        },
+                        title: 'Unvented dryers',
+                        activeChoice:
+                            getActiveChoice(data?.checklist?.unventedDryers),
+                      ),
+                      ChecklistComponent(
+                        chooseButtons: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.checklist
+                                ?.moistureConcerns = updateChoice(value);
+                          });
+                        },
+                        title: 'Moisture concerns',
+                        activeChoice:
+                            getActiveChoice(data?.checklist?.moistureConcerns),
+                      ),
+                      SizedBox(height: 20),
+                      RadioButtons(
+                        chooseButton: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough
+                                ?.blowerDoorStatus = updateChoice(value);
+                          });
+                        },
+                        isRequired: false,
+                        title: 'Was blower door completed?',
+                        labels: const ['Yes', 'No'],
+                        isColumn: false,
+                        isSquare: false,
+                        activeChoice: getActiveChoice(data?.blowerDoorStatus),
+                      ),
+                      SizedBox(height: 10),
+                      InputField(
+                        title: 'Blower door starting value *',
+                        color: isEmptyBlowerValue ? Colors.red : null,
+                        hintText: '${data?.blowerStartingValue ?? ''}',
+                        onChanged: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough
+                                ?.blowerStartingValue = int.parse(value);
+                            isEmptyBlowerValue = false;
+                          });
+                        },
+                        isNumber: true,
+                      ),
+                      InputField(
+                        title: 'Initial walkthrough notes',
+                        maxLines: 5,
+                        hintText: data?.notes,
+                        onChanged: (value) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.notes = value;
+                          });
+                        },
+                      ),
+                      // SizedBox(height: -10),
+                      ImageInputField(
+                        deleteImage: (index) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough
+                                ?.heatingSystemPic = null;
+                          });
+                        },
+                        isRequired: isEmptyHeatPic,
+                        label: 'Picture of heating system *',
+                        url: urlHandler(data?.heatingSystemPic),
+                        doesItExpand: false,
+                        addImage: (url) {
+                          setState(() {
+                            isEmptyHeatPic = false;
+                            entryData?.data?.initialWalkthrough
+                                ?.heatingSystemPic = url;
+                          });
+                        },
+                        isImageLoading: (bool isLoading) {
+                          setState(() {
+                            isImageLoading = isLoading;
+                          });
+                        },
+                      ),
+                      ImageInputField(
+                        deleteImage: (index) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough
+                                ?.waterHeaterPic = null;
+                          });
+                        },
+                        isRequired: isEmptyWaterPic,
+                        url: urlHandler(data?.waterHeaterPic),
+                        label: 'Picture of water heater *',
+                        doesItExpand: false,
+                        addImage: (url) {
+                          setState(() {
+                            isEmptyWaterPic = false;
+                            entryData?.data?.initialWalkthrough
+                                ?.waterHeaterPic = url;
+                          });
+                        },
+                        isImageLoading: (bool isLoading) {
+                          setState(() {
+                            isImageLoading = isLoading;
+                          });
+                        },
+                      ),
+                      ImageInputField(
+                        isRequired: isEmptyWaterPic,
+                        label: 'Photos of pre walkthrough concerns',
+                        url: data?.concernsPic,
+                        doesItExpand: true,
+                        addImage: (url) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.concernsPic
+                                ?.add(url);
+                          });
+                        },
+                        deleteImage: (index) {
+                          setState(() {
+                            entryData?.data?.initialWalkthrough?.concernsPic
+                                ?.removeAt(index);
+                          });
+                        },
+                        isImageLoading: (bool isLoading) {
+                          setState(() {
+                            isImageLoading = isLoading;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               BottomButtons(
                 validate: validate,
-                patchEntry: patchEntry,
-                nextScreen: FormScreen3(id: widget.id),
                 id: widget.id,
+                patchData: patch.PatchInitialWalkThroughData(
+                  initialWalkthrough: patch.InitialWalkthrough(
+                    checklist: patch.Checklist(
+                        knobAndTube: data?.checklist?.knobAndTube,
+                        knobAndTubeImg: 'https://www.google.co.uk/',
+                        abestos: data?.checklist?.abestos,
+                        abestosImg: 'https://www.google.co.uk/',
+                        titlesOnSite: data?.checklist?.titlesOnSite,
+                        titlesOnSiteImg: 'https://www.google.co.uk/',
+                        unventedDryers: data?.checklist?.unventedDryers,
+                        unventedDryersImg: 'https://www.google.co.uk/',
+                        moistureConcerns: data?.checklist?.moistureConcerns,
+                        moistureConcernsImg: 'https://www.google.co.uk/'),
+                    blowerDoorStatus: data?.blowerDoorStatus,
+                    blowerStartingValue: data?.blowerStartingValue,
+                    notes: data?.notes,
+                    heatingSystemPic: data?.heatingSystemPic,
+                    waterHeaterPic: data?.waterHeaterPic,
+                    concernsPic: data?.concernsPic != null &&
+                            data!.concernsPic!.isNotEmpty
+                        ? data.concernsPic
+                        : [],
+                  ),
+                ).toJson(),
               ),
             ],
           ),

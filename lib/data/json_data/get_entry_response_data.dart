@@ -28,16 +28,16 @@ class GetEntryResponseData {
 }
 
 class Data {
-  String id;
-  String programType;
-  bool doeJob;
-  String address;
-  String city;
-  Coordinates coordinates;
-  String createdBy;
-  String jobId;
-  int progressStep;
-  String date;
+  String? id;
+  String? programType;
+  bool? doeJob;
+  String? address;
+  String? city;
+  Coordinates? coordinates;
+  String? createdBy;
+  String? jobId;
+  int? progressStep;
+  String? date;
   InitialWalkthrough? initialWalkthrough;
   AirSealing? airSealing;
   AtticInsulation? atticInsulation;
@@ -45,16 +45,16 @@ class Data {
   FinalWalkthrough? finalWalkthrough;
 
   Data({
-    required this.id,
-    required this.programType,
-    required this.doeJob,
-    required this.address,
-    required this.city,
-    required this.coordinates,
-    required this.createdBy,
-    required this.jobId,
-    required this.progressStep,
-    required this.date,
+    this.id,
+    this.programType,
+    this.doeJob,
+    this.address,
+    this.city,
+    this.coordinates,
+    this.createdBy,
+    this.jobId,
+    this.progressStep,
+    this.date,
     this.initialWalkthrough,
     this.airSealing,
     this.atticInsulation,
@@ -87,7 +87,7 @@ class Data {
         "doeJob": doeJob,
         "address": address,
         "city": city,
-        "coordinates": coordinates.toJson(),
+        "coordinates": coordinates?.toJson(),
         "createdBy": createdBy,
         "jobId": jobId,
         "progressStep": progressStep,
@@ -198,9 +198,9 @@ class AtticInsulation {
         checklist: AtticInsulationChecklist.fromJson(json?["checklist"]),
         inaccurateMeasurementsNotes: json?["inaccurateMeasurementsNotes"],
         notes: json?["notes"],
-        atticInsulationPic: (json?["sealingQualityPic"] != null &&
-                json?["sealingQualityPic"].isNotEmpty)
-            ? List<String>.from(json?["sealingQualityPic"].map((x) => x))
+        atticInsulationPic: (json?["atticInsulationPic"] != null &&
+                json?["atticInsulationPic"].isNotEmpty)
+            ? List<String>.from(json?["atticInsulationPic"].map((x) => x))
             : [],
       );
 

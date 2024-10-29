@@ -28,18 +28,18 @@ class PatchAtticInsulationData {
 }
 
 class AtticInsulation {
-  bool onWorkOrder;
-  Checklist checklist;
-  String inaccurateMeasurementsNotes;
-  String notes;
-  List<String> atticInsulationPic;
+  bool? onWorkOrder;
+  Checklist? checklist;
+  String? inaccurateMeasurementsNotes;
+  String? notes;
+  List<String>? atticInsulationPic;
 
   AtticInsulation({
-    required this.onWorkOrder,
-    required this.checklist,
-    required this.inaccurateMeasurementsNotes,
-    required this.notes,
-    required this.atticInsulationPic,
+    this.onWorkOrder,
+    this.checklist,
+    this.inaccurateMeasurementsNotes,
+    this.notes,
+    this.atticInsulationPic,
   });
 
   factory AtticInsulation.fromJson(Map<String, dynamic> json) =>
@@ -54,31 +54,32 @@ class AtticInsulation {
 
   Map<String, dynamic> toJson() => {
         "onWorkOrder": onWorkOrder,
-        "checklist": checklist.toJson(),
+        "checklist": checklist?.toJson(),
         "inaccurateMeasurementsNotes": inaccurateMeasurementsNotes,
         "notes": notes,
-        "atticInsulationPic":
-            List<dynamic>.from(atticInsulationPic.map((x) => x)),
+        "atticInsulationPic": atticInsulationPic == null
+            ? []
+            : List<dynamic>.from(atticInsulationPic!.map((x) => x)),
       };
 }
 
 class Checklist {
-  String insulationMarkersInstalled;
-  String lightsDammed;
-  String bathroomFansVentedOut;
-  String bathroomFansDammed;
-  String measurementsAreAccurate;
-  String venilationChecked;
-  String chimneyDammed;
+  String? insulationMarkersInstalled;
+  String? lightsDammed;
+  String? bathroomFansVentedOut;
+  String? bathroomFansDammed;
+  String? measurementsAreAccurate;
+  String? venilationChecked;
+  String? chimneyDammed;
 
   Checklist({
-    required this.insulationMarkersInstalled,
-    required this.lightsDammed,
-    required this.bathroomFansVentedOut,
-    required this.bathroomFansDammed,
-    required this.measurementsAreAccurate,
-    required this.venilationChecked,
-    required this.chimneyDammed,
+    this.insulationMarkersInstalled,
+    this.lightsDammed,
+    this.bathroomFansVentedOut,
+    this.bathroomFansDammed,
+    this.measurementsAreAccurate,
+    this.venilationChecked,
+    this.chimneyDammed,
   });
 
   factory Checklist.fromJson(Map<String, dynamic> json) => Checklist(

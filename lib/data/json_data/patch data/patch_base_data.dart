@@ -6,10 +6,10 @@ PatchBaseData patchBaseDataFromJson(String str) =>
 String patchBaseDataToJson(PatchBaseData data) => json.encode(data.toJson());
 
 class PatchBaseData {
-  BaseData baseData;
+  BaseData? baseData;
 
   PatchBaseData({
-    required this.baseData,
+    this.baseData,
   });
 
   factory PatchBaseData.fromJson(Map<String, dynamic> json) => PatchBaseData(
@@ -17,23 +17,23 @@ class PatchBaseData {
       );
 
   Map<String, dynamic> toJson() => {
-        "baseData": baseData.toJson(),
+        "baseData": baseData?.toJson(),
       };
 }
 
 class BaseData {
-  String programType;
-  bool doeJob;
-  String address;
-  String city;
-  String date;
+  String? programType;
+  bool? doeJob;
+  String? address;
+  String? city;
+  String? date;
 
   BaseData({
-    required this.programType,
-    required this.doeJob,
-    required this.address,
-    required this.city,
-    required this.date,
+    this.programType,
+    this.doeJob,
+    this.address,
+    this.city,
+    this.date,
   });
 
   factory BaseData.fromJson(Map<String, dynamic> json) => BaseData(

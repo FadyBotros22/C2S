@@ -28,14 +28,14 @@ class PatchWallInsulationData {
 }
 
 class WallInsulation {
-  bool onWorkOrder;
-  Checklist checklist;
-  String notes;
+  bool? onWorkOrder;
+  Checklist? checklist;
+  String? notes;
 
   WallInsulation({
-    required this.onWorkOrder,
-    required this.checklist,
-    required this.notes,
+    this.onWorkOrder,
+    this.checklist,
+    this.notes,
   });
 
   factory WallInsulation.fromJson(Map<String, dynamic> json) => WallInsulation(
@@ -46,24 +46,24 @@ class WallInsulation {
 
   Map<String, dynamic> toJson() => {
         "onWorkOrder": onWorkOrder,
-        "checklist": checklist.toJson(),
+        "checklist": checklist?.toJson(),
         "notes": notes,
       };
 }
 
 class Checklist {
-  bool wallMeasurementsAccurate;
-  bool drainagePlaneInstalled;
-  bool sidingPutBack;
-  bool cornerBracesChecked;
-  bool blockersChecked;
+  bool? wallMeasurementsAccurate;
+  bool? drainagePlaneInstalled;
+  bool? sidingPutBack;
+  bool? cornerBracesChecked;
+  bool? blockersChecked;
 
   Checklist({
-    required this.wallMeasurementsAccurate,
-    required this.drainagePlaneInstalled,
-    required this.sidingPutBack,
-    required this.cornerBracesChecked,
-    required this.blockersChecked,
+    this.wallMeasurementsAccurate,
+    this.drainagePlaneInstalled,
+    this.sidingPutBack,
+    this.cornerBracesChecked,
+    this.blockersChecked,
   });
 
   factory Checklist.fromJson(Map<String, dynamic> json) => Checklist(

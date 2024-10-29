@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   void getEntries() async {
     entriesResponse = await getIt<AbstractEntriesRepo>()
-        .getEntries(context, getIt<Preferences>().getData('token').toString());
+        .getEntries(getIt<Preferences>().getData('token').toString());
     setState(() {
       isLoading = false;
     });

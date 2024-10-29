@@ -24,16 +24,16 @@ class PatchAirSealingData {
 }
 
 class AirSealing {
-  bool onWorkOrder;
-  Checklist checklist;
-  String notes;
-  List<String> sealingQualityPic;
+  bool? onWorkOrder;
+  Checklist? checklist;
+  String? notes;
+  List<String>? sealingQualityPic;
 
   AirSealing({
-    required this.onWorkOrder,
-    required this.checklist,
-    required this.notes,
-    required this.sealingQualityPic,
+    this.onWorkOrder,
+    this.checklist,
+    this.notes,
+    this.sealingQualityPic,
   });
 
   factory AirSealing.fromJson(Map<String, dynamic> json) => AirSealing(
@@ -46,32 +46,32 @@ class AirSealing {
 
   Map<String, dynamic> toJson() => {
         "onWorkOrder": onWorkOrder,
-        "checklist": checklist.toJson(),
+        "checklist": checklist?.toJson(),
         "notes": notes,
         "sealingQualityPic":
-            List<dynamic>.from(sealingQualityPic.map((x) => x)),
+            List<dynamic>.from(sealingQualityPic!.map((x) => x)),
       };
 }
 
 class Checklist {
-  String mainTopPlateSealed;
-  String wetWallSealed;
-  String chimneySealed;
-  String exteriorPlatesSealed;
-  String bhatroomFansSealed;
-  String gableEndsSealed;
-  String atticAccessSealed;
-  String basementSealed;
+  String? mainTopPlateSealed;
+  String? wetWallSealed;
+  String? chimneySealed;
+  String? exteriorPlatesSealed;
+  String? bhatroomFansSealed;
+  String? gableEndsSealed;
+  String? atticAccessSealed;
+  String? basementSealed;
 
   Checklist({
-    required this.mainTopPlateSealed,
-    required this.wetWallSealed,
-    required this.chimneySealed,
-    required this.exteriorPlatesSealed,
-    required this.bhatroomFansSealed,
-    required this.gableEndsSealed,
-    required this.atticAccessSealed,
-    required this.basementSealed,
+    this.mainTopPlateSealed,
+    this.wetWallSealed,
+    this.chimneySealed,
+    this.exteriorPlatesSealed,
+    this.bhatroomFansSealed,
+    this.gableEndsSealed,
+    this.atticAccessSealed,
+    this.basementSealed,
   });
 
   factory Checklist.fromJson(Map<String, dynamic> json) => Checklist(

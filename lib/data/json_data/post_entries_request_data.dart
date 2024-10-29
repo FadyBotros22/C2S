@@ -7,22 +7,22 @@ String postEntriesRequestDataToJson(PostEntriesRequestData data) =>
     json.encode(data.toJson());
 
 class PostEntriesRequestData {
-  String programType;
-  bool doeJob;
-  String date;
-  String address;
-  String city;
-  Coordinates coordinates;
-  String jobId;
+  String? programType;
+  bool? doeJob;
+  String? date;
+  String? address;
+  String? city;
+  Coordinates? coordinates;
+  String? jobId;
 
   PostEntriesRequestData({
-    required this.programType,
-    required this.doeJob,
-    required this.date,
-    required this.address,
-    required this.city,
-    required this.coordinates,
-    required this.jobId,
+    this.programType,
+    this.doeJob,
+    this.date,
+    this.address,
+    this.city,
+    this.coordinates,
+    this.jobId,
   });
 
   factory PostEntriesRequestData.fromJson(Map<String, dynamic> json) =>
@@ -42,7 +42,7 @@ class PostEntriesRequestData {
         "date": date,
         "address": address,
         "city": city,
-        "coordinates": coordinates.toJson(),
+        "coordinates": coordinates?.toJson(),
         "jobId": jobId,
       };
 }

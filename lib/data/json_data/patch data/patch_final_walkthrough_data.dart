@@ -28,42 +28,42 @@ class PatchFinalWalkthroughData {
 }
 
 class FinalWalkthrough {
-  Checklist checklist;
-  List<String> selfHelpImgs;
-  bool contractChanges;
-  String changeOrderBy;
-  String changeOrdersSpecification;
-  List<String> changeOrderPics;
-  String notes;
-  int postBlowerDoor;
-  String postBlowerDoorPic;
-  String certificateOfInsulationPostedNearElectricalPanel;
-  bool leftConfirmation;
-  bool bathroomConfirmation;
-  List<String> qualityPics;
-  String customerReview;
-  String contactMethod;
-  String email;
-  String phoneNumber;
+  Checklist? checklist;
+  List<String>? selfHelpImgs;
+  bool? contractChanges;
+  String? changeOrderBy;
+  String? changeOrdersSpecification;
+  List<String>? changeOrderPics;
+  String? notes;
+  int? postBlowerDoor;
+  String? postBlowerDoorPic;
+  String? certificateOfInsulationPostedNearElectricalPanel;
+  bool? leftConfirmation;
+  bool? bathroomConfirmation;
+  List<String>? qualityPics;
+  String? customerReview;
+  String? contactMethod;
+  String? email;
+  String? phoneNumber;
 
   FinalWalkthrough({
-    required this.checklist,
-    required this.selfHelpImgs,
-    required this.contractChanges,
-    required this.changeOrderBy,
-    required this.changeOrdersSpecification,
-    required this.changeOrderPics,
-    required this.notes,
-    required this.postBlowerDoor,
-    required this.postBlowerDoorPic,
-    required this.certificateOfInsulationPostedNearElectricalPanel,
-    required this.leftConfirmation,
-    required this.bathroomConfirmation,
-    required this.qualityPics,
-    required this.customerReview,
-    required this.contactMethod,
-    required this.email,
-    required this.phoneNumber,
+    this.checklist,
+    this.selfHelpImgs,
+    this.contractChanges,
+    this.changeOrderBy,
+    this.changeOrdersSpecification,
+    this.changeOrderPics,
+    this.notes,
+    this.postBlowerDoor,
+    this.postBlowerDoorPic,
+    this.certificateOfInsulationPostedNearElectricalPanel,
+    this.leftConfirmation,
+    this.bathroomConfirmation,
+    this.qualityPics,
+    this.customerReview,
+    this.contactMethod,
+    this.email,
+    this.phoneNumber,
   });
 
   factory FinalWalkthrough.fromJson(Map<String, dynamic> json) =>
@@ -90,12 +90,12 @@ class FinalWalkthrough {
       );
 
   Map<String, dynamic> toJson() => {
-        "checklist": checklist.toJson(),
-        "selfHelpImgs": List<dynamic>.from(selfHelpImgs.map((x) => x)),
+        "checklist": checklist?.toJson(),
+        "selfHelpImgs": [],
         "contractChanges": contractChanges,
         "changeOrderBy": changeOrderBy,
         "changeOrdersSpecification": changeOrdersSpecification,
-        "changeOrderPics": List<dynamic>.from(changeOrderPics.map((x) => x)),
+        "changeOrderPics": [],
         "notes": notes,
         "postBlowerDoor": postBlowerDoor,
         "postBlowerDoorPic": postBlowerDoorPic,
@@ -103,7 +103,9 @@ class FinalWalkthrough {
             certificateOfInsulationPostedNearElectricalPanel,
         "leftConfirmation": leftConfirmation,
         "bathroomConfirmation": bathroomConfirmation,
-        "qualityPics": List<dynamic>.from(qualityPics.map((x) => x)),
+        "qualityPics": qualityPics == null
+            ? []
+            : List<dynamic>.from(qualityPics!.map((x) => x)),
         "customerReview": customerReview,
         "contactMethod": contactMethod,
         "email": email,

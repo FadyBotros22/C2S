@@ -17,7 +17,7 @@ class LinearProgress extends StatelessWidget {
           height: 18,
           child: LinearProgressIndicator(
             borderRadius: BorderRadius.circular(5),
-            value: linearProgressValue / 6.0, // Value for progress
+            value: linearProgressValue / 7.0, // Value for progress
             backgroundColor: color == null ? Color(0xffECECEC) : Colors.white,
             valueColor:
                 AlwaysStoppedAnimation<Color>(color ?? Color(0xff0066FF)),
@@ -26,8 +26,7 @@ class LinearProgress extends StatelessWidget {
         // Clip the text to match progress width
         LayoutBuilder(
           builder: (context, constraints) {
-            final width = constraints.maxWidth * linearProgressValue / 6;
-
+            final width = constraints.maxWidth * linearProgressValue / 7;
             return Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -38,7 +37,9 @@ class LinearProgress extends StatelessWidget {
                     child: Text(
                       color != null
                           ? '${(linearProgressValue / 6.0 * 100).toStringAsFixed(0)}%'
-                          : '${linearProgressValue.toInt()} of 6', // Display percentage
+                          : linearProgressValue < 7
+                              ? '${linearProgressValue.toInt()} of 6'
+                              : '6 of 6', // Display percentage
                       style: kProgressBarTextStyle,
                     ),
                   ),

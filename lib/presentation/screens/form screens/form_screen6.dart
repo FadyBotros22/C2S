@@ -1,3 +1,5 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
 import 'package:c2s/data/json_data/get_entry_response_data.dart';
@@ -14,6 +16,9 @@ import '../../widgets/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../injection_container.dart';
+import '../../../domain/blocs/form_bloc/form_bloc.dart';
+import '../../../domain/blocs/form_bloc/form_event.dart';
+import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
 
 class FormScreen6 extends StatefulWidget {
   const FormScreen6({super.key, required this.id});
@@ -24,107 +29,71 @@ class FormScreen6 extends StatefulWidget {
 }
 
 class _FormScreen6State extends State<FormScreen6> {
-  String? notes;
-  bool? isConfirmedNothingOnSite;
-  bool? isConfirmedBathroom;
-  List<String> miscPics = [];
-
   bool isEmptyIsConfirmedNothingOnSite = false;
   bool isEmptyIsConfirmedBathroom = false;
 
   bool isLoading = true;
   bool isImageLoading = false;
 
-  bool validate() {
-    if (isConfirmedNothingOnSite == null) {
-      setState(() {
-        isEmptyIsConfirmedNothingOnSite = true;
-      });
-      return false;
-    } else if (isConfirmedBathroom == null) {
-      setState(() {
-        isEmptyIsConfirmedBathroom = true;
-      });
-      return false;
-    } else if (isImageLoading) {
-      Snackbar().showSnackBar(context, "Image is uploading, please wait");
-      return false;
-    }
-    return true;
-  }
-
-  Future<bool> patchEntry() async {
-    final_walk.PatchFinalWalkthroughData patchFinalWalkthroughData =
-        final_walk.PatchFinalWalkthroughData(
-            finalWalkthrough: final_walk.FinalWalkthrough(
-      checklist: final_walk.Checklist(
-        airSealing: '',
-        zonalPressure: '',
-        accuVents: '',
-        finishedAttic: '',
-        certificateofInsulation: '',
-        generalQualityPictures: '',
-      ),
-      selfHelpImgs: ['https://www.google.co.uk/'],
-      contractChanges: false,
-      changeOrderBy: '',
-      changeOrdersSpecification: '',
-      changeOrderPics: ['https://www.google.co.uk/'],
-      notes: notes ?? '',
-      postBlowerDoor: 0,
-      postBlowerDoorPic: 'https://www.google.co.uk/',
-      certificateOfInsulationPostedNearElectricalPanel:
-          'certificateOfInsulationPostedNearElectricalPanel',
-      leftConfirmation: isConfirmedNothingOnSite!,
-      bathroomConfirmation: isConfirmedBathroom!,
-      qualityPics: miscPics,
-      customerReview: 'customerReview',
-      contactMethod: 'contactMethod',
-      email: 'email',
-      phoneNumber: 'phoneNumber',
-    ));
-    return await getIt<AbstractEntriesRepo>().patchEntry(
-        context,
-        getIt<Preferences>().getData('token').toString(),
-        widget.id,
-        patchFinalWalkthroughData.toJson());
-  }
-
-  Future<void> getEntry() async {
-    GetEntryResponseData getEntryResponseData =
-        await getIt<AbstractEntriesRepo>().getEntry(
-            context,
-            getIt<Preferences>().getData('token').toString(),
-            widget.id.toString());
-
-    setState(() {
-      notes = getEntryResponseData.data?.finalWalkthrough!.notes;
-      isConfirmedBathroom =
-          getEntryResponseData.data?.finalWalkthrough!.bathroomConfirmation;
-      isConfirmedNothingOnSite =
-          getEntryResponseData.data?.finalWalkthrough!.leftConfirmation;
-      miscPics = getEntryResponseData.data?.finalWalkthrough?.qualityPics ?? [];
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEntry();
-  }
-
-  Future<void> _loadEntry() async {
-    setState(() {
-      isLoading = true;
-    });
-    await getEntry();
-    setState(() {
-      isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
+        ..add(
+          LoadEntryEvent(
+            getIt<Preferences>().getData('token').toString(),
+            widget.id,
+          ),
+        ),
+      child: BlocConsumer<FormBloc, form_state.FormState>(
+        listener: (context, state) async {
+          if (state is form_state.FormError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is form_state.FormSubmitted) {
+            FocusScope.of(context).unfocus();
+            await Future.delayed(Duration(milliseconds: 500));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => CompleteForm()),
+              (route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is form_state.FormLoading) {
+            return Scaffold(
+                backgroundColor: Colors.white,
+                body: Center(child: CircularProgressIndicator()));
+          } else if (state is form_state.FormLoaded) {
+            return body(state.entryData, context);
+          }
+          return Scaffold(backgroundColor: Colors.white);
+        },
+      ),
+    );
+  }
+
+  Widget body(GetEntryResponseData? entryData, BuildContext oldContext) {
+    final data = entryData?.data?.finalWalkthrough;
+    bool validate() {
+      if (data?.leftConfirmation == null) {
+        setState(() {
+          isEmptyIsConfirmedNothingOnSite = true;
+        });
+        return false;
+      } else if (data?.bathroomConfirmation == null) {
+        setState(() {
+          isEmptyIsConfirmedBathroom = true;
+        });
+        return false;
+      } else if (isImageLoading) {
+        Snackbar().showSnackBar(context, "Image is uploading, please wait");
+        return false;
+      }
+      return true;
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, _) {
@@ -146,91 +115,90 @@ class _FormScreen6State extends State<FormScreen6> {
               TitleComponent(
                   screen: FormScreen5(id: widget.id),
                   title: 'Final Walkthrough',
-                  linearProgressValue: 6.0),
-              isLoading
-                  ? const Center(
-                      heightFactor: 15,
-                      child: CircularProgressIndicator(),
-                    )
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InputField(
-                              title:
-                                  'Final notes on job and anything the office may need to know',
-                              maxLines: 5,
-                              hintText: notes,
-                              onChanged: (value) {
-                                setState(() {
-                                  notes = value;
-                                });
-                              },
-                            ),
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyIsConfirmedNothingOnSite = false;
-                                  isConfirmedNothingOnSite = (value == "Yes");
-                                });
-                              },
-                              isRequired: isEmptyIsConfirmedNothingOnSite,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              title:
-                                  'I confirm nothing was left behind at customers house and all areas of home were checked *',
-                              activeChoice: isConfirmedNothingOnSite == null
-                                  ? 0
-                                  : isConfirmedNothingOnSite!
-                                      ? 1
-                                      : 2,
-                            ),
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyIsConfirmedBathroom = false;
-                                  isConfirmedBathroom = (value == "Yes");
-                                });
-                              },
-                              isRequired: isEmptyIsConfirmedBathroom,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              activeChoice: isConfirmedBathroom == null
-                                  ? 0
-                                  : isConfirmedBathroom!
-                                      ? 1
-                                      : 2,
-                              title:
-                                  'I confirm that the bathroom fan is in working order and checked before leaving job site *',
-                            ),
-                            ImageInputField(
-                              deleteImage: (index) {
-                                setState(() {
-                                  miscPics.removeAt(index);
-                                });
-                              },
-                              isRequired: false,
-                              label: 'Misc Quality Pictures',
-                              doesItExpand: true,
-                              url: miscPics,
-                              addImage: (url) {
-                                setState(() {
-                                  miscPics.add(url);
-                                });
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+                  linearProgressValue: 7.0),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InputField(
+                        title:
+                            'Final notes on job and anything the office may need to know',
+                        maxLines: 5,
+                        hintText: data?.notes,
+                        onChanged: (value) {
+                          setState(() {
+                            entryData?.data?.finalWalkthrough?.notes = value;
+                          });
+                        },
                       ),
-                    ),
+                      RadioButtons(
+                        chooseButton: (value) {
+                          setState(() {
+                            isEmptyIsConfirmedNothingOnSite = false;
+                            entryData?.data?.finalWalkthrough
+                                ?.leftConfirmation = (value == "Yes");
+                          });
+                        },
+                        isRequired: isEmptyIsConfirmedNothingOnSite,
+                        labels: ['Yes', 'No'],
+                        isColumn: false,
+                        isSquare: false,
+                        title:
+                            'I confirm nothing was left behind at customers house and all areas of home were checked *',
+                        activeChoice: data?.leftConfirmation == null
+                            ? 0
+                            : data!.leftConfirmation!
+                                ? 1
+                                : 2,
+                      ),
+                      RadioButtons(
+                        chooseButton: (value) {
+                          setState(() {
+                            isEmptyIsConfirmedBathroom = false;
+                            entryData?.data?.finalWalkthrough
+                                ?.bathroomConfirmation = (value == "Yes");
+                          });
+                        },
+                        isRequired: isEmptyIsConfirmedBathroom,
+                        labels: ['Yes', 'No'],
+                        isColumn: false,
+                        isSquare: false,
+                        activeChoice: data?.bathroomConfirmation == null
+                            ? 0
+                            : data!.bathroomConfirmation!
+                                ? 1
+                                : 2,
+                        title:
+                            'I confirm that the bathroom fan is in working order and checked before leaving job site *',
+                      ),
+                      ImageInputField(
+                        deleteImage: (index) {
+                          setState(() {
+                            entryData?.data?.finalWalkthrough?.qualityPics
+                                ?.removeAt(index);
+                          });
+                        },
+                        isRequired: false,
+                        label: 'Misc Quality Pictures',
+                        doesItExpand: true,
+                        url: data?.qualityPics,
+                        addImage: (url) {
+                          setState(() {
+                            entryData?.data?.finalWalkthrough?.qualityPics
+                                ?.add(url);
+                          });
+                        },
+                        isImageLoading: (bool isLoading) {
+                          setState(() {
+                            isImageLoading = isLoading;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.only(
                     left: 16, right: 16, bottom: 44, top: 30),
@@ -241,8 +209,19 @@ class _FormScreen6State extends State<FormScreen6> {
                     ActionButton(
                       label: 'Complete Checklist',
                       onPressed: () {
+                        final formBloc = oldContext.read<FormBloc>();
                         if (validate()) {
-                          _showSubmitConfirmationDialog(context);
+                          _showSubmitConfirmationDialog(
+                              final_walk.PatchFinalWalkthroughData(
+                                finalWalkthrough: final_walk.FinalWalkthrough(
+                                  notes: data?.notes,
+                                  leftConfirmation: data?.leftConfirmation,
+                                  bathroomConfirmation:
+                                      data?.bathroomConfirmation!,
+                                  qualityPics: data?.qualityPics ?? [],
+                                ),
+                              ),
+                              formBloc);
                         }
                       },
                     ),
@@ -256,11 +235,11 @@ class _FormScreen6State extends State<FormScreen6> {
     );
   }
 
-  Future<void> _showSubmitConfirmationDialog(BuildContext context) async {
+  Future<void> _showSubmitConfirmationDialog(
+      final_walk.PatchFinalWalkthroughData data, FormBloc formBloc) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible:
-          false, // Prevents closing the dialog by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           alignment: Alignment.center,
@@ -300,17 +279,14 @@ class _FormScreen6State extends State<FormScreen6> {
                           'Yes',
                           style: kMcqLabelTextStyle.copyWith(
                               color: Color(0xff007AFF), fontSize: 17),
-                        ), // Yes button
+                        ),
                         onPressed: () {
-                          // Add your submit logic here
-                          patchEntry();
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CompleteForm(),
-                            ),
-                            (route) => false,
-                          );
+                          Navigator.of(context).pop(); // Close the dialog
+                          formBloc.add(PatchEntryEvent(
+                              getIt<Preferences>().getData('token').toString(),
+                              widget.id,
+                              data.toJson(),
+                              'before'));
                         },
                       ),
                     ),
