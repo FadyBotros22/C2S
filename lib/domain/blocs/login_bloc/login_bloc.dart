@@ -9,9 +9,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc(this.repository) : super(InitialState()) {
     on<LoginButtonClicked>((event, emit) async {
       emit(Loading());
-      // String status = await repository.login(event.userName, event.pw);
-      String status = await repository.login('ismail', '12345678');
-
+      String status = await repository.login(event.userName, event.pw);
       if (status == 'true') {
         emit(CorrectPassword());
       } else if (status == 'false') {
