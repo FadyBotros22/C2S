@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../injection_container.dart';
 import '../../widgets/bottom_buttons.dart';
+import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
@@ -40,10 +41,7 @@ class _FormScreen5State extends State<FormScreen5> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is form_state.FormSubmitted) {
+          if (state is form_state.FormSubmitted) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
@@ -56,6 +54,14 @@ class _FormScreen5State extends State<FormScreen5> {
                       : HomePage()),
               (route) => false,
             );
+          } else if (state is form_state.NavigateBack) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen4(id: widget.id),
+              ),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
@@ -64,7 +70,9 @@ class _FormScreen5State extends State<FormScreen5> {
                 backgroundColor: Colors.white,
                 body: Center(child: CircularProgressIndicator()));
           } else if (state is form_state.FormLoaded) {
-            return body(state.entryData);
+            return body(context, state.entryData);
+          } else if (state is form_state.FormError) {
+            return body(context, state.entryData);
           }
           return Scaffold(backgroundColor: Colors.white);
         },
@@ -72,7 +80,16 @@ class _FormScreen5State extends State<FormScreen5> {
     );
   }
 
-  Widget body(GetEntryResponseData? entryData) {
+  Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    if (context.read<FormBloc>().state is form_state.FormError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          (context.read<FormBloc>().state as form_state.FormError).message,
+        );
+      });
+    }
+
     final data = entryData?.data?.wallInsulation;
 
     bool validate() {
@@ -104,9 +121,10 @@ class _FormScreen5State extends State<FormScreen5> {
           child: Column(
             children: [
               TitleComponent(
-                  screen: FormScreen4(id: widget.id),
-                  title: 'Wall Insulation',
-                  linearProgressValue: 5.0),
+                title: 'Wall Insulation',
+                linearProgressValue: 5.0,
+                formBloc: context.read<FormBloc>(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

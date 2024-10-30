@@ -13,7 +13,8 @@ class FormLoaded extends FormState {
 
 class FormError extends FormState {
   final String message;
-  FormError(this.message);
+  final GetEntryResponseData entryData;
+  FormError(this.message, this.entryData);
 }
 
 class FormSubmitted extends FormState {
@@ -21,3 +22,7 @@ class FormSubmitted extends FormState {
   final String screen;
   FormSubmitted({this.id, required this.screen});
 }
+
+class SubmitErrorState extends FormState {}
+
+class NavigateBack extends FormState {}

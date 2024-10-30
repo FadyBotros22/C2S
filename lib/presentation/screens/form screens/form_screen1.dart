@@ -1,3 +1,5 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+
 import '../../../data/json_data/post_entries_request_data.dart' as req;
 import '../../../data/json_data/patch data/patch_base_data.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
@@ -11,6 +13,7 @@ import '../../widgets/bottom_buttons.dart';
 import '../../widgets/date_input.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
+import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
 import '../home_page.dart';
 import 'form_screen2.dart';
@@ -38,6 +41,7 @@ class _FormScreen1State extends State<FormScreen1> {
 
   @override
   Widget build(BuildContext context) {
+    safePrint('Screen 1 : here');
     return BlocProvider(
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
@@ -48,10 +52,7 @@ class _FormScreen1State extends State<FormScreen1> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is form_state.FormSubmitted) {
+          if (state is form_state.FormSubmitted) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
@@ -64,6 +65,14 @@ class _FormScreen1State extends State<FormScreen1> {
                       : HomePage()),
               (route) => false,
             );
+          } else if (state is form_state.NavigateBack) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
@@ -72,6 +81,8 @@ class _FormScreen1State extends State<FormScreen1> {
                 backgroundColor: Colors.white,
                 body: Center(child: CircularProgressIndicator()));
           } else if (state is form_state.FormLoaded) {
+            return body(context, state.entryData);
+          } else if (state is form_state.FormError) {
             return body(context, state.entryData);
           }
 
@@ -82,6 +93,15 @@ class _FormScreen1State extends State<FormScreen1> {
   }
 
   Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    if (context.read<FormBloc>().state is form_state.FormError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          (context.read<FormBloc>().state as form_state.FormError).message,
+        );
+      });
+    }
+
     bool validate() {
       if (entryData?.data?.programType == null) {
         setState(() {
@@ -156,9 +176,10 @@ class _FormScreen1State extends State<FormScreen1> {
           child: Column(
             children: [
               TitleComponent(
-                  screen: HomePage(),
-                  title: 'Create new form',
-                  linearProgressValue: 1.0),
+                title: 'Create new form',
+                linearProgressValue: 1.0,
+                formBloc: context.read<FormBloc>(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

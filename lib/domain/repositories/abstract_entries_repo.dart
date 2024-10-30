@@ -7,7 +7,7 @@ abstract class AbstractEntriesRepo {
   Future<String> postEntry(
       String token, PostEntriesRequestData postEntriesRequestData);
 
-  Future<bool> patchEntry(
+  Future<void> patchEntry(
       String token, String id, Map<String, dynamic> patchData);
 
   Future<EntriesResponseData?> getEntries(String token);

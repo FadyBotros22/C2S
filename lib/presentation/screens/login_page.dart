@@ -1,3 +1,8 @@
+import 'package:c2s/domain/blocs/login_bloc/login_bloc.dart';
+import 'package:c2s/domain/blocs/login_bloc/login_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../domain/blocs/login_bloc/login_event.dart';
 import '../widgets/action_button.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/injection_container.dart';
@@ -18,32 +23,31 @@ class _LoginPageState extends State<LoginPage> {
   String errorMessage = '';
   bool isLoading = false;
 
-  void login() async {
-    setState(() {
-      isLoading = true;
-    });
-    String status = await getIt<AbstractAuthRepository>()
-        .login('ismail', '12345678', context);
-
-    if (status == 'true' && mounted) {
-      errorMessage = '';
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-        (route) => false,
-      );
-    } else if (status == "false") {
-      errorMessage = 'Username or password incorrect, Please try again';
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => LoginBloc(getIt<AbstractAuthRepository>()),
+      child: BlocConsumer<LoginBloc, LoginState>(
+        listener: (context, state) async {
+          if (state is LoginError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is CorrectPassword) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+              (route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          return body(context, state);
+        },
+      ),
+    );
+  }
+
+  Widget body(BuildContext context, LoginState state) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -77,11 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (errorMessage.isNotEmpty)
+                    if (state is WrongPassword)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: Text(
-                          errorMessage,
+                          state.message,
                           style: kErrorMessageTextStyle,
                         ),
                       ),
@@ -111,13 +115,20 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 45),
-                    ActionButton(onPressed: login, label: 'Login'),
+                    ActionButton(
+                        onPressed: () {
+                          context
+                              .read<LoginBloc>()
+                              .add(LoginButtonClicked(username, password));
+                        },
+                        label: 'Login'),
                   ],
                 ),
               ),
             ],
           ),
-          if (isLoading) const Center(child: CircularProgressIndicator()),
+          if (state is Loading)
+            const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

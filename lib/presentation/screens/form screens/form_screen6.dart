@@ -47,15 +47,20 @@ class _FormScreen6State extends State<FormScreen6> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is form_state.FormSubmitted) {
+          if (state is form_state.FormSubmitted) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => CompleteForm()),
+              (route) => false,
+            );
+          } else if (state is form_state.NavigateBack) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen5(id: widget.id),
+              ),
               (route) => false,
             );
           }
@@ -66,7 +71,11 @@ class _FormScreen6State extends State<FormScreen6> {
                 backgroundColor: Colors.white,
                 body: Center(child: CircularProgressIndicator()));
           } else if (state is form_state.FormLoaded) {
-            return body(state.entryData, context);
+            return body(context, state.entryData);
+          } else if (state is form_state.FormError) {
+            return body(context, state.entryData);
+          } else if (state is form_state.SubmitErrorState) {
+            Navigator.of(context).pop();
           }
           return Scaffold(backgroundColor: Colors.white);
         },
@@ -74,7 +83,16 @@ class _FormScreen6State extends State<FormScreen6> {
     );
   }
 
-  Widget body(GetEntryResponseData? entryData, BuildContext oldContext) {
+  Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    if (context.read<FormBloc>().state is form_state.FormError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          (context.read<FormBloc>().state as form_state.FormError).message,
+        );
+      });
+    }
+
     final data = entryData?.data?.finalWalkthrough;
     bool validate() {
       if (data?.leftConfirmation == null) {
@@ -113,9 +131,10 @@ class _FormScreen6State extends State<FormScreen6> {
           child: Column(
             children: [
               TitleComponent(
-                  screen: FormScreen5(id: widget.id),
-                  title: 'Final Walkthrough',
-                  linearProgressValue: 7.0),
+                title: 'Final Walkthrough',
+                linearProgressValue: 7.0,
+                formBloc: context.read<FormBloc>(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -209,7 +228,7 @@ class _FormScreen6State extends State<FormScreen6> {
                     ActionButton(
                       label: 'Complete Checklist',
                       onPressed: () {
-                        final formBloc = oldContext.read<FormBloc>();
+                        final formBloc = context.read<FormBloc>();
                         if (validate()) {
                           _showSubmitConfirmationDialog(
                               final_walk.PatchFinalWalkthroughData(

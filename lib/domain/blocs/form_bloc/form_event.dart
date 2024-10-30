@@ -23,3 +23,13 @@ class PatchEntryEvent extends FormEvent {
 
   PatchEntryEvent(this.token, this.id, this.data, this.screen);
 }
+
+class SubmitClicked extends FormEvent {
+  final String token;
+  final String id;
+  final Map<String, dynamic> data;
+  final String screen;
+  SubmitClicked(this.token, this.id, this.data, this.screen);
+}
+
+class BackButtonClicked extends FormEvent {}

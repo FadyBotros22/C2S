@@ -138,3 +138,11 @@ const kProgressBarTextStyle = TextStyle(
   height: 20 / 10,
   color: Colors.white,
 );
+
+const kEmptyListTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontWeight: FontWeight.w400,
+  fontSize: 20,
+  height: 25 / 20,
+  color: Colors.black,
+);

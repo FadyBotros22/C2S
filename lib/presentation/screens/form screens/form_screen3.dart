@@ -44,10 +44,7 @@ class _FormScreen3State extends State<FormScreen3> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is form_state.FormSubmitted) {
+          if (state is form_state.FormSubmitted) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
@@ -60,6 +57,14 @@ class _FormScreen3State extends State<FormScreen3> {
                       : HomePage()),
               (route) => false,
             );
+          } else if (state is form_state.NavigateBack) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen2(id: widget.id),
+              ),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
@@ -69,6 +74,8 @@ class _FormScreen3State extends State<FormScreen3> {
                 body: Center(child: CircularProgressIndicator()));
           } else if (state is form_state.FormLoaded) {
             return body(context, state.entryData);
+          } else if (state is form_state.FormError) {
+            return body(context, state.entryData);
           }
           return Scaffold(backgroundColor: Colors.white);
         },
@@ -77,6 +84,15 @@ class _FormScreen3State extends State<FormScreen3> {
   }
 
   Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    if (context.read<FormBloc>().state is form_state.FormError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          (context.read<FormBloc>().state as form_state.FormError).message,
+        );
+      });
+    }
+
     final data = entryData?.data?.airSealing;
     bool validate() {
       if (data?.onWorkOrder == null) {
@@ -116,9 +132,10 @@ class _FormScreen3State extends State<FormScreen3> {
           child: Column(
             children: [
               TitleComponent(
-                  screen: FormScreen2(id: widget.id),
-                  title: 'Air Sealing',
-                  linearProgressValue: 3.0),
+                title: 'Air Sealing',
+                linearProgressValue: 3.0,
+                formBloc: context.read<FormBloc>(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

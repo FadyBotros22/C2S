@@ -52,10 +52,7 @@ class _FormScreen2State extends State<FormScreen2> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is form_state.FormSubmitted) {
+          if (state is form_state.FormSubmitted) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
@@ -68,6 +65,14 @@ class _FormScreen2State extends State<FormScreen2> {
                       : HomePage()),
               (route) => false,
             );
+          } else if (state is form_state.NavigateBack) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen1(id: widget.id),
+              ),
+              (route) => false,
+            );
           }
         },
         builder: (context, state) {
@@ -76,6 +81,8 @@ class _FormScreen2State extends State<FormScreen2> {
                 backgroundColor: Colors.white,
                 body: Center(child: CircularProgressIndicator()));
           } else if (state is form_state.FormLoaded) {
+            return body(context, state.entryData);
+          } else if (state is form_state.FormError) {
             return body(context, state.entryData);
           }
 
@@ -86,8 +93,15 @@ class _FormScreen2State extends State<FormScreen2> {
   }
 
   Widget body(BuildContext context, GetEntryResponseData? entryData) {
+    if (context.read<FormBloc>().state is form_state.FormError) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          (context.read<FormBloc>().state as form_state.FormError).message,
+        );
+      });
+    }
     final data = entryData?.data?.initialWalkthrough;
-
     bool validate() {
       if (data?.checklist?.knobAndTube == null ||
           data?.checklist?.abestos == null ||
@@ -167,9 +181,10 @@ class _FormScreen2State extends State<FormScreen2> {
           child: Column(
             children: [
               TitleComponent(
-                  screen: FormScreen1(id: widget.id),
-                  title: 'Initial Walkthrough',
-                  linearProgressValue: 2.0),
+                title: 'Initial Walkthrough',
+                linearProgressValue: 2.0,
+                formBloc: context.read<FormBloc>(),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -388,7 +403,7 @@ class _FormScreen2State extends State<FormScreen2> {
                         unventedDryersImg: 'https://www.google.co.uk/',
                         moistureConcerns: data?.checklist?.moistureConcerns,
                         moistureConcernsImg: 'https://www.google.co.uk/'),
-                    blowerDoorStatus: data?.blowerDoorStatus,
+                    blowerDoorStatus: data?.blowerDoorStatus ?? false,
                     blowerStartingValue: data?.blowerStartingValue,
                     notes: data?.notes,
                     heatingSystemPic: data?.heatingSystemPic,

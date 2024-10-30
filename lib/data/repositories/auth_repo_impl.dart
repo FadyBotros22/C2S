@@ -2,9 +2,6 @@ import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/injection_container.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-
-import '../../presentation//widgets/snakbar.dart';
 import '../../statics/preferences.dart';
 import '../json_data/user_request_data.dart';
 
@@ -14,8 +11,7 @@ class AuthRepoImpl implements AbstractAuthRepository {
   AuthRepoImpl(this._apiService);
 
   @override
-  Future<String> login(
-      String userName, String password, BuildContext context) async {
+  Future<String> login(String userName, String password) async {
     try {
       UserRequestData user = UserRequestData(
           user: User(userName: userName, password: password),
@@ -28,23 +24,14 @@ class AuthRepoImpl implements AbstractAuthRepository {
     } on DioException catch (e) {
       if (e.type == DioExceptionType.badResponse) {
         return "false";
-      } else if (e.type == DioExceptionType.connectionError) {
-        Snackbar().showSnackBar(context, "Network error");
-      } else {
-        Snackbar().showSnackBar(context, "unknown error");
       }
       return "";
     }
   }
 
   @override
-  Future<void> logout(context) async {
-    try {
-      var token = getIt<Preferences>().getData('token').toString();
-      await _apiService.logout(token);
-    } catch (e) {
-      Snackbar().showSnackBar(
-          context, "Error occurred, try connecting to active Network");
-    }
+  Future<void> logout() async {
+    var token = getIt<Preferences>().getData('token').toString();
+    await _apiService.logout(token);
   }
 }

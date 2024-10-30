@@ -7,7 +7,7 @@ import 'amplifyconfiguration.dart';
 Future<String> uploadFile(File file) async {
   try {
     var key = DateTime.now().millisecondsSinceEpoch;
-    final result = await Amplify.Storage.uploadFile(
+    await Amplify.Storage.uploadFile(
       localFile: AWSFile.fromPath(file.path),
       path: StoragePath.fromString('public/$key.jpg'),
     ).result;
