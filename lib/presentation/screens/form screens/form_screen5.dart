@@ -1,4 +1,3 @@
-import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_wall_insulation_data.dart'
     as insulation;
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
-import '../home_page.dart';
 import 'form_screen4.dart';
 import 'form_screen6.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
@@ -41,59 +39,35 @@ class _FormScreen5State extends State<FormScreen5> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormSubmitted) {
+          if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (context) => state.screen == 'next'
-                      ? FormScreen6(
-                          id: widget.id,
-                        )
-                      : HomePage()),
-              (route) => false,
-            );
-          } else if (state is form_state.NavigateBack) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FormScreen4(id: widget.id),
-              ),
+              MaterialPageRoute(builder: (context) => state.screen),
               (route) => false,
             );
           }
         },
-        builder: (context, state) {
-          if (state is form_state.FormLoading) {
-            return Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()));
-          } else if (state is form_state.FormLoaded) {
-            return body(context, state.entryData);
-          } else if (state is form_state.FormError) {
-            return body(context, state.entryData);
-          }
-          return Scaffold(backgroundColor: Colors.white);
-        },
+        builder: body,
       ),
     );
   }
 
-  Widget body(BuildContext context, GetEntryResponseData? entryData) {
-    if (context.read<FormBloc>().state is form_state.FormError) {
+  Widget body(BuildContext context, state) {
+    if ((state as form_state.FormScreen).errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Snackbar().showSnackBar(
           context,
-          (context.read<FormBloc>().state as form_state.FormError).message,
+          state.errorMessage!,
         );
       });
     }
 
-    final data = entryData?.data?.wallInsulation;
+    final entryData = state.entryData?.data?.wallInsulation;
 
     bool validate() {
-      if (data?.onWorkOrder == null) {
+      if (entryData?.onWorkOrder == null) {
         setState(() {
           isEmptyOnWorkOrder = true;
         });
@@ -119,57 +93,61 @@ class _FormScreen5State extends State<FormScreen5> {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TitleComponent(
                 title: 'Wall Insulation',
                 linearProgressValue: 5.0,
-                formBloc: context.read<FormBloc>(),
+                screen: FormScreen4(id: widget.id),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RadioButtons(
-                        chooseButton: (value) {
-                          setState(() {
-                            isEmptyOnWorkOrder = false;
-                            entryData?.data?.wallInsulation?.onWorkOrder =
-                                (value == "Yes");
-                          });
-                        },
-                        isRequired: isEmptyOnWorkOrder,
-                        labels: ['Yes', 'No'],
-                        isColumn: false,
-                        isSquare: false,
-                        title: 'Wall insulation on work order *',
-                        activeChoice: data?.onWorkOrder == null
-                            ? 0
-                            : data!.onWorkOrder!
-                                ? 1
-                                : 2,
+              state.isLoading == true
+                  ? Center(child: CircularProgressIndicator())
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyOnWorkOrder = false;
+                                  context.read<FormBloc>().add(UpdateData(
+                                      wallOnWorkOrder: (value == "Yes")));
+                                });
+                              },
+                              isRequired: isEmptyOnWorkOrder,
+                              labels: ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title: 'Wall insulation on work order *',
+                              activeChoice: entryData?.onWorkOrder == null
+                                  ? 0
+                                  : entryData!.onWorkOrder!
+                                      ? 1
+                                      : 2,
+                            ),
+                            InputField(
+                              title: 'Inaccurate wall measurement notes',
+                              maxLines: 6,
+                              hintText: entryData?.notes,
+                              onChanged: (value) {
+                                context
+                                    .read<FormBloc>()
+                                    .add(UpdateData(atticNotes: value));
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      InputField(
-                        title: 'Inaccurate wall measurement notes',
-                        maxLines: 6,
-                        hintText: data?.notes,
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.wallInsulation?.notes = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
               BottomButtons(
+                nextScreen: FormScreen6(id: widget.id),
                 validate: validate,
                 id: widget.id,
                 patchData: insulation.PatchWallInsulationData(
                     wallInsulation: insulation.WallInsulation(
-                  onWorkOrder: data?.onWorkOrder,
-                  notes: data?.notes,
+                  onWorkOrder: entryData?.onWorkOrder,
+                  notes: entryData?.notes,
                 )).toJson(),
               ),
             ],

@@ -1,17 +1,13 @@
-abstract class LoginState {}
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class InitialState extends LoginState {}
+part 'login_state.freezed.dart';
 
-class Loading extends LoginState {}
-
-class LoginError extends LoginState {
-  final String message;
-  LoginError(this.message);
+@freezed
+class LoginState with _$LoginState {
+  const factory LoginState({
+    bool? isLoading,
+    bool? loginStatus,
+    String? loginErrorMessage,
+    String? wrongPwErrorMessage,
+  }) = _LoginState;
 }
-
-class WrongPassword extends LoginState {
-  final String message;
-  WrongPassword(this.message);
-}
-
-class CorrectPassword extends LoginState {}

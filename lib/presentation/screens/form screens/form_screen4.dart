@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../widgets/bottom_buttons.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
-import 'package:c2s/data/json_data/get_entry_response_data.dart';
 import 'package:c2s/data/json_data/patch%20data/patch_attic_insulation_data.dart'
     as attic;
-import '../home_page.dart';
 import 'form_screen3.dart';
 import 'form_screen5.dart';
 import 'package:flutter/material.dart';
@@ -44,60 +42,35 @@ class _FormScreen4State extends State<FormScreen4> {
           ),
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
-        listener: (context, state) async {
-          if (state is form_state.FormSubmitted) {
-            FocusScope.of(context).unfocus();
-            await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => state.screen == 'next'
-                      ? FormScreen5(
-                          id: widget.id,
-                        )
-                      : HomePage()),
-              (route) => false,
-            );
-          } else if (state is form_state.NavigateBack) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FormScreen3(id: widget.id),
-              ),
-              (route) => false,
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is form_state.FormLoading) {
-            return Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()));
-          } else if (state is form_state.FormLoaded) {
-            return body(context, state.entryData);
-          } else if (state is form_state.FormError) {
-            return body(context, state.entryData);
-          }
-          return Scaffold(backgroundColor: Colors.white);
-        },
-      ),
+          listener: (context, state) async {
+            if (state.onNavigate == true) {
+              FocusScope.of(context).unfocus();
+              await Future.delayed(Duration(milliseconds: 500));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => state.screen),
+                (route) => false,
+              );
+            }
+          },
+          builder: body),
     );
   }
 
-  Widget body(BuildContext context, GetEntryResponseData? entryData) {
-    if (context.read<FormBloc>().state is form_state.FormError) {
+  Widget body(BuildContext context, state) {
+    if ((state as form_state.FormScreen).errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Snackbar().showSnackBar(
           context,
-          (context.read<FormBloc>().state as form_state.FormError).message,
+          state.errorMessage!,
         );
       });
     }
 
-    final data = entryData?.data?.atticInsulation;
+    final entryData = state.entryData?.data?.atticInsulation;
 
     bool validate() {
-      if (data?.onWorkOrder == null) {
+      if (entryData?.onWorkOrder == null) {
         setState(() {
           isEmptyOnWorkOrder = true;
         });
@@ -126,96 +99,100 @@ class _FormScreen4State extends State<FormScreen4> {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TitleComponent(
                 title: 'Attic Insulation',
                 linearProgressValue: 4.0,
-                formBloc: context.read<FormBloc>(),
+                screen: FormScreen3(id: widget.id),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RadioButtons(
-                        chooseButton: (value) {
-                          setState(() {
-                            isEmptyOnWorkOrder = false;
-                            entryData?.data?.atticInsulation?.onWorkOrder =
-                                (value == "Yes");
-                          });
-                        },
-                        isRequired: isEmptyOnWorkOrder,
-                        labels: const ['Yes', 'No'],
-                        isColumn: false,
-                        isSquare: false,
-                        title: 'Attic insulation on work order *',
-                        activeChoice: data?.onWorkOrder == null
-                            ? 0
-                            : data!.onWorkOrder!
-                                ? 1
-                                : 2,
+              state.isLoading == true
+                  ? Center(child: CircularProgressIndicator())
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              chooseButton: (value) {
+                                setState(() {
+                                  isEmptyOnWorkOrder = false;
+                                  context.read<FormBloc>().add(UpdateData(
+                                      atticOnWorkOrder: (value == "Yes")));
+                                });
+                              },
+                              isRequired: isEmptyOnWorkOrder,
+                              labels: const ['Yes', 'No'],
+                              isColumn: false,
+                              isSquare: false,
+                              title: 'Attic insulation on work order *',
+                              activeChoice: entryData?.onWorkOrder == null
+                                  ? 0
+                                  : entryData!.onWorkOrder!
+                                      ? 1
+                                      : 2,
+                            ),
+                            InputField(
+                              title: 'Notes on inaccurate measurements',
+                              maxLines: 5,
+                              hintText: entryData?.inaccurateMeasurementsNotes,
+                              onChanged: (value) {
+                                context.read<FormBloc>().add(UpdateData(
+                                    inaccurateMeasurementsNotes: value));
+                              },
+                            ),
+                            InputField(
+                              title: 'Attic insulation notes',
+                              maxLines: 5,
+                              hintText: entryData?.notes,
+                              onChanged: (value) {
+                                context
+                                    .read<FormBloc>()
+                                    .add(UpdateData(airNotes: value));
+                              },
+                            ),
+                            ImageInputField(
+                              isRequired: false,
+                              label: 'Attic Insulation Quality - Misc Pictures',
+                              url: entryData?.atticInsulationPic,
+                              doesItExpand: true,
+                              addImage: (String url) {
+                                final atticPic = List<String>.from(
+                                    entryData?.atticInsulationPic ?? []);
+                                atticPic.add(url);
+                                context.read<FormBloc>().add(
+                                    UpdateData(atticInsulationPic: atticPic));
+                              },
+                              deleteImage: (index) {
+                                final atticPic = List<String>.from(
+                                    entryData?.atticInsulationPic ?? []);
+                                atticPic.removeAt(index);
+                                context.read<FormBloc>().add(
+                                    UpdateData(atticInsulationPic: atticPic));
+                              },
+                              isImageLoading: (bool isLoading) {
+                                setState(() {
+                                  isImageLoading = isLoading;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      InputField(
-                        title: 'Notes on inaccurate measurements',
-                        maxLines: 5,
-                        hintText: data?.inaccurateMeasurementsNotes,
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.atticInsulation
-                                ?.inaccurateMeasurementsNotes = value;
-                          });
-                        },
-                      ),
-                      InputField(
-                        title: 'Attic insulation notes',
-                        maxLines: 5,
-                        hintText: data?.notes,
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.atticInsulation?.notes = value;
-                          });
-                        },
-                      ),
-                      ImageInputField(
-                        isRequired: false,
-                        label: 'Attic Insulation Quality - Misc Pictures',
-                        url: data?.atticInsulationPic,
-                        doesItExpand: true,
-                        addImage: (String url) {
-                          setState(() {
-                            entryData?.data?.atticInsulation?.atticInsulationPic
-                                ?.add(url);
-                          });
-                        },
-                        deleteImage: (index) {
-                          setState(() {
-                            entryData?.data?.atticInsulation?.atticInsulationPic
-                                ?.removeAt(index);
-                          });
-                        },
-                        isImageLoading: (bool isLoading) {
-                          setState(() {
-                            isImageLoading = isLoading;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
               BottomButtons(
+                nextScreen: FormScreen5(id: widget.id),
                 validate: validate,
                 id: widget.id,
                 patchData: attic.PatchAtticInsulationData(
                   atticInsulation: attic.AtticInsulation(
-                    onWorkOrder: data?.onWorkOrder,
+                    onWorkOrder: entryData?.onWorkOrder,
                     inaccurateMeasurementsNotes:
-                        data?.inaccurateMeasurementsNotes,
-                    notes: data?.notes,
-                    atticInsulationPic: data?.atticInsulationPic != null &&
-                            data!.atticInsulationPic!.isNotEmpty
-                        ? data.atticInsulationPic
+                        entryData?.inaccurateMeasurementsNotes,
+                    notes: entryData?.notes,
+                    atticInsulationPic: entryData?.atticInsulationPic != null &&
+                            entryData!.atticInsulationPic!.isNotEmpty
+                        ? entryData.atticInsulationPic
                         : [],
                   ),
                 ).toJson(),

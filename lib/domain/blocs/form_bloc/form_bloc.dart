@@ -1,112 +1,145 @@
-import 'package:c2s/data/json_data/get_entry_response_data.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:c2s/data/json_data/get_entry_response_data/get_entry_response_data.dart';
+import 'package:c2s/data/json_data/post_entries_request_data.dart';
+import 'package:c2s/presentation/screens/form%20screens/form_screen2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repositories/abstract_entries_repo.dart';
 import 'form_event.dart';
-import 'form_state.dart';
+import 'form_state.dart' as custom_form_state;
 
-class FormBloc extends Bloc<FormEvent, FormState> {
+class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
   final AbstractEntriesRepo repository;
 
-  FormBloc(this.repository) : super(FormInitial()) {
-    GetEntryResponseData entryData = GetEntryResponseData(
-      data: Data(
-        id: null,
-        programType: null,
-        doeJob: null,
-        address: null,
-        city: null,
-        coordinates: null,
-        createdBy: '',
-        jobId: null,
-        progressStep: null,
-        date: null,
-      ),
-    );
+  FormBloc(this.repository) : super(custom_form_state.FormState.initial()) {
     // Handle LoadEntryEvent
     on<LoadEntryEvent>((event, emit) async {
-      emit(FormLoading());
+      emit((state as custom_form_state.FormScreen).copyWith(isLoading: true));
       if (event.id != 'empty') {
         try {
-          entryData = await repository.getEntry(event.token, event.id);
-          entryData.data?.date = entryData.data?.date
-              ?.substring(0, entryData.data?.date?.indexOf('T'));
-          emit(FormLoaded(entryData: entryData));
+          GetEntryResponseData entryData =
+              await repository.getEntry(event.token, event.id);
+          //TODO reformate the date
+          entryData = entryData.copyWith(
+              data: entryData.data?.copyWith(
+                  date: entryData.data?.date
+                      ?.substring(0, entryData.data?.date?.indexOf('T'))));
+          emit((state as custom_form_state.FormScreen)
+              .copyWith(entryData: entryData));
         } catch (e) {
-          emit(FormError(e.toString(), entryData));
+          emit((state as custom_form_state.FormScreen)
+              .copyWith(errorMessage: e.toString()));
           await Future.delayed(Duration(milliseconds: 500));
-          emit(FormLoaded(entryData: entryData));
+          emit((state as custom_form_state.FormScreen)
+              .copyWith(errorMessage: null));
         }
-      } else {
-        emit(FormLoaded(entryData: entryData));
       }
-    });
-
-    // Handle PostEntryEvent
-    on<PostEntryEvent>((event, emit) async {
-      emit(FormLoading());
-      try {
-        final id = await repository.postEntry(event.token, event.data);
-        emit(FormSubmitted(id: id, screen: event.screen));
-      } catch (_) {
-        emit(FormError(
-            'Internet Error, Connect to an active Network', entryData));
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(FormLoaded(entryData: entryData));
-      }
+      emit((state as custom_form_state.FormScreen).copyWith(isLoading: false));
     });
 
     // Handle PatchEntryEvent
     on<PatchEntryEvent>((event, emit) async {
-      emit(FormLoading());
+      emit((state as custom_form_state.FormScreen).copyWith(isLoading: true));
       try {
-        await repository.patchEntry(event.token, event.id, event.data);
-        emit(FormSubmitted(screen: event.screen));
+        if (event.id != null) {
+          await repository.patchEntry(event.token, event.id!, event.data);
+          emit((state as custom_form_state.FormScreen)
+              .copyWith(onNavigate: true, screen: event.screen));
+        } else {
+          final id = await repository.postEntry(
+              event.token, PostEntriesRequestData.fromJson(event.data));
+          emit((state as custom_form_state.FormScreen).copyWith(
+              onNavigate: true,
+              screen:
+                  event.screen is Text ? FormScreen2(id: id) : event.screen));
+        }
       } catch (e) {
-        emit(FormError(
-            'Internet Error, Connect to an active Network', entryData));
+        emit((state as custom_form_state.FormScreen).copyWith(
+            errorMessage: 'Internet Error, Connect to an active Network'));
         await Future.delayed(Duration(milliseconds: 500));
-        emit(FormLoaded(entryData: entryData));
+        emit((state as custom_form_state.FormScreen)
+            .copyWith(errorMessage: null, isLoading: false));
       }
     });
 
-    on<SubmitClicked>((event, emit) async {
-      try {
-        await repository.patchEntry(event.token, event.id, event.data);
-        emit(FormSubmitted(screen: event.screen));
-      } catch (e) {
-        emit(SubmitErrorState());
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(FormError(
-            'Internet Error, Connect to an active Network', entryData));
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(FormLoaded(entryData: entryData));
-      }
+    on<UpdateData>((event, emit) async {
+      final entryData = (state as custom_form_state.FormScreen).entryData;
+      GetEntryResponseData? newEntryData = entryData?.copyWith(
+        data: entryData.data?.copyWith(
+          date: event.date ?? entryData.data?.date,
+          address: event.address ?? entryData.data?.address,
+          city: event.city ?? entryData.data?.city,
+          doeJob: event.doeJob ?? entryData.data?.doeJob,
+          programType: event.programType ?? entryData.data?.programType,
+          jobId: event.jobId ?? entryData.data?.jobId,
+          createdBy: event.createdBy ?? entryData.data?.createdBy,
+          initialWalkthrough:
+              (entryData.data?.initialWalkthrough ?? InitialWalkthrough())
+                  .copyWith(
+            checklist: (entryData.data?.initialWalkthrough?.checklist ??
+                    InitialWalkthroughChecklist())
+                .copyWith(
+              knobAndTube: event.knobAndTube ??
+                  entryData.data?.initialWalkthrough?.checklist?.knobAndTube,
+              abestos: event.abestos ??
+                  entryData.data?.initialWalkthrough?.checklist?.abestos,
+              moistureConcerns: event.moistureConcerns ??
+                  entryData
+                      .data?.initialWalkthrough?.checklist?.moistureConcerns,
+              titlesOnSite: event.titlesOnSite ??
+                  entryData.data?.initialWalkthrough?.checklist?.titlesOnSite,
+              unventedDryers: event.unventedDryers ??
+                  entryData.data?.initialWalkthrough?.checklist?.unventedDryers,
+            ),
+            blowerDoorStatus: event.blowerDoorStatus ??
+                entryData.data?.initialWalkthrough?.blowerDoorStatus,
+            blowerStartingValue: event.blowerStartingValue ??
+                entryData.data?.initialWalkthrough?.blowerStartingValue,
+            notes:
+                event.initialNotes ?? entryData.data?.initialWalkthrough?.notes,
+            heatingSystemPic: event.heatingSystemPic ??
+                entryData.data?.initialWalkthrough?.heatingSystemPic,
+            waterHeaterPic: event.waterHeaterPic ??
+                entryData.data?.initialWalkthrough?.waterHeaterPic,
+            concernsPic: event.concernsPic ??
+                entryData.data?.initialWalkthrough?.concernsPic,
+          ),
+          airSealing: (entryData.data?.airSealing ?? AirSealing()).copyWith(
+            notes: event.airNotes ?? entryData.data?.airSealing?.notes,
+            onWorkOrder:
+                event.airOnWorkOrder ?? entryData.data?.airSealing?.onWorkOrder,
+            sealingQualityPic: event.sealingQualityPic ??
+                entryData.data?.airSealing?.sealingQualityPic,
+          ),
+          atticInsulation:
+              (entryData.data?.atticInsulation ?? AtticInsulation()).copyWith(
+            notes: event.atticNotes ?? entryData.data?.atticInsulation?.notes,
+            onWorkOrder: event.atticOnWorkOrder ??
+                entryData.data?.atticInsulation?.onWorkOrder,
+            inaccurateMeasurementsNotes: event.inaccurateMeasurementsNotes ??
+                entryData.data?.atticInsulation?.inaccurateMeasurementsNotes,
+            atticInsulationPic: event.atticInsulationPic ??
+                entryData.data?.atticInsulation?.atticInsulationPic,
+          ),
+          wallInsulation:
+              (entryData.data?.wallInsulation ?? WallInsulation()).copyWith(
+            notes: event.wallNotes ?? entryData.data?.wallInsulation?.notes,
+            onWorkOrder: event.wallOnWorkOrder ??
+                entryData.data?.wallInsulation?.onWorkOrder,
+          ),
+          finalWalkthrough:
+              (entryData.data?.finalWalkthrough ?? FinalWalkthrough()).copyWith(
+            notes: event.finalNotes ?? entryData.data?.finalWalkthrough?.notes,
+            bathroomConfirmation: event.bathroomConfirmation ??
+                entryData.data?.finalWalkthrough?.bathroomConfirmation,
+            leftConfirmation: event.leftConfirmation ??
+                entryData.data?.finalWalkthrough?.leftConfirmation,
+            qualityPics: event.qualityPics ??
+                entryData.data?.finalWalkthrough?.qualityPics,
+          ),
+        ),
+      );
+      emit((state as custom_form_state.FormScreen)
+          .copyWith(entryData: newEntryData));
     });
-    on<BackButtonClicked>((event, emit) async {
-      var connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult.first == ConnectivityResult.mobile ||
-          connectivityResult.first == ConnectivityResult.wifi) {
-        emit(NavigateBack());
-      } else {
-        emit(FormError(
-            'Internet Error, Connect to an active Network', entryData));
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(FormLoaded(entryData: entryData));
-      }
-    });
-  }
-
-  @override
-  void onChange(Change<FormState> change) {
-    super.onChange(change);
-    print(change);
-  }
-
-  @override
-  void onError(Object error, StackTrace stackTrace) {
-    super.onError(error, stackTrace);
-    print(
-        '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$error');
   }
 }

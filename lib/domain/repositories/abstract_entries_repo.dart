@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import '../../data/json_data/entries_response_data.dart';
-import '../../data/json_data/get_entry_response_data.dart';
+import '../../data/json_data/get_entry_response_data/get_entry_response_data.dart';
 import '../../data/json_data/post_entries_request_data.dart';
 
 abstract class AbstractEntriesRepo {

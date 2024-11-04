@@ -29,10 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       create: (context) => LoginBloc(getIt<AbstractAuthRepository>()),
       child: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) async {
-          if (state is LoginError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is CorrectPassword) {
+          if (state.loginStatus == true) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
@@ -40,14 +37,19 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
         },
-        builder: (context, state) {
-          return body(context, state);
-        },
+        builder: body,
       ),
     );
   }
 
-  Widget body(BuildContext context, LoginState state) {
+  Widget body(BuildContext context, state) {
+    if ((state as LoginState).loginErrorMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(state.loginErrorMessage!)));
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -81,11 +83,11 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (state is WrongPassword)
+                    if (state.wrongPwErrorMessage != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: Text(
-                          state.message,
+                          state.wrongPwErrorMessage!,
                           style: kErrorMessageTextStyle,
                         ),
                       ),
@@ -127,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-          if (state is Loading)
+          if (state.isLoading == true)
             const Center(child: CircularProgressIndicator()),
         ],
       ),

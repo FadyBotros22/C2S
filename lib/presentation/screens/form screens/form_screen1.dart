@@ -6,7 +6,6 @@ import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
 import '../../../injection_container.dart';
 import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
-import '../../../data/json_data/get_entry_response_data.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../statics/preferences.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -16,9 +15,15 @@ import '../../widgets/radio_buttons.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
 import '../home_page.dart';
-import 'form_screen2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+Map<String, String> programTypeMap = {
+  'CLEAResult': 'clearesult',
+  'RISE': 'rise',
+  'Self Help': 'self_help',
+  'Citizens for Citizens (CFC)': 'cfc',
+};
 
 class FormScreen1 extends StatefulWidget {
   const FormScreen1({super.key, this.id});
@@ -52,55 +57,31 @@ class _FormScreen1State extends State<FormScreen1> {
         ),
       child: BlocConsumer<FormBloc, form_state.FormState>(
         listener: (context, state) async {
-          if (state is form_state.FormSubmitted) {
+          if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (context) => state.screen == 'next'
-                      ? FormScreen2(
-                          id: widget.id ?? state.id.toString(),
-                        )
-                      : HomePage()),
-              (route) => false,
-            );
-          } else if (state is form_state.NavigateBack) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
+              MaterialPageRoute(builder: (context) => state.screen),
               (route) => false,
             );
           }
         },
-        builder: (context, state) {
-          if (state is form_state.FormLoading) {
-            return Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()));
-          } else if (state is form_state.FormLoaded) {
-            return body(context, state.entryData);
-          } else if (state is form_state.FormError) {
-            return body(context, state.entryData);
-          }
-
-          return Scaffold(backgroundColor: Colors.white);
-        },
+        builder: body,
       ),
     );
   }
 
-  Widget body(BuildContext context, GetEntryResponseData? entryData) {
-    if (context.read<FormBloc>().state is form_state.FormError) {
+  Widget body(BuildContext context, state) {
+    if ((state as form_state.FormScreen).errorMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Snackbar().showSnackBar(
           context,
-          (context.read<FormBloc>().state as form_state.FormError).message,
+          state.errorMessage!,
         );
       });
     }
+    final entryData = state.entryData;
 
     bool validate() {
       if (entryData?.data?.programType == null) {
@@ -174,140 +155,146 @@ class _FormScreen1State extends State<FormScreen1> {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TitleComponent(
                 title: 'Create new form',
                 linearProgressValue: 1.0,
-                formBloc: context.read<FormBloc>(),
+                screen: HomePage(),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RadioButtons(
-                        isRequired: isEmptyProg,
-                        chooseButton: (value) {
-                          setState(() {
-                            if (value == 'CLEAResult') {
-                              entryData?.data?.programType = 'clearesult';
-                            } else if (value == 'RISE') {
-                              entryData?.data?.programType = 'rise';
-                            } else if (value == 'Self Help') {
-                              entryData?.data?.programType = 'self_help';
-                            } else {
-                              entryData?.data?.programType = 'cfc';
-                            }
-                            if (entryData?.data?.programType != null) {
-                              isEmptyProg = false;
-                            }
-                          });
-                        },
-                        title:
-                            'What Program are you filling out a job checklist for?',
-                        labels: const [
-                          "CLEAResult",
-                          "RISE",
-                          "Self Help",
-                          "Citizens for Citizens (CFC)"
-                        ],
-                        isColumn: true,
-                        isSquare: false,
-                        activeChoice: getActiveChoiceForProgramType(),
-                      ),
-                      const Divider(
-                        color: Color(0xffDCDCDC),
-                      ),
-                      SizedBox(height: 8),
-                      if (entryData?.data?.programType == 'self_help') ...[
-                        RadioButtons(
-                          isRequired: isEmptyDoe,
-                          chooseButton: (value) {
-                            setState(() {
-                              if (value == "Yes") {
-                                entryData?.data?.doeJob = true;
-                              } else if (value == 'No') {
-                                entryData?.data?.doeJob = false;
-                              }
-                              if (entryData?.data?.doeJob != null) {
-                                isEmptyDoe = false;
-                              }
-                            });
-                          },
-                          title: 'DOE Job? *',
-                          labels: const ['Yes', 'No'],
-                          isColumn: false,
-                          isSquare: false,
-                          activeChoice: (entryData == null ||
-                                  entryData.data == null ||
-                                  entryData.data?.doeJob == null)
-                              ? 0
-                              : entryData.data!.doeJob!
-                                  ? 1
-                                  : 2,
+              state.isLoading == true
+                  ? Center(child: CircularProgressIndicator())
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RadioButtons(
+                              isRequired: isEmptyProg,
+                              chooseButton: (value) {
+                                //TODO
+                                context.read<FormBloc>().add(UpdateData(
+                                    programType: programTypeMap[value]));
+                                if (entryData?.data?.programType != null) {
+                                  setState(() {
+                                    isEmptyProg = false;
+                                  });
+                                }
+                              },
+                              title:
+                                  'What Program are you filling out a job checklist for?',
+                              labels: const [
+                                "CLEAResult",
+                                "RISE",
+                                "Self Help",
+                                "Citizens for Citizens (CFC)"
+                              ],
+                              isColumn: true,
+                              isSquare: false,
+                              activeChoice: getActiveChoiceForProgramType(),
+                            ),
+                            const Divider(
+                              color: Color(0xffDCDCDC),
+                            ),
+                            SizedBox(height: 8),
+                            if (entryData?.data?.programType ==
+                                'self_help') ...[
+                              RadioButtons(
+                                isRequired: isEmptyDoe,
+                                chooseButton: (value) {
+                                  context.read<FormBloc>().add(
+                                      UpdateData(doeJob: (value == 'Yes')));
+                                  if (entryData?.data?.doeJob != null) {
+                                    setState(() {
+                                      isEmptyDoe = false;
+                                    });
+                                  }
+                                },
+                                title: 'DOE Job? *',
+                                labels: const ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                activeChoice: (entryData == null ||
+                                        entryData.data == null ||
+                                        entryData.data?.doeJob == null)
+                                    ? 0
+                                    : entryData.data!.doeJob!
+                                        ? 1
+                                        : 2,
+                              ),
+                              SizedBox(height: 8),
+                            ],
+                            SizedBox(height: 8),
+                            InputField(
+                              color: isEmptyCrew ? Colors.red : null,
+                              title: 'Crew Chief Submitting Form *',
+                              hintText: crew,
+                              onChanged: (value) {
+                                setState(() {
+                                  crew = value;
+                                  isEmptyCrew = false;
+                                });
+                              },
+                            ),
+                            DateInput(
+                              onChanged: (value) {
+                                setState(() {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(date: value));
+                                  isEmptyDate = false;
+                                });
+                              },
+                              color: isEmptyDate ? Colors.red : null,
+                              hintText: entryData?.data?.date,
+                            ),
+                            InputField(
+                              title: 'Address line 1 *',
+                              color: isEmptyAdd ? Colors.red : null,
+                              hintText: entryData?.data?.address ?? '',
+                              onChanged: (value) {
+                                setState(() {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(address: value));
+                                  isEmptyAdd = false;
+                                });
+                              },
+                            ),
+                            InputField(
+                              title: 'City *',
+                              color: isEmptyCity ? Colors.red : null,
+                              hintText: entryData?.data?.city ?? '',
+                              onChanged: (value) {
+                                setState(() {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(city: value));
+                                  isEmptyCity = false;
+                                });
+                              },
+                            ),
+                            if (widget.id == null)
+                              InputField(
+                                title: 'Job ID *',
+                                color: isEmptyJobId ? Colors.red : null,
+                                onChanged: (value) {
+                                  setState(
+                                    () {
+                                      context
+                                          .read<FormBloc>()
+                                          .add(UpdateData(jobId: value));
+                                      isEmptyJobId = false;
+                                    },
+                                  );
+                                },
+                              ),
+                          ],
                         ),
-                        SizedBox(height: 8),
-                      ],
-                      SizedBox(height: 8),
-                      InputField(
-                        color: isEmptyCrew ? Colors.red : null,
-                        title: 'Crew Chief Submitting Form *',
-                        hintText: crew,
-                        onChanged: (value) {
-                          setState(() {
-                            crew = value;
-                            isEmptyCrew = false;
-                          });
-                        },
                       ),
-                      DateInput(
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.date = value;
-                            isEmptyDate = false;
-                          });
-                        },
-                        color: isEmptyDate ? Colors.red : null,
-                        hintText: entryData?.data?.date,
-                      ),
-                      InputField(
-                        title: 'Address line 1 *',
-                        color: isEmptyAdd ? Colors.red : null,
-                        hintText: entryData?.data?.address ?? '',
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.address = value;
-                            isEmptyAdd = false;
-                          });
-                        },
-                      ),
-                      InputField(
-                        title: 'City *',
-                        color: isEmptyCity ? Colors.red : null,
-                        hintText: entryData?.data?.city ?? '',
-                        onChanged: (value) {
-                          setState(() {
-                            entryData?.data?.city = value;
-                            isEmptyCity = false;
-                          });
-                        },
-                      ),
-                      if (widget.id == null)
-                        InputField(
-                          title: 'Job ID *',
-                          color: isEmptyJobId ? Colors.red : null,
-                          onChanged: (value) {
-                            setState(() {
-                              entryData?.data?.jobId = value;
-                              isEmptyJobId = false;
-                            });
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
               BottomButtons(
+                nextScreen: Text(''),
                 validate: validate,
                 id: widget.id,
                 patchData: PatchBaseData(
@@ -320,13 +307,14 @@ class _FormScreen1State extends State<FormScreen1> {
                   ),
                 ).toJson(),
                 postEntriesRequestData: req.PostEntriesRequestData(
-                    programType: entryData?.data?.programType,
-                    doeJob: entryData?.data?.doeJob,
-                    date: entryData?.data?.date,
-                    address: entryData?.data?.address,
-                    city: entryData?.data?.city,
-                    coordinates: req.Coordinates(latitude: 0, longitude: 0),
-                    jobId: entryData?.data?.jobId),
+                        programType: entryData?.data?.programType,
+                        doeJob: entryData?.data?.doeJob,
+                        date: entryData?.data?.date,
+                        address: entryData?.data?.address,
+                        city: entryData?.data?.city,
+                        coordinates: req.Coordinates(latitude: 0, longitude: 0),
+                        jobId: entryData?.data?.jobId)
+                    .toJson(),
               ),
             ],
           ),

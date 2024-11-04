@@ -6,17 +6,27 @@ import 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AbstractAuthRepository repository;
 
-  LoginBloc(this.repository) : super(InitialState()) {
+  LoginBloc(this.repository) : super(LoginState()) {
     on<LoginButtonClicked>((event, emit) async {
-      emit(Loading());
-      String status = await repository.login(event.userName, event.pw);
+      emit(state.copyWith(isLoading: true));
+      // String status = await repository.login(event.userName, event.pw);
+      String status = await repository.login('ismail', '12345678');
+
       if (status == 'true') {
-        emit(CorrectPassword());
+        emit(state.copyWith(
+          loginStatus: true,
+          wrongPwErrorMessage: null,
+        ));
       } else if (status == 'false') {
-        emit(WrongPassword('Username or password incorrect, Please try again'));
+        emit(state.copyWith(
+            wrongPwErrorMessage:
+                'Username or password incorrect, Please try again'));
       } else {
-        emit(LoginError('Internet Error, Connect to an active Network'));
+        emit(state.copyWith(
+            loginErrorMessage: 'Internet Error, Connect to an active Network'));
       }
+      await Future.delayed(Duration(milliseconds: 500));
+      emit(state.copyWith(loginErrorMessage: null, isLoading: false));
     });
   }
   @override

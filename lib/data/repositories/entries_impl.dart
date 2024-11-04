@@ -2,7 +2,7 @@ import 'package:c2s/data/json_data/post_entries_request_data.dart';
 import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
 import '../json_data/entries_response_data.dart';
-import '../json_data/get_entry_response_data.dart';
+import '../json_data/get_entry_response_data/get_entry_response_data.dart';
 import '../json_data/post_entries_response_data.dart';
 
 class EntriesRepoImpl implements AbstractEntriesRepo {

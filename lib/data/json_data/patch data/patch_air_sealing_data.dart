@@ -48,8 +48,9 @@ class AirSealing {
         "onWorkOrder": onWorkOrder,
         "checklist": checklist?.toJson(),
         "notes": notes,
-        "sealingQualityPic":
-            List<dynamic>.from(sealingQualityPic!.map((x) => x)),
+        "sealingQualityPic": sealingQualityPic != null
+            ? List<dynamic>.from(sealingQualityPic!.map((x) => x))
+            : [],
       };
 }
 

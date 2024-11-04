@@ -1,28 +1,35 @@
-import '../../../data/json_data/get_entry_response_data.dart';
+import 'package:c2s/presentation/screens/home_page.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../data/json_data/get_entry_response_data/get_entry_response_data.dart';
 
-abstract class FormState {}
+part 'form_state.freezed.dart';
 
-class FormInitial extends FormState {}
+@freezed
+abstract class FormState with _$FormState {
+  const factory FormState(
+      {GetEntryResponseData? entryData,
+      bool? isLoading,
+      String? errorMessage,
+      String? isSubmitError,
+      ActiveForm? activeForm,
+      String? id,
+      bool? onNavigate,
+      required Widget screen}) = FormScreen;
 
-class FormLoading extends FormState {}
-
-class FormLoaded extends FormState {
-  final GetEntryResponseData? entryData;
-  FormLoaded({this.entryData});
+  factory FormState.initial() => FormState(
+      isLoading: false,
+      entryData: GetEntryResponseData(
+          meta: Meta(),
+          data: Data(
+            initialWalkthrough:
+                InitialWalkthrough(checklist: InitialWalkthroughChecklist()),
+            finalWalkthrough: FinalWalkthrough(),
+            wallInsulation: WallInsulation(),
+            atticInsulation: AtticInsulation(),
+            coordinates: Coordinates(),
+          )),
+      screen: HomePage());
 }
 
-class FormError extends FormState {
-  final String message;
-  final GetEntryResponseData entryData;
-  FormError(this.message, this.entryData);
-}
-
-class FormSubmitted extends FormState {
-  final String? id;
-  final String screen;
-  FormSubmitted({this.id, required this.screen});
-}
-
-class SubmitErrorState extends FormState {}
-
-class NavigateBack extends FormState {}
+enum ActiveForm { form1, form2, form3, form4, form5, form6 }
