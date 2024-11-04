@@ -2,44 +2,41 @@ import 'package:flutter/cupertino.dart';
 
 import '../../../data/json_data/entries_response_data.dart';
 
-abstract class HomeState {}
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class InitialState extends HomeState {}
+part 'home_state.freezed.dart';
 
-class LoadingState extends HomeState {}
-
-class LoadingErrorState extends HomeState {
-  final String message;
-  LoadingErrorState(this.message);
+@freezed
+class HomeState with _$HomeState {
+  const factory HomeState({
+    bool? isLoading,
+    String? loadingErrMessage,
+    EntriesResponseData? entriesResponse,
+    bool? isEmpty,
+    bool? isLogout,
+  }) = _HomeState;
 }
 
-class LoadedState extends HomeState {
-  EntriesResponseData entriesResponse;
-  LoadedState(this.entriesResponse);
-}
+// class LogoutState extends HomeState {} // implement in the page
 
-class EmptyState extends HomeState {}
+// class SortState extends HomeState {  // implement in the bloc
+//   EntriesResponseData entriesResponse;
+//   SortState(this.entriesResponse);
+// }
 
-class LogoutState extends HomeState {}
+// class NewEntryState extends HomeState {} // implement in the page
 
-class SortState extends HomeState {
-  EntriesResponseData entriesResponse;
-  SortState(this.entriesResponse);
-}
+// class EditEntryState extends HomeState { // implement in the page
+//   String entryId;
+//   Widget screen;
+//   EditEntryState(this.entryId, this.screen);
+// }
 
-class NewEntryState extends HomeState {}
+// class ErrorState extends HomeState { // implement in bloc
+//   String message;
+//   EntriesResponseData entriesResponse;
+//
+//   ErrorState(this.message, this.entriesResponse);
+// }
 
-class EditEntryState extends HomeState {
-  String entryId;
-  Widget screen;
-  EditEntryState(this.entryId, this.screen);
-}
-
-class ErrorState extends HomeState {
-  String message;
-  EntriesResponseData entriesResponse;
-
-  ErrorState(this.message, this.entriesResponse);
-}
-
-class LogoutErrorState extends HomeState {}
+// class LogoutErrorState extends HomeState {} // implement in bloc

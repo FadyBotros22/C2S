@@ -1,15 +1,7 @@
 import 'package:c2s/data/json_data/entries_response_data.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
-import 'package:c2s/presentation/screens/form%20screens/form_screen2.dart';
-import 'package:c2s/presentation/screens/form%20screens/form_screen3.dart';
-import 'package:c2s/presentation/screens/form%20screens/form_screen4.dart';
-import 'package:c2s/presentation/screens/form%20screens/form_screen5.dart';
-import 'package:c2s/presentation/screens/form%20screens/form_screen6.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -17,79 +9,48 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final AbstractEntriesRepo entryRepository;
   final AbstractAuthRepository authRepository;
 
-  HomeBloc(this.entryRepository, this.authRepository) : super(InitialState()) {
-    EntriesResponseData? entriesResponse;
+  HomeBloc(this.entryRepository, this.authRepository) : super(HomeState()) {
     on<LoadEntries>((event, emit) async {
-      emit(LoadingState());
-      while (true) {
-        try {
-          entriesResponse = await entryRepository.getEntries(event.token);
-          if (entriesResponse == null ||
-              entriesResponse!.data.entries.isEmpty) {
-            emit(EmptyState());
-          } else {
-            emit(LoadedState(entriesResponse!));
-          }
-          break;
-        } catch (e) {
-          emit(LoadingErrorState(
-              'Network error, Try connecting to an active Network'));
+      emit(state.copyWith(isLoading: true));
+      try {
+        EntriesResponseData? entriesResponse =
+            await entryRepository.getEntries(event.token);
+        if (entriesResponse == null || entriesResponse.data.entries.isEmpty) {
+          emit(state.copyWith(isEmpty: true));
+        } else {
+          emit(
+              state.copyWith(entriesResponse: entriesResponse, isEmpty: false));
         }
-        await Future.delayed(Duration(seconds: 5));
+      } catch (e) {
+        emit(state.copyWith(
+            loadingErrMessage:
+                'Network error, Try connecting to an active Network',
+            isEmpty: true));
       }
+      emit(state.copyWith(isLoading: false));
     });
+
     on<LogoutClicked>((event, emit) async {
-      if (await checkNetwork()) {
+      try {
         await authRepository.logout();
-        emit(LogoutState());
-      } else {
-        emit(LogoutErrorState());
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(ErrorState('Network error, Try connecting to an active Network',
-            entriesResponse!));
+        emit(state.copyWith(isLogout: true));
+      } catch (e) {
+        emit(state.copyWith(
+            loadingErrMessage:
+                'Network error, Try connecting to an active Network'));
+        Future.delayed(Duration(milliseconds: 500));
+        emit(state.copyWith(loadingErrMessage: null));
       }
     });
 
     on<SortClicked>((event, emit) async {
-      EntriesResponseData? sortedEntries = entriesResponse;
+      EntriesResponseData? sortedEntries = state.entriesResponse;
       sortedEntries?.data.entries.sort((a, b) =>
           DateTime.parse(a.date.toString())
               .compareTo(DateTime.parse(b.date.toString())));
-      emit(SortState(sortedEntries!));
+      emit(state.copyWith(entriesResponse: sortedEntries, isLoading: true));
+      emit(state.copyWith(isLoading: false));
     });
-
-    on<CreateNewEntry>((event, emit) async {
-      if (await checkNetwork()) {
-        emit(NewEntryState());
-      } else {
-        emit(ErrorState('Network error, Try connecting to an active Network',
-            entriesResponse!));
-      }
-    });
-
-    on<EditExistingEntry>((event, emit) async {
-      if (await checkNetwork()) {
-        Widget screen = FormScreen2(id: event.entryId);
-        if (event.progressValue == 2) screen = FormScreen3(id: event.entryId);
-        if (event.progressValue == 3) screen = FormScreen4(id: event.entryId);
-        if (event.progressValue == 4) screen = FormScreen5(id: event.entryId);
-        if (event.progressValue == 5) screen = FormScreen6(id: event.entryId);
-        emit(EditEntryState(event.entryId, screen));
-      } else {
-        emit(ErrorState('Network error, Try connecting to an active Network',
-            entriesResponse!));
-      }
-    });
-  }
-
-  Future<bool> checkNetwork() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult.first == ConnectivityResult.mobile ||
-        connectivityResult.first == ConnectivityResult.wifi) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override

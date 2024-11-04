@@ -22,7 +22,9 @@ class _PopupMenuState extends State<PopupMenu> {
       iconSize: 35,
       onSelected: (String value) {
         if (value == 'sort') {
-          widget.homeBloc.add(SortClicked());
+          setState(() {
+            widget.homeBloc.add(SortClicked());
+          });
         } else if (value == 'logout') {
           showDialog(
             context: context,
@@ -59,8 +61,9 @@ class _PopupMenuState extends State<PopupMenu> {
                         children: [
                           Expanded(
                             child: TextButton(
-                              onPressed: () =>
-                                  widget.homeBloc.add(LogoutClicked()),
+                              onPressed: () {
+                                widget.homeBloc.add(LogoutClicked());
+                              },
                               child: Text(
                                 'Yes',
                                 style: kMcqLabelTextStyle.copyWith(

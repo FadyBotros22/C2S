@@ -1,15 +1,23 @@
-import 'package:c2s/domain/blocs/home_bloc/home_bloc.dart';
-import 'package:c2s/domain/blocs/home_bloc/home_event.dart';
+import 'package:c2s/presentation/screens/form%20screens/form_screen1.dart';
+import 'package:c2s/presentation/widgets/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants.dart';
 
 class EmptyList extends StatelessWidget {
-  const EmptyList({super.key, required this.homeBloc});
-  final HomeBloc homeBloc;
+  const EmptyList({super.key, this.errorMess});
+  final String? errorMess;
 
   @override
   Widget build(BuildContext context) {
+    if (errorMess != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Snackbar().showSnackBar(
+          context,
+          errorMess!,
+        );
+      });
+    }
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +47,12 @@ class EmptyList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () => homeBloc.add(CreateNewEntry()),
+                        onPressed: () => Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FormScreen1()),
+                          (route) => false,
+                        ),
                         child: SvgPicture.asset(
                           'assets/icons/ic_create_form.svg',
                           width: 30,

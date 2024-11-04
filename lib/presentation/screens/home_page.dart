@@ -18,6 +18,12 @@ import 'package:c2s/constants.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
+import 'form screens/form_screen2.dart';
+import 'form screens/form_screen3.dart';
+import 'form screens/form_screen4.dart';
+import 'form screens/form_screen5.dart';
+import 'form screens/form_screen6.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -36,16 +42,7 @@ class _HomePageState extends State<HomePage> {
         ),
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) async {
-          if (state is LoadingErrorState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is EditEntryState) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => state.screen),
-              (route) => false,
-            );
-          } else if (state is LogoutState) {
+          if (state.isLogout == true) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
@@ -54,44 +51,23 @@ class _HomePageState extends State<HomePage> {
           }
         },
         builder: (context, state) {
-          if (state is LoadingState) {
-            return Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()));
-          } else if (state is EmptyState) {
-            final homeBloc = context.read<HomeBloc>();
-            return EmptyList(homeBloc: homeBloc);
-          } else if (state is LoadedState) {
-            return body(context, state, state.entriesResponse);
-          } else if (state is SortState) {
-            return body(context, state, state.entriesResponse);
-          } else if (state is NewEntryState) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => FormScreen1()),
-                (route) => false,
-              );
-            });
-          } else if (state is ErrorState) {
-            return body(context, state, state.entriesResponse);
-          } else if (state is LogoutErrorState) {
-            Navigator.of(context).pop();
+          if (state.isEmpty == true) {
+            print(
+                '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            return EmptyList(errorMess: state.loadingErrMessage);
           }
-          return Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(child: CircularProgressIndicator()));
+          return body(context, state);
         },
       ),
     );
   }
 
-  Widget body(BuildContext oldContext, state, entriesResponse) {
-    if (state is ErrorState) {
+  Widget body(BuildContext oldContext, state) {
+    if ((state as HomeState).loadingErrMessage != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Snackbar().showSnackBar(
           context,
-          state.message,
+          state.loadingErrMessage!,
         );
       });
     }
@@ -112,122 +88,162 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top: 18),
-              itemCount: entriesResponse!.data.entries.length,
-              itemBuilder: (context, index) {
-                final project = entriesResponse!.data.entries[index];
-                return Card(
-                  shadowColor: Colors.transparent,
-                  color: const Color(0xFFF5F5F5),
-                  margin:
-                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 14, left: 12, right: 12),
+          state.isLoading == true
+              ? Expanded(child: Center(child: CircularProgressIndicator()))
+              : Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(top: 18),
+                    itemCount: state.entriesResponse?.data.entries.length,
+                    itemBuilder: (context, index) {
+                      final project =
+                          state.entriesResponse?.data.entries[index];
+                      return Card(
+                        shadowColor: Colors.transparent,
+                        color: const Color(0xFFF5F5F5),
+                        margin: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text("Created By",
-                                    style: kCreatedByTextStyle),
-                                Text(
-                                  DateFormat('d MMMM, yyyy')
-                                      .format(project.date),
-                                  style: kDateTextStyle,
-                                ),
-                              ],
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: 14, left: 12, right: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text("Created By",
+                                          style: kCreatedByTextStyle),
+                                      Text(
+                                        DateFormat('d MMMM, yyyy')
+                                            .format(project!.date),
+                                        style: kDateTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 15.0),
+                                  Text(
+                                    project.createdBy,
+                                    style: kNameTextStyle,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Text(
+                                    project.jobId,
+                                    style: kProjectNameTextStyle,
+                                  ),
+                                  const SizedBox(height: 15.0),
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/path929.svg',
+                                        height: 16.35,
+                                        width: 12,
+                                      ),
+                                      const SizedBox(width: 9),
+                                      Text(
+                                        project.address ?? "None",
+                                        style: kProjectNameTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 15),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 15.0),
-                            Text(
-                              project.createdBy,
-                              style: kNameTextStyle,
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              project.jobId,
-                              style: kProjectNameTextStyle,
-                            ),
-                            const SizedBox(height: 15.0),
-                            Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/path929.svg',
-                                  height: 16.35,
-                                  width: 12,
-                                ),
-                                const SizedBox(width: 9),
-                                Text(
-                                  project.address ?? "None",
-                                  style: kProjectNameTextStyle,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 15),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Divider(
+                                    color: Color(0xffDFDFDF),
+                                    height: 0,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                          width: 290,
+                                          child: LinearProgress(
+                                            linearProgressValue:
+                                                project.progressStep.toDouble(),
+                                            color: Color(0xff34C759),
+                                          )),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          var progressValue =
+                                              project.progressStep.toInt();
+                                          Widget screen =
+                                              FormScreen2(id: project.id);
+                                          if (progressValue == 2) {
+                                            screen =
+                                                FormScreen3(id: project.id);
+                                          }
+                                          if (progressValue == 3) {
+                                            screen =
+                                                FormScreen4(id: project.id);
+                                          }
+                                          if (progressValue == 4) {
+                                            screen =
+                                                FormScreen5(id: project.id);
+                                          }
+                                          if (progressValue == 5) {
+                                            screen =
+                                                FormScreen6(id: project.id);
+                                          }
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => screen,
+                                            ),
+                                            (route) => false,
+                                          );
+                                        },
+                                        style: const ButtonStyle(
+                                          overlayColor: WidgetStatePropertyAll(
+                                              Colors.transparent),
+                                          elevation: WidgetStatePropertyAll(0),
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                  Color(0xffF5F5F5)),
+                                          padding: WidgetStatePropertyAll(
+                                              EdgeInsets.zero),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/icons/ic_view_form.svg',
+                                          width: 28,
+                                          height: 28,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Divider(
-                              color: Color(0xffDFDFDF),
-                              height: 0,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                    width: 290,
-                                    child: LinearProgress(
-                                      linearProgressValue:
-                                          project.progressStep.toDouble(),
-                                      color: Color(0xff34C759),
-                                    )),
-                                ElevatedButton(
-                                  onPressed: () => oldContext
-                                      .read<HomeBloc>()
-                                      .add(EditExistingEntry(project.id,
-                                          project.progressStep.toInt())),
-                                  style: const ButtonStyle(
-                                    overlayColor: WidgetStatePropertyAll(
-                                        Colors.transparent),
-                                    elevation: WidgetStatePropertyAll(0),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Color(0xffF5F5F5)),
-                                    padding:
-                                        WidgetStatePropertyAll(EdgeInsets.zero),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/ic_view_form.svg',
-                                    width: 28,
-                                    height: 28,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                ),
         ],
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 15, bottom: 34),
         child: FloatingActionButton(
-          onPressed: () => oldContext.read<HomeBloc>().add(CreateNewEntry()),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen1(),
+              ),
+              (route) => false,
+            );
+          },
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: SvgPicture.asset(
