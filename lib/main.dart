@@ -1,4 +1,6 @@
+import 'package:c2s/presentation/screens/home_page.dart';
 import 'package:c2s/presentation/screens/login_page.dart';
+import 'package:c2s/statics/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -26,7 +28,10 @@ Future<void> main() async {
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Colors.black), // Recommended for better color handling
       ),
-      home: LoginPage(),
+      home: getIt<Preferences>().getData('token') == null ||
+              getIt<Preferences>().getData('token') == ''
+          ? LoginPage()
+          : HomePage(),
     ),
   );
 }

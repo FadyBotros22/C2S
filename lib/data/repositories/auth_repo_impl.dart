@@ -18,8 +18,7 @@ class AuthRepoImpl implements AbstractAuthRepository {
   Future<String> login(String userName, String password) async {
     try {
       UserRequestData user = UserRequestData(
-          user: User(userName: 'ismail', password: '12345678'),
-          // user: User(userName: userName, password: password),
+          user: User(userName: userName, password: password),
           device: Device(deviceId: "deviceId", os: "IOS"));
 
       final fetchedUser = await _apiService.login(user);
@@ -37,6 +36,7 @@ class AuthRepoImpl implements AbstractAuthRepository {
   @override
   Future<void> logout() async {
     var token = getIt<Preferences>().getData('token').toString();
+    getIt<Preferences>().saveData('token', '');
     await _apiService.logout(token);
   }
 }
