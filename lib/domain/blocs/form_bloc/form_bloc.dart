@@ -1,4 +1,5 @@
 import 'package:c2s/presentation/screens/form%20screens/form_screen2.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
@@ -59,8 +60,25 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
                   event.screen is Text ? FormScreen2(id: id) : event.screen));
         }
       } catch (e) {
-        emit((state as custom_form_state.FormScreen).copyWith(
-            errorMessage: 'Internet Error, Connect to an active Network'));
+        if (e is DioException) {
+          final responseData = e.response?.data;
+
+          // Check if the structure matches the expected format
+          if (responseData is Map<String, dynamic> &&
+              responseData.containsKey('meta') &&
+              responseData['meta'] is Map<String, dynamic> &&
+              responseData['meta'].containsKey('message')) {
+            final errorMessage = responseData['meta']['message'];
+            emit((state as custom_form_state.FormScreen)
+                .copyWith(errorMessage: '$errorMessage'));
+          } else {
+            emit((state as custom_form_state.FormScreen)
+                .copyWith(errorMessage: 'unknown error'));
+          }
+        } else {
+          emit((state as custom_form_state.FormScreen).copyWith(
+              errorMessage: 'Internet Error, Connect to an active Network'));
+        }
         await Future.delayed(Duration(milliseconds: 500));
         emit((state as custom_form_state.FormScreen)
             .copyWith(errorMessage: null, isLoading: false));

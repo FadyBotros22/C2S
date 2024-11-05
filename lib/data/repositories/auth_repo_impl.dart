@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/injection_container.dart';

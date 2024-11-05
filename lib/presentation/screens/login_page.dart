@@ -117,10 +117,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 45),
                     ActionButton(
-                        onPressed: () {
-                          context
-                              .read<LoginBloc>()
-                              .add(LoginButtonClicked(username, password));
+                        onPressed: () async {
+                          FocusScope.of(context).unfocus();
+                          await Future.delayed(Duration(milliseconds: 500));
+                          if (context.mounted) {
+                            context
+                                .read<LoginBloc>()
+                                .add(LoginButtonClicked(username, password));
+                          }
                         },
                         label: 'Login'),
                   ],

@@ -29,9 +29,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(state.copyWith(loginErrorMessage: null, isLoading: false));
     });
   }
-  @override
-  void onChange(Change<LoginState> change) {
-    super.onChange(change);
-    print(change);
-  }
 }

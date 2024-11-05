@@ -48,7 +48,6 @@ class _FormScreen1State extends State<FormScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    safePrint('Screen 1 : here');
     return BlocProvider(
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
