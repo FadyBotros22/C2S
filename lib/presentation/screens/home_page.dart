@@ -52,8 +52,6 @@ class _HomePageState extends State<HomePage> {
         },
         builder: (context, state) {
           if (state.isEmpty == true) {
-            print(
-                '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             return EmptyList(errorMess: state.loadingErrMessage);
           }
           return body(context, state);

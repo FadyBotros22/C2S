@@ -1,8 +1,8 @@
-import 'package:c2s/data/json_data/patch%20data/patch_wall_insulation_data.dart'
-    as insulation;
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/get_entry_models/wall_insulation/wall_insulation.dart';
+import '../../../data/models/patch_models/patch_wall_insulation/patch_wall_insulation.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../injection_container.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -42,11 +42,13 @@ class _FormScreen5State extends State<FormScreen5> {
           if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => state.screen),
-              (route) => false,
-            );
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => state.screen),
+                (route) => false,
+              );
+            }
           }
         },
         builder: body,
@@ -144,8 +146,8 @@ class _FormScreen5State extends State<FormScreen5> {
                 nextScreen: FormScreen6(id: widget.id),
                 validate: validate,
                 id: widget.id,
-                patchData: insulation.PatchWallInsulationData(
-                    wallInsulation: insulation.WallInsulation(
+                patchData: PatchWallInsulationData(
+                    wallInsulation: WallInsulation(
                   onWorkOrder: entryData?.onWorkOrder,
                   notes: entryData?.notes,
                 )).toJson(),

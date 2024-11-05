@@ -12,6 +12,7 @@ final getIt = GetIt.instance;
 
 Future<void> setup() async {
   final dio = DioClass();
+  dio.dio.options.headers['Content-Type'] = 'application/json';
   getIt.registerSingleton<DioClass>(dio);
 
   getIt.registerSingleton<ApiService>(ApiService(getIt<DioClass>().getDio()));

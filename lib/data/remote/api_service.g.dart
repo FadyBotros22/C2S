@@ -6,7 +6,7 @@ part of 'api_service.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _ApiService implements ApiService {
   _ApiService(
@@ -27,13 +27,14 @@ class _ApiService implements ApiService {
   Future<UserResponseData> login(UserRequestData user) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(user.toJson());
+    final _headers = <String, dynamic>{r'Content-Type': 'application/json'};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = user;
     final _options = _setStreamType<UserResponseData>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
+      contentType: 'application/json',
     )
         .compose(
           _dio.options,
@@ -58,13 +59,13 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<LogoutResonseData> logout(String token) async {
+  Future<LogoutResponseData> logout(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<LogoutResonseData>(Options(
+    final _options = _setStreamType<LogoutResponseData>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -81,9 +82,9 @@ class _ApiService implements ApiService {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LogoutResonseData _value;
+    late LogoutResponseData _value;
     try {
-      _value = LogoutResonseData.fromJson(_result.data!);
+      _value = LogoutResponseData.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -165,14 +166,14 @@ class _ApiService implements ApiService {
   @override
   Future<PostEntriesResponseData> postEntry(
     String token,
-    PostEntriesRequestData postEntriesRequestData,
+    Map<String, dynamic> postEntriesRequestData,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(postEntriesRequestData.toJson());
+    _data.addAll(postEntriesRequestData);
     final _options = _setStreamType<PostEntriesResponseData>(Options(
       method: 'POST',
       headers: _headers,

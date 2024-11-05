@@ -1,8 +1,8 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:c2s/presentation/widgets/pic_input_button.dart';
 import 'image_display.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/constants.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'image_upload.dart';
@@ -36,14 +36,16 @@ class ImageInputField extends StatefulWidget {
 
 class _ImageInputFieldState extends State<ImageInputField> {
   final ImagePicker _picker = ImagePicker();
+  List<bool> areLoading = [];
 
   bool loading = false;
 
-  Future<void> _pickImage() async {
+  Future<void> pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
     widget.isImageLoading(true);
     setState(() {
+      areLoading.add(true);
       loading = true;
     });
 
@@ -82,38 +84,16 @@ class _ImageInputFieldState extends State<ImageInputField> {
     }
 
     setState(() {
+      areLoading.removeLast();
       loading = false;
     });
-    widget.isImageLoading(false);
-  }
-
-  void deleteUrl(index) {
-    widget.deleteImage(index);
+    if (areLoading.isEmpty) {
+      widget.isImageLoading(false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget picInput = TextButton(
-      style: const ButtonStyle(
-        padding: WidgetStatePropertyAll(
-          EdgeInsets.only(left: 0, top: 10),
-        ),
-        overlayColor: WidgetStateColor.transparent,
-      ),
-      onPressed: _pickImage,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SvgPicture.asset('assets/icons/Group_53.svg', height: 66, width: 66),
-          const SizedBox(width: 10),
-          const Text(
-            'Choose File',
-            style: kParagraphTextStyle,
-          ),
-        ],
-      ),
-    );
-
     return Column(
       children: [
         Container(
@@ -150,43 +130,53 @@ class _ImageInputFieldState extends State<ImageInputField> {
                     child: Row(
                       children: [
                         if (widget.url != null)
-                          ...widget.url!.asMap().entries.map((url) {
-                            return ImageDisplay(
-                              url: url.value,
-                              deleteImage: () {
-                                deleteUrl(url.key);
-                              },
-                            );
-                          }),
-                        if (loading == true)
-                          const Padding(
+                          ...widget.url!.asMap().entries.map(
+                            (url) {
+                              return ImageDisplay(
+                                url: url.value,
+                                deleteImage: () {
+                                  widget.deleteImage(url.key);
+                                  setState(() {
+                                    areLoading.removeAt(url.key);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ...areLoading.asMap().entries.map((isTrue) {
+                          return const Padding(
                             padding:
                                 EdgeInsets.only(top: 10, left: 10, right: 40),
                             child: CircularProgressIndicator(),
-                          ),
-                        picInput
+                          );
+                        }),
+                        PicInputButton(
+                          onPickImage: () {
+                            pickImage();
+                          },
+                        ),
                       ],
                     ),
                   ),
                 if (!widget.doesItExpand)
-                  widget.url!.isEmpty
-                      ? loading
-                          ? Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 20, left: 10),
-                                  child: CircularProgressIndicator(),
-                                ),
-                                SizedBox(height: 20),
-                              ],
-                            )
-                          : picInput
-                      : ImageDisplay(
+                  widget.url!.isNotEmpty
+                      ? ImageDisplay(
                           url: widget.url![0],
                           deleteImage: () {
-                            deleteUrl(0);
+                            widget.deleteImage(0);
                           },
-                        ),
+                        )
+                      : loading
+                          ? const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20, bottom: 20, left: 10, right: 40),
+                              child: CircularProgressIndicator(),
+                            )
+                          : PicInputButton(
+                              onPickImage: () {
+                                pickImage();
+                              },
+                            ),
                 if (widget.isRequired)
                   Column(
                     children: [

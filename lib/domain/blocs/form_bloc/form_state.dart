@@ -1,7 +1,16 @@
 import 'package:c2s/presentation/screens/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../../data/json_data/get_entry_response_data/get_entry_response_data.dart';
+
+import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
+import '../../../data/models/coordinates/coordinates.dart';
+import '../../../data/models/get_entry_models/final_walkthrough/final_walkthrough.dart';
+import '../../../data/models/get_entry_models/get_entry_data/get_entry_data.dart';
+import '../../../data/models/get_entry_models/get_entry_response_data/get_entry_response_data.dart';
+import '../../../data/models/get_entry_models/initial_walkthrough/initial_walkthrough.dart';
+import '../../../data/models/get_entry_models/initial_walkthrough_checklist/initial_walkthrough_checklist.dart';
+import '../../../data/models/meta/meta.dart';
+import '../../../data/models/get_entry_models/wall_insulation/wall_insulation.dart';
 
 part 'form_state.freezed.dart';
 
@@ -27,7 +36,7 @@ abstract class FormState with _$FormState {
             finalWalkthrough: FinalWalkthrough(),
             wallInsulation: WallInsulation(),
             atticInsulation: AtticInsulation(),
-            coordinates: Coordinates(),
+            coordinates: Coordinates(latitude: 0, longitude: 0),
           )),
       screen: HomePage());
 }

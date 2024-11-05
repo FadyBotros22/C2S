@@ -1,9 +1,8 @@
-import 'package:c2s/data/json_data/post_entries_request_data.dart';
 import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_entries_repo.dart';
-import '../json_data/entries_response_data.dart';
-import '../json_data/get_entry_response_data/get_entry_response_data.dart';
-import '../json_data/post_entries_response_data.dart';
+import 'package:c2s/data/models/get_all_entries_models/get_entries_response_data/get_entries_response_data.dart';
+import 'package:c2s/data/models/post_entries_models/post_entries_response_data/post_entries_response_data.dart';
+import '../models/get_entry_models/get_entry_response_data/get_entry_response_data.dart';
 
 class EntriesRepoImpl implements AbstractEntriesRepo {
   final ApiService _apiService;
@@ -32,7 +31,7 @@ class EntriesRepoImpl implements AbstractEntriesRepo {
 
   @override
   Future<String> postEntry(
-      String token, PostEntriesRequestData postEntriesRequestData) async {
+      String token, Map<String, dynamic> postEntriesRequestData) async {
     PostEntriesResponseData postEntriesResponseData;
     postEntriesResponseData =
         await _apiService.postEntry(token, postEntriesRequestData);

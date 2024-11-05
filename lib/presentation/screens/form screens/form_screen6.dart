@@ -1,9 +1,9 @@
 import 'package:c2s/presentation/screens/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/get_entry_models/final_walkthrough/final_walkthrough.dart';
+import '../../../data/models/patch_models/patch_final_walkthrough/patch_final_walkthrough.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
-import 'package:c2s/data/json_data/patch%20data/patch_final_walkthrough_data.dart'
-    as final_walk;
 import '../complete_form.dart';
 import 'form_screen5.dart';
 import 'package:flutter/material.dart';
@@ -49,11 +49,13 @@ class _FormScreen6State extends State<FormScreen6> {
           if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => CompleteForm()),
-              (route) => false,
-            );
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => CompleteForm()),
+                (route) => false,
+              );
+            }
           }
         },
         builder: body,
@@ -221,8 +223,8 @@ class _FormScreen6State extends State<FormScreen6> {
                         final formBloc = context.read<FormBloc>();
                         if (validate()) {
                           _showSubmitConfirmationDialog(
-                              final_walk.PatchFinalWalkthroughData(
-                                finalWalkthrough: final_walk.FinalWalkthrough(
+                              PatchFinalWalkthroughData(
+                                finalWalkthrough: FinalWalkthrough(
                                   notes: entryData?.notes,
                                   leftConfirmation: entryData?.leftConfirmation,
                                   bathroomConfirmation:
@@ -245,7 +247,7 @@ class _FormScreen6State extends State<FormScreen6> {
   }
 
   Future<void> _showSubmitConfirmationDialog(
-      final_walk.PatchFinalWalkthroughData data, FormBloc formBloc) async {
+      PatchFinalWalkthroughData data, FormBloc formBloc) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,

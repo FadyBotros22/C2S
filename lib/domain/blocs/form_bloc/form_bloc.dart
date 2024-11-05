@@ -1,8 +1,13 @@
-import 'package:c2s/data/json_data/get_entry_response_data/get_entry_response_data.dart';
-import 'package:c2s/data/json_data/post_entries_request_data.dart';
 import 'package:c2s/presentation/screens/form%20screens/form_screen2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
+import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
+import '../../../data/models/get_entry_models/final_walkthrough/final_walkthrough.dart';
+import '../../../data/models/get_entry_models/get_entry_response_data/get_entry_response_data.dart';
+import '../../../data/models/get_entry_models/initial_walkthrough/initial_walkthrough.dart';
+import '../../../data/models/get_entry_models/initial_walkthrough_checklist/initial_walkthrough_checklist.dart';
+import '../../../data/models/get_entry_models/wall_insulation/wall_insulation.dart';
 import '../../repositories/abstract_entries_repo.dart';
 import 'form_event.dart';
 import 'form_state.dart' as custom_form_state;
@@ -18,7 +23,6 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
         try {
           GetEntryResponseData entryData =
               await repository.getEntry(event.token, event.id);
-          //TODO reformate the date
           entryData = entryData.copyWith(
               data: entryData.data?.copyWith(
                   date: entryData.data?.date
@@ -42,11 +46,13 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
       try {
         if (event.id != null) {
           await repository.patchEntry(event.token, event.id!, event.data);
-          emit((state as custom_form_state.FormScreen)
-              .copyWith(onNavigate: true, screen: event.screen));
+          emit((state as custom_form_state.FormScreen).copyWith(
+              onNavigate: true,
+              screen: event.screen is Text
+                  ? FormScreen2(id: event.id!)
+                  : event.screen));
         } else {
-          final id = await repository.postEntry(
-              event.token, PostEntriesRequestData.fromJson(event.data));
+          final id = await repository.postEntry(event.token, event.data);
           emit((state as custom_form_state.FormScreen).copyWith(
               onNavigate: true,
               screen:
@@ -62,7 +68,7 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
     });
 
     on<UpdateData>((event, emit) async {
-      final entryData = (state as custom_form_state.FormScreen).entryData;
+      final entryData = state.entryData;
       GetEntryResponseData? newEntryData = entryData?.copyWith(
         data: entryData.data?.copyWith(
           date: event.date ?? entryData.data?.date,
@@ -96,10 +102,14 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
                 entryData.data?.initialWalkthrough?.blowerStartingValue,
             notes:
                 event.initialNotes ?? entryData.data?.initialWalkthrough?.notes,
-            heatingSystemPic: event.heatingSystemPic ??
-                entryData.data?.initialWalkthrough?.heatingSystemPic,
-            waterHeaterPic: event.waterHeaterPic ??
-                entryData.data?.initialWalkthrough?.waterHeaterPic,
+            heatingSystemPic: event.heatingSystemPic == ''
+                ? null
+                : event.heatingSystemPic ??
+                    entryData.data?.initialWalkthrough?.heatingSystemPic,
+            waterHeaterPic: event.waterHeaterPic == ''
+                ? null
+                : event.waterHeaterPic ??
+                    entryData.data?.initialWalkthrough?.waterHeaterPic,
             concernsPic: event.concernsPic ??
                 entryData.data?.initialWalkthrough?.concernsPic,
           ),
@@ -138,8 +148,7 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
           ),
         ),
       );
-      emit((state as custom_form_state.FormScreen)
-          .copyWith(entryData: newEntryData));
+      emit(state.copyWith(entryData: newEntryData));
     });
   }
 }

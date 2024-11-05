@@ -1,4 +1,7 @@
+import 'package:c2s/data/models/get_entry_models/initial_walkthrough_checklist/initial_walkthrough_checklist.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/get_entry_models/initial_walkthrough/initial_walkthrough.dart';
+import '../../../data/models/patch_models/patch_initial_walk_through/patch_initial_walk_through.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
 import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
@@ -10,8 +13,7 @@ import '../../widgets/radio_buttons.dart';
 
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
-import 'package:c2s/data/json_data/patch%20data/patch_initial_walk_through_data.dart'
-    as patch;
+
 import 'form_screen1.dart';
 import 'form_screen3.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +55,13 @@ class _FormScreen2State extends State<FormScreen2> {
           if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => state.screen),
-              (route) => false,
-            );
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => state.screen),
+                (route) => false,
+              );
+            }
           }
         },
         builder: body,
@@ -276,13 +280,16 @@ class _FormScreen2State extends State<FormScreen2> {
                               deleteImage: (index) {
                                 context
                                     .read<FormBloc>()
-                                    .add(UpdateData(heatingSystemPic: null));
+                                    .add(UpdateData(heatingSystemPic: ''));
                               },
                               isRequired: isEmptyHeatPic,
                               label: 'Picture of heating system *',
                               url: urlHandler(entryData?.heatingSystemPic),
                               doesItExpand: false,
                               addImage: (url) {
+                                setState(() {
+                                  isEmptyHeatPic = false;
+                                });
                                 context
                                     .read<FormBloc>()
                                     .add(UpdateData(heatingSystemPic: url));
@@ -297,7 +304,7 @@ class _FormScreen2State extends State<FormScreen2> {
                               deleteImage: (index) {
                                 context
                                     .read<FormBloc>()
-                                    .add(UpdateData(waterHeaterPic: null));
+                                    .add(UpdateData(waterHeaterPic: ''));
                               },
                               isRequired: isEmptyWaterPic,
                               url: urlHandler(entryData?.waterHeaterPic),
@@ -351,9 +358,9 @@ class _FormScreen2State extends State<FormScreen2> {
                 nextScreen: FormScreen3(id: widget.id),
                 validate: validate,
                 id: widget.id,
-                patchData: patch.PatchInitialWalkThroughData(
-                  initialWalkthrough: patch.InitialWalkthrough(
-                    checklist: patch.Checklist(
+                patchData: PatchInitialWalkThroughData(
+                  initialWalkthrough: InitialWalkthrough(
+                    checklist: InitialWalkthroughChecklist(
                         knobAndTube: entryData?.checklist?.knobAndTube,
                         knobAndTubeImg: 'https://www.google.co.uk/',
                         abestos: entryData?.checklist?.abestos,

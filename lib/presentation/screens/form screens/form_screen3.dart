@@ -1,11 +1,11 @@
+import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
+import '../../../data/models/patch_models/patch_air_sealing/patch_air_sealing.dart';
 import '../../widgets/bottom_buttons.dart';
 import '../../widgets/image_input_field.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
-import 'package:c2s/data/json_data/patch%20data/patch_air_sealing_data.dart'
-    as air_sealing;
 import 'form_screen2.dart';
 import 'form_screen4.dart';
 import 'package:flutter/material.dart';
@@ -45,11 +45,13 @@ class _FormScreen3State extends State<FormScreen3> {
             if (state.onNavigate == true) {
               FocusScope.of(context).unfocus();
               await Future.delayed(Duration(milliseconds: 500));
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => state.screen),
-                (route) => false,
-              );
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => state.screen),
+                  (route) => false,
+                );
+              }
             }
           },
           builder: body),
@@ -183,8 +185,8 @@ class _FormScreen3State extends State<FormScreen3> {
                 nextScreen: FormScreen4(id: widget.id),
                 validate: validate,
                 id: widget.id,
-                patchData: air_sealing.PatchAirSealingData(
-                  airSealing: air_sealing.AirSealing(
+                patchData: PatchAirSealingData(
+                  airSealing: AirSealing(
                     onWorkOrder: entryData?.onWorkOrder,
                     notes: entryData?.notes,
                     sealingQualityPic: entryData?.sealingQualityPic,

@@ -1,7 +1,9 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:c2s/data/models/coordinates/coordinates.dart';
 
-import '../../../data/json_data/post_entries_request_data.dart' as req;
-import '../../../data/json_data/patch data/patch_base_data.dart';
+import 'package:c2s/data/models/post_entries_models/post_entries_request_data/post_entries_request_data.dart'
+    as req;
+import '../../../data/models/patch_models/patch_base/patch_base.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
 import '../../../injection_container.dart';
@@ -60,11 +62,13 @@ class _FormScreen1State extends State<FormScreen1> {
           if (state.onNavigate == true) {
             FocusScope.of(context).unfocus();
             await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => state.screen),
-              (route) => false,
-            );
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => state.screen),
+                (route) => false,
+              );
+            }
           }
         },
         builder: body,
@@ -172,7 +176,6 @@ class _FormScreen1State extends State<FormScreen1> {
                             RadioButtons(
                               isRequired: isEmptyProg,
                               chooseButton: (value) {
-                                //TODO
                                 context.read<FormBloc>().add(UpdateData(
                                     programType: programTypeMap[value]));
                                 if (entryData?.data?.programType != null) {
@@ -307,14 +310,14 @@ class _FormScreen1State extends State<FormScreen1> {
                   ),
                 ).toJson(),
                 postEntriesRequestData: req.PostEntriesRequestData(
-                        programType: entryData?.data?.programType,
-                        doeJob: entryData?.data?.doeJob,
-                        date: entryData?.data?.date,
-                        address: entryData?.data?.address,
-                        city: entryData?.data?.city,
-                        coordinates: req.Coordinates(latitude: 0, longitude: 0),
-                        jobId: entryData?.data?.jobId)
-                    .toJson(),
+                  programType: entryData?.data?.programType,
+                  doeJob: entryData?.data?.doeJob,
+                  date: entryData?.data?.date,
+                  address: entryData?.data?.address,
+                  city: entryData?.data?.city,
+                  coordinates: Coordinates(latitude: 0, longitude: 0),
+                  jobId: entryData?.data?.jobId,
+                ).toJson(),
               ),
             ],
           ),

@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HomeState {
-  bool? get isLoading => throw _privateConstructorUsedError;
+  bool get isLoading => throw _privateConstructorUsedError;
   String? get loadingErrMessage => throw _privateConstructorUsedError;
   EntriesResponseData? get entriesResponse =>
       throw _privateConstructorUsedError;
@@ -36,11 +36,13 @@ abstract class $HomeStateCopyWith<$Res> {
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
   $Res call(
-      {bool? isLoading,
+      {bool isLoading,
       String? loadingErrMessage,
       EntriesResponseData? entriesResponse,
       bool? isEmpty,
       bool? isLogout});
+
+  $EntriesResponseDataCopyWith<$Res>? get entriesResponse;
 }
 
 /// @nodoc
@@ -58,17 +60,17 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isLoading = freezed,
+    Object? isLoading = null,
     Object? loadingErrMessage = freezed,
     Object? entriesResponse = freezed,
     Object? isEmpty = freezed,
     Object? isLogout = freezed,
   }) {
     return _then(_value.copyWith(
-      isLoading: freezed == isLoading
+      isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       loadingErrMessage: freezed == loadingErrMessage
           ? _value.loadingErrMessage
           : loadingErrMessage // ignore: cast_nullable_to_non_nullable
@@ -87,6 +89,20 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
               as bool?,
     ) as $Val);
   }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $EntriesResponseDataCopyWith<$Res>? get entriesResponse {
+    if (_value.entriesResponse == null) {
+      return null;
+    }
+
+    return $EntriesResponseDataCopyWith<$Res>(_value.entriesResponse!, (value) {
+      return _then(_value.copyWith(entriesResponse: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -98,11 +114,14 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool? isLoading,
+      {bool isLoading,
       String? loadingErrMessage,
       EntriesResponseData? entriesResponse,
       bool? isEmpty,
       bool? isLogout});
+
+  @override
+  $EntriesResponseDataCopyWith<$Res>? get entriesResponse;
 }
 
 /// @nodoc
@@ -118,17 +137,17 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isLoading = freezed,
+    Object? isLoading = null,
     Object? loadingErrMessage = freezed,
     Object? entriesResponse = freezed,
     Object? isEmpty = freezed,
     Object? isLogout = freezed,
   }) {
     return _then(_$HomeStateImpl(
-      isLoading: freezed == isLoading
+      isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       loadingErrMessage: freezed == loadingErrMessage
           ? _value.loadingErrMessage
           : loadingErrMessage // ignore: cast_nullable_to_non_nullable
@@ -153,14 +172,15 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 
 class _$HomeStateImpl implements _HomeState {
   const _$HomeStateImpl(
-      {this.isLoading,
+      {this.isLoading = true,
       this.loadingErrMessage,
       this.entriesResponse,
       this.isEmpty,
       this.isLogout});
 
   @override
-  final bool? isLoading;
+  @JsonKey()
+  final bool isLoading;
   @override
   final String? loadingErrMessage;
   @override
@@ -206,14 +226,14 @@ class _$HomeStateImpl implements _HomeState {
 
 abstract class _HomeState implements HomeState {
   const factory _HomeState(
-      {final bool? isLoading,
+      {final bool isLoading,
       final String? loadingErrMessage,
       final EntriesResponseData? entriesResponse,
       final bool? isEmpty,
       final bool? isLogout}) = _$HomeStateImpl;
 
   @override
-  bool? get isLoading;
+  bool get isLoading;
   @override
   String? get loadingErrMessage;
   @override

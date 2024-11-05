@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
+import '../../../data/models/patch_models/patch_attic_insulation/patch_attic_insulation.dart';
 import '../../widgets/bottom_buttons.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
-import 'package:c2s/data/json_data/patch%20data/patch_attic_insulation_data.dart'
-    as attic;
 import 'form_screen3.dart';
 import 'form_screen5.dart';
 import 'package:flutter/material.dart';
@@ -46,11 +46,13 @@ class _FormScreen4State extends State<FormScreen4> {
             if (state.onNavigate == true) {
               FocusScope.of(context).unfocus();
               await Future.delayed(Duration(milliseconds: 500));
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => state.screen),
-                (route) => false,
-              );
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => state.screen),
+                  (route) => false,
+                );
+              }
             }
           },
           builder: body),
@@ -184,8 +186,8 @@ class _FormScreen4State extends State<FormScreen4> {
                 nextScreen: FormScreen5(id: widget.id),
                 validate: validate,
                 id: widget.id,
-                patchData: attic.PatchAtticInsulationData(
-                  atticInsulation: attic.AtticInsulation(
+                patchData: PatchAtticInsulationData(
+                  atticInsulation: AtticInsulation(
                     onWorkOrder: entryData?.onWorkOrder,
                     inaccurateMeasurementsNotes:
                         entryData?.inaccurateMeasurementsNotes,
