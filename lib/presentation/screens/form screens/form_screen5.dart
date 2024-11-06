@@ -95,16 +95,8 @@ class _FormScreen5State extends State<FormScreen5> {
         backgroundColor: Colors.white,
         body: RefreshIndicator(
           onRefresh: () async {
-            Future.delayed(Duration(seconds: 2));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FormScreen5(
-                  id: widget.id,
-                ),
-              ),
-              (route) => false,
-            );
+            context.read<FormBloc>().add(LoadEntryEvent(
+                getIt<Preferences>().getData('token').toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -149,7 +141,7 @@ class _FormScreen5State extends State<FormScreen5> {
                                 onChanged: (value) {
                                   context
                                       .read<FormBloc>()
-                                      .add(UpdateData(atticNotes: value));
+                                      .add(UpdateData(wallNotes: value));
                                 },
                               ),
                             ],

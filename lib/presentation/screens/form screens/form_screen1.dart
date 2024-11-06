@@ -157,16 +157,8 @@ class _FormScreen1State extends State<FormScreen1> {
         backgroundColor: Colors.white,
         body: RefreshIndicator(
           onRefresh: () async {
-            Future.delayed(Duration(seconds: 2));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => widget.id != null
-                    ? FormScreen1(id: widget.id)
-                    : FormScreen1(),
-              ),
-              (route) => false,
-            );
+            context.read<FormBloc>().add(LoadEntryEvent(
+                getIt<Preferences>().getData('token').toString(), 'empty'));
           },
           child: SafeArea(
             child: Column(

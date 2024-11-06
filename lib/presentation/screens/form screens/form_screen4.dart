@@ -101,16 +101,8 @@ class _FormScreen4State extends State<FormScreen4> {
         backgroundColor: Colors.white,
         body: RefreshIndicator(
           onRefresh: () async {
-            Future.delayed(Duration(seconds: 2));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FormScreen4(
-                  id: widget.id,
-                ),
-              ),
-              (route) => false,
-            );
+            context.read<FormBloc>().add(LoadEntryEvent(
+                getIt<Preferences>().getData('token').toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -165,7 +157,7 @@ class _FormScreen4State extends State<FormScreen4> {
                                 onChanged: (value) {
                                   context
                                       .read<FormBloc>()
-                                      .add(UpdateData(airNotes: value));
+                                      .add(UpdateData(atticNotes: value));
                                 },
                               ),
                               ImageInputField(

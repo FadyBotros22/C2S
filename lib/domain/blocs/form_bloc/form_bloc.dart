@@ -28,8 +28,50 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
               data: entryData.data?.copyWith(
                   date: entryData.data?.date
                       ?.substring(0, entryData.data?.date?.indexOf('T'))));
-          emit((state as custom_form_state.FormScreen)
-              .copyWith(entryData: entryData));
+          add(UpdateData(
+            createdBy: entryData.data?.createdBy,
+            jobId: entryData.data?.jobId,
+            doeJob: entryData.data?.doeJob,
+            city: entryData.data?.city,
+            address: entryData.data?.address,
+            date: entryData.data?.date,
+            programType: entryData.data?.programType,
+            concernsPic: entryData.data?.initialWalkthrough?.concernsPic,
+            waterHeaterPic: entryData.data?.initialWalkthrough?.waterHeaterPic,
+            heatingSystemPic:
+                entryData.data?.initialWalkthrough?.heatingSystemPic,
+            blowerStartingValue:
+                entryData.data?.initialWalkthrough?.blowerStartingValue,
+            blowerDoorStatus:
+                entryData.data?.initialWalkthrough?.blowerDoorStatus,
+            knobAndTube:
+                entryData.data?.initialWalkthrough?.checklist?.knobAndTube,
+            abestos: entryData.data?.initialWalkthrough?.checklist?.abestos,
+            unventedDryers:
+                entryData.data?.initialWalkthrough?.checklist?.unventedDryers,
+            titlesOnSite:
+                entryData.data?.initialWalkthrough?.checklist?.titlesOnSite,
+            moistureConcerns:
+                entryData.data?.initialWalkthrough?.checklist?.moistureConcerns,
+            initialNotes: entryData.data?.initialWalkthrough?.notes,
+            airNotes: entryData.data?.airSealing?.notes,
+            sealingQualityPic: entryData.data?.airSealing?.sealingQualityPic,
+            airOnWorkOrder: entryData.data?.airSealing?.onWorkOrder,
+            atticInsulationPic:
+                entryData.data?.atticInsulation?.atticInsulationPic,
+            inaccurateMeasurementsNotes:
+                entryData.data?.atticInsulation?.inaccurateMeasurementsNotes,
+            atticNotes: entryData.data?.atticInsulation?.notes,
+            atticOnWorkOrder: entryData.data?.atticInsulation?.onWorkOrder,
+            wallNotes: entryData.data?.wallInsulation?.notes,
+            wallOnWorkOrder: entryData.data?.wallInsulation?.onWorkOrder,
+            qualityPics: entryData.data?.finalWalkthrough?.qualityPics,
+            leftConfirmation:
+                entryData.data?.finalWalkthrough?.leftConfirmation,
+            bathroomConfirmation:
+                entryData.data?.finalWalkthrough?.bathroomConfirmation,
+            finalNotes: entryData.data?.finalWalkthrough?.notes,
+          ));
         } catch (e) {
           emit((state as custom_form_state.FormScreen).copyWith(
               errorMessage:
@@ -72,6 +114,9 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
             final errorMessage = responseData['meta']['message'];
             emit((state as custom_form_state.FormScreen)
                 .copyWith(errorMessage: '$errorMessage'));
+          } else if (e.type == DioExceptionType.connectionError) {
+            emit((state as custom_form_state.FormScreen).copyWith(
+                errorMessage: 'Internet Error, Connect to an active Network'));
           } else {
             emit((state as custom_form_state.FormScreen)
                 .copyWith(errorMessage: 'unknown error'));
@@ -88,6 +133,7 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
 
     on<UpdateData>((event, emit) async {
       final entryData = state.entryData;
+
       GetEntryResponseData? newEntryData = entryData?.copyWith(
         data: entryData.data?.copyWith(
           date: event.date ?? entryData.data?.date,
@@ -129,8 +175,10 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
                 ? null
                 : event.waterHeaterPic ??
                     entryData.data?.initialWalkthrough?.waterHeaterPic,
-            concernsPic: event.concernsPic ??
-                entryData.data?.initialWalkthrough?.concernsPic,
+            concernsPic:
+                event.concernsPic != null && event.concernsPic!.isNotEmpty
+                    ? event.concernsPic
+                    : entryData.data?.initialWalkthrough?.concernsPic,
           ),
           airSealing: (entryData.data?.airSealing ?? AirSealing()).copyWith(
             notes: event.airNotes ?? entryData.data?.airSealing?.notes,
@@ -146,8 +194,10 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
                 entryData.data?.atticInsulation?.onWorkOrder,
             inaccurateMeasurementsNotes: event.inaccurateMeasurementsNotes ??
                 entryData.data?.atticInsulation?.inaccurateMeasurementsNotes,
-            atticInsulationPic: event.atticInsulationPic ??
-                entryData.data?.atticInsulation?.atticInsulationPic,
+            atticInsulationPic: event.atticInsulationPic != null &&
+                    event.atticInsulationPic!.isNotEmpty
+                ? event.atticInsulationPic
+                : entryData.data?.atticInsulation?.atticInsulationPic,
           ),
           wallInsulation:
               (entryData.data?.wallInsulation ?? WallInsulation()).copyWith(
@@ -167,6 +217,7 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
           ),
         ),
       );
+
       emit(state.copyWith(entryData: newEntryData));
     });
   }
