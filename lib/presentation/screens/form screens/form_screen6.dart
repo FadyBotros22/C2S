@@ -59,9 +59,6 @@ class _FormScreen6State extends State<FormScreen6> {
           }
         },
         builder: body,
-        // } else if (state is form_state.SubmitErrorState) {
-        //   Navigator.of(context).pop();
-        // }
       ),
     );
   }
@@ -111,135 +108,153 @@ class _FormScreen6State extends State<FormScreen6> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TitleComponent(
-                title: 'Final Walkthrough',
-                linearProgressValue: 7.0,
-                screen: FormScreen5(id: widget.id),
-              ),
-              state.isLoading == true
-                  ? Center(child: CircularProgressIndicator())
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InputField(
-                              title:
-                                  'Final notes on job and anything the office may need to know',
-                              maxLines: 5,
-                              hintText: entryData?.notes,
-                              onChanged: (value) {
-                                context
-                                    .read<FormBloc>()
-                                    .add(UpdateData(finalNotes: value));
-                              },
-                            ),
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyIsConfirmedNothingOnSite = false;
-                                  context.read<FormBloc>().add(UpdateData(
-                                      leftConfirmation: (value == "Yes")));
-                                });
-                              },
-                              isRequired: isEmptyIsConfirmedNothingOnSite,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              title:
-                                  'I confirm nothing was left behind at customers house and all areas of home were checked *',
-                              activeChoice: entryData?.leftConfirmation == null
-                                  ? 0
-                                  : entryData!.leftConfirmation!
-                                      ? 1
-                                      : 2,
-                            ),
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyIsConfirmedBathroom = false;
-                                  context.read<FormBloc>().add(UpdateData(
-                                      bathroomConfirmation: (value == "Yes")));
-                                });
-                              },
-                              isRequired: isEmptyIsConfirmedBathroom,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              activeChoice:
-                                  entryData?.bathroomConfirmation == null
-                                      ? 0
-                                      : entryData!.bathroomConfirmation!
-                                          ? 1
-                                          : 2,
-                              title:
-                                  'I confirm that the bathroom fan is in working order and checked before leaving job site *',
-                            ),
-                            ImageInputField(
-                              deleteImage: (index) {
-                                final qualityPic = List<String>.from(
-                                    entryData?.qualityPics ?? []);
-                                qualityPic.removeAt(index);
-                                context
-                                    .read<FormBloc>()
-                                    .add(UpdateData(qualityPics: qualityPic));
-                              },
-                              isRequired: false,
-                              label: 'Misc Quality Pictures',
-                              doesItExpand: true,
-                              url: entryData?.qualityPics,
-                              addImage: (url) {
-                                final qualityPic = List<String>.from(
-                                    entryData?.qualityPics ?? []);
-                                qualityPic.add(url);
-                                context
-                                    .read<FormBloc>()
-                                    .add(UpdateData(qualityPics: qualityPic));
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-              Container(
-                margin: const EdgeInsets.only(
-                    left: 16, right: 16, bottom: 44, top: 30),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ActionButton(
-                      label: 'Complete Checklist',
-                      onPressed: () {
-                        final formBloc = context.read<FormBloc>();
-                        if (validate()) {
-                          _showSubmitConfirmationDialog(
-                              PatchFinalWalkthroughData(
-                                finalWalkthrough: FinalWalkthrough(
-                                  notes: entryData?.notes,
-                                  leftConfirmation: entryData?.leftConfirmation,
-                                  bathroomConfirmation:
-                                      entryData?.bathroomConfirmation!,
-                                  qualityPics: entryData?.qualityPics ?? [],
-                                ),
-                              ),
-                              formBloc);
-                        }
-                      },
-                    ),
-                  ],
+        body: RefreshIndicator(
+          onRefresh: () async {
+            Future.delayed(Duration(seconds: 2));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen6(
+                  id: widget.id,
                 ),
               ),
-            ],
+              (route) => false,
+            );
+          },
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleComponent(
+                  title: 'Final Walkthrough',
+                  linearProgressValue: 7.0,
+                  screen: FormScreen5(id: widget.id),
+                ),
+                state.isLoading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InputField(
+                                title:
+                                    'Final notes on job and anything the office may need to know',
+                                maxLines: 5,
+                                hintText: entryData?.notes,
+                                onChanged: (value) {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(finalNotes: value));
+                                },
+                              ),
+                              RadioButtons(
+                                chooseButton: (value) {
+                                  setState(() {
+                                    isEmptyIsConfirmedNothingOnSite = false;
+                                    context.read<FormBloc>().add(UpdateData(
+                                        leftConfirmation: (value == "Yes")));
+                                  });
+                                },
+                                isRequired: isEmptyIsConfirmedNothingOnSite,
+                                labels: ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                title:
+                                    'I confirm nothing was left behind at customers house and all areas of home were checked *',
+                                activeChoice:
+                                    entryData?.leftConfirmation == null
+                                        ? 0
+                                        : entryData!.leftConfirmation!
+                                            ? 1
+                                            : 2,
+                              ),
+                              RadioButtons(
+                                chooseButton: (value) {
+                                  setState(() {
+                                    isEmptyIsConfirmedBathroom = false;
+                                    context.read<FormBloc>().add(UpdateData(
+                                        bathroomConfirmation:
+                                            (value == "Yes")));
+                                  });
+                                },
+                                isRequired: isEmptyIsConfirmedBathroom,
+                                labels: ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                activeChoice:
+                                    entryData?.bathroomConfirmation == null
+                                        ? 0
+                                        : entryData!.bathroomConfirmation!
+                                            ? 1
+                                            : 2,
+                                title:
+                                    'I confirm that the bathroom fan is in working order and checked before leaving job site *',
+                              ),
+                              ImageInputField(
+                                deleteImage: (index) {
+                                  final qualityPic = List<String>.from(
+                                      entryData?.qualityPics ?? []);
+                                  qualityPic.removeAt(index);
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(qualityPics: qualityPic));
+                                },
+                                isRequired: false,
+                                label: 'Misc Quality Pictures',
+                                doesItExpand: true,
+                                url: entryData?.qualityPics,
+                                addImage: (url) {
+                                  final qualityPic = List<String>.from(
+                                      entryData?.qualityPics ?? []);
+                                  qualityPic.add(url);
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(qualityPics: qualityPic));
+                                },
+                                isImageLoading: (bool isLoading) {
+                                  setState(() {
+                                    isImageLoading = isLoading;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                Container(
+                  margin: const EdgeInsets.only(
+                      left: 16, right: 16, bottom: 44, top: 30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ActionButton(
+                        label: 'Complete Checklist',
+                        onPressed: () {
+                          final formBloc = context.read<FormBloc>();
+                          if (validate()) {
+                            _showSubmitConfirmationDialog(
+                                PatchFinalWalkthroughData(
+                                  finalWalkthrough: FinalWalkthrough(
+                                    notes: entryData?.notes,
+                                    leftConfirmation:
+                                        entryData?.leftConfirmation,
+                                    bathroomConfirmation:
+                                        entryData?.bathroomConfirmation!,
+                                    qualityPics: entryData?.qualityPics ?? [],
+                                  ),
+                                ),
+                                formBloc);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

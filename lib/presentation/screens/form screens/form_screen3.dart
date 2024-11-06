@@ -104,96 +104,111 @@ class _FormScreen3State extends State<FormScreen3> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TitleComponent(
-                title: 'Air Sealing',
-                linearProgressValue: 3.0,
-                screen: FormScreen2(id: widget.id),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            Future.delayed(Duration(seconds: 2));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen3(
+                  id: widget.id,
+                ),
               ),
-              state.isLoading == true
-                  ? Center(child: CircularProgressIndicator())
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyOnWorkOrder = false;
-                                  context.read<FormBloc>().add(UpdateData(
-                                      airOnWorkOrder: (value == "Yes")));
-                                });
-                              },
-                              isRequired: isEmptyOnWorkOrder,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              title: 'Air Sealing on work order? *',
-                              activeChoice: entryData?.onWorkOrder == null
-                                  ? 0
-                                  : entryData!.onWorkOrder!
-                                      ? 1
-                                      : 2,
-                            ),
-                            InputField(
-                              title: 'Air sealing notes',
-                              hintText: entryData?.notes,
-                              maxLines: 5,
-                              onChanged: (value) {
-                                context
-                                    .read<FormBloc>()
-                                    .add(UpdateData(airNotes: value));
-                              },
-                            ),
-                            ImageInputField(
-                              isRequired: isEmptyAirSealingPics,
-                              label: 'Air sealing quality pictures *',
-                              doesItExpand: true,
-                              url: entryData?.sealingQualityPic,
-                              addImage: (String url) {
-                                final updatedSealingPic = List<String>.from(
-                                    entryData?.sealingQualityPic ?? []);
-                                updatedSealingPic.add(url);
-                                setState(() {
+              (route) => false,
+            );
+          },
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleComponent(
+                  title: 'Air Sealing',
+                  linearProgressValue: 3.0,
+                  screen: FormScreen2(id: widget.id),
+                ),
+                state.isLoading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RadioButtons(
+                                chooseButton: (value) {
+                                  setState(() {
+                                    isEmptyOnWorkOrder = false;
+                                    context.read<FormBloc>().add(UpdateData(
+                                        airOnWorkOrder: (value == "Yes")));
+                                  });
+                                },
+                                isRequired: isEmptyOnWorkOrder,
+                                labels: ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                title: 'Air Sealing on work order? *',
+                                activeChoice: entryData?.onWorkOrder == null
+                                    ? 0
+                                    : entryData!.onWorkOrder!
+                                        ? 1
+                                        : 2,
+                              ),
+                              InputField(
+                                title: 'Air sealing notes',
+                                hintText: entryData?.notes,
+                                maxLines: 5,
+                                onChanged: (value) {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(airNotes: value));
+                                },
+                              ),
+                              ImageInputField(
+                                isRequired: isEmptyAirSealingPics,
+                                label: 'Air sealing quality pictures *',
+                                doesItExpand: true,
+                                url: entryData?.sealingQualityPic,
+                                addImage: (String url) {
+                                  final updatedSealingPic = List<String>.from(
+                                      entryData?.sealingQualityPic ?? []);
+                                  updatedSealingPic.add(url);
+                                  setState(() {
+                                    context.read<FormBloc>().add(UpdateData(
+                                        sealingQualityPic: updatedSealingPic));
+                                    isEmptyAirSealingPics = false;
+                                  });
+                                },
+                                deleteImage: (index) {
+                                  final updatedSealingPic = List<String>.from(
+                                      entryData?.sealingQualityPic ?? []);
+                                  updatedSealingPic.removeAt(index);
                                   context.read<FormBloc>().add(UpdateData(
                                       sealingQualityPic: updatedSealingPic));
-                                  isEmptyAirSealingPics = false;
-                                });
-                              },
-                              deleteImage: (index) {
-                                final updatedSealingPic = List<String>.from(
-                                    entryData?.sealingQualityPic ?? []);
-                                updatedSealingPic.removeAt(index);
-                                context.read<FormBloc>().add(UpdateData(
-                                    sealingQualityPic: updatedSealingPic));
-                              },
-                              isImageLoading: (bool isLoading) {
-                                setState(() {
-                                  isImageLoading = isLoading;
-                                });
-                              },
-                            ),
-                          ],
+                                },
+                                isImageLoading: (bool isLoading) {
+                                  setState(() {
+                                    isImageLoading = isLoading;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                BottomButtons(
+                  nextScreen: FormScreen4(id: widget.id),
+                  validate: validate,
+                  id: widget.id,
+                  patchData: PatchAirSealingData(
+                    airSealing: AirSealing(
+                      onWorkOrder: entryData?.onWorkOrder,
+                      notes: entryData?.notes,
+                      sealingQualityPic: entryData?.sealingQualityPic,
                     ),
-              BottomButtons(
-                nextScreen: FormScreen4(id: widget.id),
-                validate: validate,
-                id: widget.id,
-                patchData: PatchAirSealingData(
-                  airSealing: AirSealing(
-                    onWorkOrder: entryData?.onWorkOrder,
-                    notes: entryData?.notes,
-                    sealingQualityPic: entryData?.sealingQualityPic,
-                  ),
-                ).toJson(),
-              ),
-            ],
+                  ).toJson(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -93,66 +93,81 @@ class _FormScreen5State extends State<FormScreen5> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TitleComponent(
-                title: 'Wall Insulation',
-                linearProgressValue: 5.0,
-                screen: FormScreen4(id: widget.id),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            Future.delayed(Duration(seconds: 2));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen5(
+                  id: widget.id,
+                ),
               ),
-              state.isLoading == true
-                  ? Center(child: CircularProgressIndicator())
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RadioButtons(
-                              chooseButton: (value) {
-                                setState(() {
-                                  isEmptyOnWorkOrder = false;
-                                  context.read<FormBloc>().add(UpdateData(
-                                      wallOnWorkOrder: (value == "Yes")));
-                                });
-                              },
-                              isRequired: isEmptyOnWorkOrder,
-                              labels: ['Yes', 'No'],
-                              isColumn: false,
-                              isSquare: false,
-                              title: 'Wall insulation on work order *',
-                              activeChoice: entryData?.onWorkOrder == null
-                                  ? 0
-                                  : entryData!.onWorkOrder!
-                                      ? 1
-                                      : 2,
-                            ),
-                            InputField(
-                              title: 'Inaccurate wall measurement notes',
-                              maxLines: 6,
-                              hintText: entryData?.notes,
-                              onChanged: (value) {
-                                context
-                                    .read<FormBloc>()
-                                    .add(UpdateData(atticNotes: value));
-                              },
-                            ),
-                          ],
+              (route) => false,
+            );
+          },
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TitleComponent(
+                  title: 'Wall Insulation',
+                  linearProgressValue: 5.0,
+                  screen: FormScreen4(id: widget.id),
+                ),
+                state.isLoading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RadioButtons(
+                                chooseButton: (value) {
+                                  setState(() {
+                                    isEmptyOnWorkOrder = false;
+                                    context.read<FormBloc>().add(UpdateData(
+                                        wallOnWorkOrder: (value == "Yes")));
+                                  });
+                                },
+                                isRequired: isEmptyOnWorkOrder,
+                                labels: ['Yes', 'No'],
+                                isColumn: false,
+                                isSquare: false,
+                                title: 'Wall insulation on work order *',
+                                activeChoice: entryData?.onWorkOrder == null
+                                    ? 0
+                                    : entryData!.onWorkOrder!
+                                        ? 1
+                                        : 2,
+                              ),
+                              InputField(
+                                title: 'Inaccurate wall measurement notes',
+                                maxLines: 6,
+                                hintText: entryData?.notes,
+                                onChanged: (value) {
+                                  context
+                                      .read<FormBloc>()
+                                      .add(UpdateData(atticNotes: value));
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-              BottomButtons(
-                nextScreen: FormScreen6(id: widget.id),
-                validate: validate,
-                id: widget.id,
-                patchData: PatchWallInsulationData(
-                    wallInsulation: WallInsulation(
-                  onWorkOrder: entryData?.onWorkOrder,
-                  notes: entryData?.notes,
-                )).toJson(),
-              ),
-            ],
+                BottomButtons(
+                  nextScreen: FormScreen6(id: widget.id),
+                  validate: validate,
+                  id: widget.id,
+                  patchData: PatchWallInsulationData(
+                      wallInsulation: WallInsulation(
+                    onWorkOrder: entryData?.onWorkOrder,
+                    notes: entryData?.notes,
+                  )).toJson(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

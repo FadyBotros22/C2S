@@ -31,8 +31,9 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
           emit((state as custom_form_state.FormScreen)
               .copyWith(entryData: entryData));
         } catch (e) {
-          emit((state as custom_form_state.FormScreen)
-              .copyWith(errorMessage: e.toString()));
+          emit((state as custom_form_state.FormScreen).copyWith(
+              errorMessage:
+                  "Network error, connect to active network and refresh"));
           await Future.delayed(Duration(milliseconds: 500));
           emit((state as custom_form_state.FormScreen)
               .copyWith(errorMessage: null));
