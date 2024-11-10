@@ -1,6 +1,7 @@
 import 'package:c2s/domain/blocs/login_bloc/login_bloc.dart';
 import 'package:c2s/domain/blocs/login_bloc/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 
 import '../../domain/blocs/login_bloc/login_event.dart';
 import '../widgets/action_button.dart';
@@ -50,6 +51,8 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
 
+    String title = FlavorConfig.instance.variables["title"];
+
     return Scaffold(
       body: Stack(
         children: [
@@ -60,11 +63,11 @@ class _LoginPageState extends State<LoginPage> {
                 color: const Color(0Xfffafafa),
                 child: Container(
                   margin: const EdgeInsets.only(left: 16, top: 64),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hello,\nWelcome back.',
+                        'Hello,\nWelcome back. $title',
                         style: kAppBarTitleTextStyle,
                       ),
                       SizedBox(height: 10),
