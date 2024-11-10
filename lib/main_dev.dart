@@ -7,7 +7,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'presentation/widgets//amplifyconfiguration.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'injection_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';

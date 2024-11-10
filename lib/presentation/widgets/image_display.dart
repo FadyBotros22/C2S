@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_svg/svg.dart';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 class ImageDisplay extends StatelessWidget {
   const ImageDisplay({
     super.key,
@@ -10,11 +12,43 @@ class ImageDisplay extends StatelessWidget {
     required this.deleteImage,
     this.url,
   });
+
   final File? image;
   final Function deleteImage;
   final String? url;
+
+  Future<bool> hasNetwork() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    print(connectivityResult);
+    return connectivityResult[0] != ConnectivityResult.none;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: hasNetwork(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || !(snapshot.data ?? false)) {
+          Snackbar().showSnackBar(context, "Network Error, try again");
+          deleteImage();
+          return Container(
+            height: 66,
+            width: 66,
+            color: Colors.grey[300],
+            child: Center(
+              child: Icon(Icons.error, color: Colors.red),
+            ),
+          );
+        } else {
+          return buildImage(context);
+        }
+      },
+    );
+  }
+
+  Widget buildImage(BuildContext context) {
     return Stack(
       children: [
         Padding(
@@ -28,10 +62,17 @@ class ImageDisplay extends StatelessWidget {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Snackbar().showSnackBar(context, "Network Error, try again");
+                  Snackbar().showSnackBar(context, "Image loading failed");
                   deleteImage();
                 });
-                return SizedBox(height: 0, width: 0);
+                return Container(
+                  height: 66,
+                  width: 66,
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: Icon(Icons.error, color: Colors.red),
+                  ),
+                );
               },
             ),
           ),
@@ -45,7 +86,7 @@ class ImageDisplay extends StatelessWidget {
             },
             child: Container(
               decoration: const BoxDecoration(
-                shape: BoxShape.circle, // Make it circular
+                shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(5),
               child: SvgPicture.asset(

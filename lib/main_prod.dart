@@ -24,7 +24,7 @@ Future<void> main() async {
       color: Colors.red,
       location: BannerLocation.bottomStart,
       variables: {
-        "title": 'Product',
+        "title": 'Production',
         "baseUrl": "https://www.example.com",
       });
   runApp(
