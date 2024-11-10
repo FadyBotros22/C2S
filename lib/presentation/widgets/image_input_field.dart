@@ -146,7 +146,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
                         ...areLoading.asMap().entries.map((isTrue) {
                           return const Padding(
                             padding:
-                                EdgeInsets.only(top: 10, left: 10, right: 40),
+                                EdgeInsetsDirectional.fromSTEB(10, 10, 40, 0),
                             child: CircularProgressIndicator(),
                           );
                         }),

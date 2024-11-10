@@ -25,7 +25,7 @@ mixin _$Data {
   String get jobId => throw _privateConstructorUsedError;
   int get progressStep => throw _privateConstructorUsedError;
   DateTime get date => throw _privateConstructorUsedError;
-  String get programType => throw _privateConstructorUsedError;
+  ProgramType get programType => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   Coordinates get coordinates => throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ abstract class $DataCopyWith<$Res> {
       String jobId,
       int progressStep,
       DateTime date,
-      String programType,
+      ProgramType programType,
       String address,
       String city,
       Coordinates coordinates});
@@ -107,7 +107,7 @@ class _$DataCopyWithImpl<$Res, $Val extends Data>
       programType: null == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String,
+              as ProgramType,
       address: null == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -147,7 +147,7 @@ abstract class _$$DataImplCopyWith<$Res> implements $DataCopyWith<$Res> {
       String jobId,
       int progressStep,
       DateTime date,
-      String programType,
+      ProgramType programType,
       String address,
       String city,
       Coordinates coordinates});
@@ -202,7 +202,7 @@ class __$$DataImplCopyWithImpl<$Res>
       programType: null == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String,
+              as ProgramType,
       address: null == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -247,7 +247,7 @@ class _$DataImpl implements _Data {
   @override
   final DateTime date;
   @override
-  final String programType;
+  final ProgramType programType;
   @override
   final String address;
   @override
@@ -308,7 +308,7 @@ abstract class _Data implements Data {
       required final String jobId,
       required final int progressStep,
       required final DateTime date,
-      required final String programType,
+      required final ProgramType programType,
       required final String address,
       required final String city,
       required final Coordinates coordinates}) = _$DataImpl;
@@ -326,7 +326,7 @@ abstract class _Data implements Data {
   @override
   DateTime get date;
   @override
-  String get programType;
+  ProgramType get programType;
   @override
   String get address;
   @override

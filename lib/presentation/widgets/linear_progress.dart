@@ -46,7 +46,7 @@ class LinearProgress extends StatelessWidget {
                 ),
                 if (color != null)
                   Padding(
-                    padding: EdgeInsets.only(left: 5),
+                    padding: EdgeInsetsDirectional.only(start: 5),
                     child: Text(
                       'Inprogress',
                       style: kMcqLabelTextStyle,

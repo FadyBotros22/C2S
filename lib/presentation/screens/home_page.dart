@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
       create: (context) => HomeBloc(
           getIt<AbstractEntriesRepo>(), getIt<AbstractAuthRepository>())
         ..add(
-          LoadEntries(getIt<Preferences>().getData('token').toString()),
+          LoadEntries(getIt<Preferences>().getData(kToken).toString()),
         ),
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) async {
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 36, left: 16),
+              margin: const EdgeInsetsDirectional.fromSTEB(16, 36, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -114,8 +114,8 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
-                                    top: 14, left: 12, right: 12),
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    12, 14, 12, 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

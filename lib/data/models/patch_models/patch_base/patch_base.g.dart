@@ -20,7 +20,8 @@ Map<String, dynamic> _$$PatchBaseDataImplToJson(_$PatchBaseDataImpl instance) =>
 
 _$BaseDataImpl _$$BaseDataImplFromJson(Map<String, dynamic> json) =>
     _$BaseDataImpl(
-      programType: json['programType'] as String?,
+      programType:
+          $enumDecodeNullable(_$ProgramTypeEnumMap, json['programType']),
       doeJob: json['doeJob'] as bool?,
       address: json['address'] as String?,
       city: json['city'] as String?,
@@ -29,9 +30,16 @@ _$BaseDataImpl _$$BaseDataImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$BaseDataImplToJson(_$BaseDataImpl instance) =>
     <String, dynamic>{
-      'programType': instance.programType,
+      'programType': _$ProgramTypeEnumMap[instance.programType],
       'doeJob': instance.doeJob,
       'address': instance.address,
       'city': instance.city,
       'date': instance.date,
     };
+
+const _$ProgramTypeEnumMap = {
+  ProgramType.clearesult: 'clearesult',
+  ProgramType.rise: 'rise',
+  ProgramType.self_help: 'self_help',
+  ProgramType.cfc: 'cfc',
+};

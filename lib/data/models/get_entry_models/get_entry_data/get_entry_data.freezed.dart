@@ -21,7 +21,7 @@ Data _$DataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Data {
   String? get id => throw _privateConstructorUsedError;
-  String? get programType => throw _privateConstructorUsedError;
+  ProgramType? get programType => throw _privateConstructorUsedError;
   bool? get doeJob => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get city => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $DataCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? programType,
+      ProgramType? programType,
       bool? doeJob,
       String? address,
       String? city,
@@ -115,7 +115,7 @@ class _$DataCopyWithImpl<$Res, $Val extends Data>
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -266,7 +266,7 @@ abstract class _$$DataImplCopyWith<$Res> implements $DataCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? programType,
+      ProgramType? programType,
       bool? doeJob,
       String? address,
       String? city,
@@ -331,7 +331,7 @@ class __$$DataImplCopyWithImpl<$Res>
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -414,7 +414,7 @@ class _$DataImpl implements _Data {
   @override
   final String? id;
   @override
-  final String? programType;
+  final ProgramType? programType;
   @override
   final bool? doeJob;
   @override
@@ -517,7 +517,7 @@ class _$DataImpl implements _Data {
 abstract class _Data implements Data {
   const factory _Data(
       {final String? id,
-      final String? programType,
+      final ProgramType? programType,
       final bool? doeJob,
       final String? address,
       final String? city,
@@ -537,7 +537,7 @@ abstract class _Data implements Data {
   @override
   String? get id;
   @override
-  String? get programType;
+  ProgramType? get programType;
   @override
   bool? get doeJob;
   @override

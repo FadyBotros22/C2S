@@ -2,6 +2,7 @@ import 'package:c2s/data/models/coordinates/coordinates.dart';
 
 import 'package:c2s/data/models/post_entries_models/post_entries_request_data/post_entries_request_data.dart'
     as req;
+import '../../../constants.dart';
 import '../../../data/models/patch_models/patch_base/patch_base.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
@@ -19,11 +20,18 @@ import '../home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-Map<String, String> programTypeMap = {
-  'CLEAResult': 'clearesult',
-  'RISE': 'rise',
-  'Self Help': 'self_help',
-  'Citizens for Citizens (CFC)': 'cfc',
+enum ProgramType {
+  clearesult,
+  rise,
+  self_help,
+  cfc,
+}
+
+Map<String, ProgramType> programTypeMap = {
+  'CLEAResult': ProgramType.clearesult,
+  'RISE': ProgramType.rise,
+  'Self Help': ProgramType.self_help,
+  'Citizens for Citizens (CFC)': ProgramType.cfc,
 };
 
 class FormScreen1 extends StatefulWidget {
@@ -51,7 +59,7 @@ class _FormScreen1State extends State<FormScreen1> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id ?? 'empty',
           ),
         ),
@@ -117,7 +125,7 @@ class _FormScreen1State extends State<FormScreen1> {
         });
         return false;
       } else if (entryData?.data?.doeJob == null &&
-          entryData?.data?.programType == 'self_help') {
+          entryData?.data?.programType == ProgramType.self_help) {
         setState(() {
           isEmptyDoe = true;
         });
@@ -129,11 +137,11 @@ class _FormScreen1State extends State<FormScreen1> {
     int getActiveChoiceForProgramType() {
       if (entryData?.data?.programType == null) {
         return 0;
-      } else if (entryData?.data?.programType == 'clearesult') {
+      } else if (entryData?.data?.programType == ProgramType.clearesult) {
         return 1;
-      } else if (entryData?.data?.programType == 'rise') {
+      } else if (entryData?.data?.programType == ProgramType.rise) {
         return 2;
-      } else if (entryData?.data?.programType == 'self_help') {
+      } else if (entryData?.data?.programType == ProgramType.self_help) {
         return 3;
       } else {
         return 4;
@@ -158,7 +166,7 @@ class _FormScreen1State extends State<FormScreen1> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), 'empty'));
+                getIt<Preferences>().getData(kToken).toString(), 'empty'));
           },
           child: SafeArea(
             child: Column(
@@ -178,7 +186,8 @@ class _FormScreen1State extends State<FormScreen1> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               RadioButtons(
-                                isRequired: isEmptyProg,
+                                isEmpty: isEmptyProg,
+                                isRequired: false,
                                 chooseButton: (value) {
                                   context.read<FormBloc>().add(UpdateData(
                                       programType: programTypeMap[value]));
@@ -205,9 +214,10 @@ class _FormScreen1State extends State<FormScreen1> {
                               ),
                               SizedBox(height: 8),
                               if (entryData?.data?.programType ==
-                                  'self_help') ...[
+                                  ProgramType.self_help) ...[
                                 RadioButtons(
-                                  isRequired: isEmptyDoe,
+                                  isRequired: true,
+                                  isEmpty: isEmptyDoe,
                                   chooseButton: (value) {
                                     context.read<FormBloc>().add(
                                         UpdateData(doeJob: (value == 'Yes')));
@@ -312,7 +322,7 @@ class _FormScreen1State extends State<FormScreen1> {
                       city: entryData?.data?.city,
                       date: entryData?.data?.date,
                     ),
-                  ).toJson(),
+                  ),
                   postEntriesRequestData: req.PostEntriesRequestData(
                     programType: entryData?.data?.programType,
                     doeJob: entryData?.data?.doeJob,
@@ -321,7 +331,7 @@ class _FormScreen1State extends State<FormScreen1> {
                     city: entryData?.data?.city,
                     coordinates: Coordinates(latitude: 0, longitude: 0),
                     jobId: entryData?.data?.jobId,
-                  ).toJson(),
+                  ),
                 ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../constants.dart';
 import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
 import '../../../data/models/patch_models/patch_attic_insulation/patch_attic_insulation.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -37,7 +38,7 @@ class _FormScreen4State extends State<FormScreen4> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id,
           ),
         ),
@@ -102,7 +103,7 @@ class _FormScreen4State extends State<FormScreen4> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), widget.id));
+                getIt<Preferences>().getData(kToken).toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -129,7 +130,8 @@ class _FormScreen4State extends State<FormScreen4> {
                                         atticOnWorkOrder: (value == "Yes")));
                                   });
                                 },
-                                isRequired: isEmptyOnWorkOrder,
+                                isEmpty: isEmptyOnWorkOrder,
+                                isRequired: true,
                                 labels: const ['Yes', 'No'],
                                 isColumn: false,
                                 isSquare: false,
@@ -206,7 +208,7 @@ class _FormScreen4State extends State<FormScreen4> {
                               ? entryData.atticInsulationPic
                               : [],
                     ),
-                  ).toJson(),
+                  ),
                 ),
               ],
             ),

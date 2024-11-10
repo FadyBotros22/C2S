@@ -1,3 +1,4 @@
+import 'package:c2s/presentation/screens/form%20screens/form_screen1.dart';
 import 'package:flutter/material.dart';
 
 abstract class FormEvent {}
@@ -11,7 +12,7 @@ class LoadEntryEvent extends FormEvent {
 class PatchEntryEvent extends FormEvent {
   final String token;
   final String? id;
-  final Map<String, dynamic> data;
+  final dynamic data;
   final Widget screen;
 
   PatchEntryEvent(this.token, this.id, this.data, this.screen);
@@ -26,7 +27,7 @@ class SubmitClicked extends FormEvent {
 }
 
 class UpdateData extends FormEvent {
-  String? programType;
+  ProgramType? programType;
   bool? doeJob;
   String? address;
   String? city;

@@ -8,7 +8,8 @@ part of 'get_entry_data.dart';
 
 _$DataImpl _$$DataImplFromJson(Map<String, dynamic> json) => _$DataImpl(
       id: json['id'] as String?,
-      programType: json['programType'] as String?,
+      programType:
+          $enumDecodeNullable(_$ProgramTypeEnumMap, json['programType']),
       doeJob: json['doeJob'] as bool?,
       address: json['address'] as String?,
       city: json['city'] as String?,
@@ -43,7 +44,7 @@ _$DataImpl _$$DataImplFromJson(Map<String, dynamic> json) => _$DataImpl(
 Map<String, dynamic> _$$DataImplToJson(_$DataImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'programType': instance.programType,
+      'programType': _$ProgramTypeEnumMap[instance.programType],
       'doeJob': instance.doeJob,
       'address': instance.address,
       'city': instance.city,
@@ -58,3 +59,10 @@ Map<String, dynamic> _$$DataImplToJson(_$DataImpl instance) =>
       'wallInsulation': instance.wallInsulation,
       'finalWalkthrough': instance.finalWalkthrough,
     };
+
+const _$ProgramTypeEnumMap = {
+  ProgramType.clearesult: 'clearesult',
+  ProgramType.rise: 'rise',
+  ProgramType.self_help: 'self_help',
+  ProgramType.cfc: 'cfc',
+};

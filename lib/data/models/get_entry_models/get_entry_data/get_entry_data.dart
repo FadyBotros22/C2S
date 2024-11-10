@@ -1,3 +1,4 @@
+import 'package:c2s/presentation/screens/form%20screens/form_screen1.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../coordinates/coordinates.dart';
@@ -14,7 +15,7 @@ part 'get_entry_data.g.dart';
 class Data with _$Data {
   const factory Data({
     String? id,
-    String? programType,
+    ProgramType? programType,
     bool? doeJob,
     String? address,
     String? city,

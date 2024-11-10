@@ -1,3 +1,4 @@
+import '../../../constants.dart';
 import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
 import '../../../data/models/patch_models/patch_air_sealing/patch_air_sealing.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -36,7 +37,7 @@ class _FormScreen3State extends State<FormScreen3> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id,
           ),
         ),
@@ -107,7 +108,7 @@ class _FormScreen3State extends State<FormScreen3> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), widget.id));
+                getIt<Preferences>().getData(kToken).toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -134,7 +135,8 @@ class _FormScreen3State extends State<FormScreen3> {
                                         airOnWorkOrder: (value == "Yes")));
                                   });
                                 },
-                                isRequired: isEmptyOnWorkOrder,
+                                isEmpty: isEmptyOnWorkOrder,
+                                isRequired: true,
                                 labels: ['Yes', 'No'],
                                 isColumn: false,
                                 isSquare: false,
@@ -197,7 +199,7 @@ class _FormScreen3State extends State<FormScreen3> {
                       notes: entryData?.notes,
                       sealingQualityPic: entryData?.sealingQualityPic,
                     ),
-                  ).toJson(),
+                  ),
                 ),
               ],
             ),

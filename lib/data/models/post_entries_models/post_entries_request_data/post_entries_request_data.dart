@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../presentation/screens/form screens/form_screen1.dart';
 import '../../coordinates/coordinates.dart';
 
 part 'post_entries_request_data.freezed.dart';
@@ -8,7 +9,7 @@ part 'post_entries_request_data.g.dart';
 @freezed
 class PostEntriesRequestData with _$PostEntriesRequestData {
   const factory PostEntriesRequestData({
-    String? programType,
+    ProgramType? programType,
     bool? doeJob,
     String? date,
     String? address,

@@ -33,6 +33,7 @@ class _ChecklistComponentState extends State<ChecklistComponent> {
             ),
           ),
           RadioButtons(
+              isEmpty: false,
               isChecklistComponent: true,
               isRequired: false,
               chooseButton: (value) {

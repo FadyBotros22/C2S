@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../constants.dart';
 import '../../../data/models/get_entry_models/wall_insulation/wall_insulation.dart';
 import '../../../data/models/patch_models/patch_wall_insulation/patch_wall_insulation.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
@@ -33,7 +34,7 @@ class _FormScreen5State extends State<FormScreen5> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id,
           ),
         ),
@@ -96,7 +97,7 @@ class _FormScreen5State extends State<FormScreen5> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), widget.id));
+                getIt<Preferences>().getData(kToken).toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -123,7 +124,8 @@ class _FormScreen5State extends State<FormScreen5> {
                                         wallOnWorkOrder: (value == "Yes")));
                                   });
                                 },
-                                isRequired: isEmptyOnWorkOrder,
+                                isRequired: true,
+                                isEmpty: isEmptyOnWorkOrder,
                                 labels: ['Yes', 'No'],
                                 isColumn: false,
                                 isSquare: false,
@@ -156,7 +158,7 @@ class _FormScreen5State extends State<FormScreen5> {
                       wallInsulation: WallInsulation(
                     onWorkOrder: entryData?.onWorkOrder,
                     notes: entryData?.notes,
-                  )).toJson(),
+                  )),
                 ),
               ],
             ),

@@ -12,7 +12,7 @@ _$DataImpl _$$DataImplFromJson(Map<String, dynamic> json) => _$DataImpl(
       jobId: json['jobId'] as String,
       progressStep: (json['progressStep'] as num).toInt(),
       date: DateTime.parse(json['date'] as String),
-      programType: json['programType'] as String,
+      programType: $enumDecode(_$ProgramTypeEnumMap, json['programType']),
       address: json['address'] as String,
       city: json['city'] as String,
       coordinates:
@@ -26,8 +26,15 @@ Map<String, dynamic> _$$DataImplToJson(_$DataImpl instance) =>
       'jobId': instance.jobId,
       'progressStep': instance.progressStep,
       'date': instance.date.toIso8601String(),
-      'programType': instance.programType,
+      'programType': _$ProgramTypeEnumMap[instance.programType]!,
       'address': instance.address,
       'city': instance.city,
       'coordinates': instance.coordinates,
     };
+
+const _$ProgramTypeEnumMap = {
+  ProgramType.clearesult: 'clearesult',
+  ProgramType.rise: 'rise',
+  ProgramType.self_help: 'self_help',
+  ProgramType.cfc: 'cfc',
+};

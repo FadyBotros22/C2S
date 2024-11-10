@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../presentation/screens/form screens/form_screen1.dart';
 import '../../coordinates/coordinates.dart';
 
 part 'data.freezed.dart';
@@ -13,7 +14,7 @@ class Data with _$Data {
     required String jobId,
     required int progressStep,
     required DateTime date,
-    required String programType,
+    required ProgramType programType,
     required String address,
     required String city,
     required Coordinates coordinates,

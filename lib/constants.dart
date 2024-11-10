@@ -146,3 +146,17 @@ const kEmptyListTextStyle = TextStyle(
   height: 25 / 20,
   color: Colors.black,
 );
+const String kLoginEndpoint = "/auth/login";
+const String kLogoutEndpoint = "/auth/logout";
+const String kGetEntriesEndpoint = "/entries";
+const String kGetEntryEndpoint = "/entries/{id}";
+const String kPostEntryEndpoint = "/entries";
+const String kPatchEntryEndpoint = "/entries/{id}";
+const kAuth = 'Authorization';
+const kId = 'id';
+const kBaseUrl = "http://3.21.176.77/v1/";
+const kCreatedBy = 'createdBy';
+const kPerPage = 'perPage';
+const kPage = 'page';
+
+const kToken = 'token';

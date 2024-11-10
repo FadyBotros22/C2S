@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 color: const Color(0Xfffafafa),
                 child: Container(
-                  margin: const EdgeInsets.only(left: 16, top: 64),
+                  margin: const EdgeInsetsDirectional.only(start: 16, top: 64),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

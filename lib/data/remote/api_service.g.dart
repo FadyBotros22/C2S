@@ -27,14 +27,12 @@ class _ApiService implements ApiService {
   Future<UserResponseData> login(UserRequestData user) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Content-Type': 'application/json'};
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = user;
     final _options = _setStreamType<UserResponseData>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
-      contentType: 'application/json',
     )
         .compose(
           _dio.options,
@@ -93,9 +91,18 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<EntriesResponseData> getEntries(String token) async {
+  Future<EntriesResponseData> getEntries(
+    String token,
+    String createdBy,
+    int perPage,
+    int page,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'createdBy': createdBy,
+      r'perPage': perPage,
+      r'page': page,
+    };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
@@ -106,7 +113,7 @@ class _ApiService implements ApiService {
     )
         .compose(
           _dio.options,
-          '/entries?createdBy=all&perPage=10&page=1',
+          '/entries',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -166,14 +173,13 @@ class _ApiService implements ApiService {
   @override
   Future<PostEntriesResponseData> postEntry(
     String token,
-    Map<String, dynamic> postEntriesRequestData,
+    PostEntriesRequestData postEntriesRequestData,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(postEntriesRequestData);
+    final _data = postEntriesRequestData;
     final _options = _setStreamType<PostEntriesResponseData>(Options(
       method: 'POST',
       headers: _headers,
@@ -205,14 +211,13 @@ class _ApiService implements ApiService {
   Future<dynamic> patchEntry(
     String id,
     String token,
-    Map<String, dynamic> patchData,
+    dynamic patchData,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(patchData);
+    final _data = patchData;
     final _options = _setStreamType<dynamic>(Options(
       method: 'PATCH',
       headers: _headers,

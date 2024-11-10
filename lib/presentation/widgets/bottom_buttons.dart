@@ -1,8 +1,10 @@
+import 'package:c2s/data/models/post_entries_models/post_entries_request_data/post_entries_request_data.dart';
 import 'package:c2s/domain/blocs/form_bloc/form_event.dart';
 import 'package:c2s/injection_container.dart';
 import 'package:c2s/presentation/screens/home_page.dart';
 import 'package:c2s/presentation/widgets/transparent_action_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../constants.dart';
 import '../../domain/blocs/form_bloc/form_bloc.dart';
 import 'package:flutter/material.dart';
 import 'action_button.dart';
@@ -21,13 +23,13 @@ class BottomButtons extends StatelessWidget {
   final String? id;
   final Function? patchEntry;
   final Function validate;
-  final Map<String, dynamic>? patchData;
-  final Map<String, dynamic>? postEntriesRequestData;
+  final dynamic patchData;
+  final PostEntriesRequestData? postEntriesRequestData;
   final Widget nextScreen;
 
   @override
   Widget build(BuildContext context) {
-    final token = getIt<Preferences>().getData('token').toString();
+    final token = getIt<Preferences>().getData(kToken).toString();
     return Container(
       margin: const EdgeInsets.all(16),
       height: 130,

@@ -9,7 +9,8 @@ part of 'post_entries_request_data.dart';
 _$PostEntriesRequestDataImpl _$$PostEntriesRequestDataImplFromJson(
         Map<String, dynamic> json) =>
     _$PostEntriesRequestDataImpl(
-      programType: json['programType'] as String?,
+      programType:
+          $enumDecodeNullable(_$ProgramTypeEnumMap, json['programType']),
       doeJob: json['doeJob'] as bool?,
       date: json['date'] as String?,
       address: json['address'] as String?,
@@ -23,7 +24,7 @@ _$PostEntriesRequestDataImpl _$$PostEntriesRequestDataImplFromJson(
 Map<String, dynamic> _$$PostEntriesRequestDataImplToJson(
         _$PostEntriesRequestDataImpl instance) =>
     <String, dynamic>{
-      'programType': instance.programType,
+      'programType': _$ProgramTypeEnumMap[instance.programType],
       'doeJob': instance.doeJob,
       'date': instance.date,
       'address': instance.address,
@@ -31,3 +32,10 @@ Map<String, dynamic> _$$PostEntriesRequestDataImplToJson(
       'coordinates': instance.coordinates,
       'jobId': instance.jobId,
     };
+
+const _$ProgramTypeEnumMap = {
+  ProgramType.clearesult: 'clearesult',
+  ProgramType.rise: 'rise',
+  ProgramType.self_help: 'self_help',
+  ProgramType.cfc: 'cfc',
+};

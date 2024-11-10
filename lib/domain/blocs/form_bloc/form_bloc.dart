@@ -2,6 +2,7 @@ import 'package:c2s/presentation/screens/form%20screens/form_screen2.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
 import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
 import '../../../data/models/get_entry_models/final_walkthrough/final_walkthrough.dart';
@@ -26,8 +27,8 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
               await repository.getEntry(event.token, event.id);
           entryData = entryData.copyWith(
               data: entryData.data?.copyWith(
-                  date: entryData.data?.date
-                      ?.substring(0, entryData.data?.date?.indexOf('T'))));
+                  date: DateFormat('yyyy-MM-dd')
+                      .format(DateTime.parse(entryData.data!.date!))));
           add(UpdateData(
             createdBy: entryData.data?.createdBy,
             jobId: entryData.data?.jobId,
@@ -97,10 +98,8 @@ class FormBloc extends Bloc<FormEvent, custom_form_state.FormState> {
                   : event.screen));
         } else {
           final id = await repository.postEntry(event.token, event.data);
-          emit((state as custom_form_state.FormScreen).copyWith(
-              onNavigate: true,
-              screen:
-                  event.screen is Text ? FormScreen2(id: id) : event.screen));
+          emit((state as custom_form_state.FormScreen)
+              .copyWith(onNavigate: true, screen: FormScreen2(id: id)));
         }
       } catch (e) {
         if (e is DioException) {

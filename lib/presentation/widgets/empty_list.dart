@@ -35,7 +35,7 @@ class EmptyList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 46, left: 16),
+                margin: const EdgeInsetsDirectional.fromSTEB(16, 46, 0, 0),
                 child: const Text(
                   'Entries',
                   style: kAppBarTitleTextStyle,
@@ -55,7 +55,7 @@ class EmptyList extends StatelessWidget {
                       height: 32,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 25),
+                      padding: const EdgeInsetsDirectional.only(end: 25),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

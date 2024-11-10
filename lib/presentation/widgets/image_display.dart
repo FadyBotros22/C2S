@@ -19,7 +19,6 @@ class ImageDisplay extends StatelessWidget {
 
   Future<bool> hasNetwork() async {
     var connectivityResult = await Connectivity().checkConnectivity();
-    print(connectivityResult);
     return connectivityResult[0] != ConnectivityResult.none;
   }
 
@@ -52,7 +51,7 @@ class ImageDisplay extends StatelessWidget {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 10, right: 20),
+          padding: const EdgeInsetsDirectional.only(top: 10, end: 20),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(9.71),
             child: Image.network(

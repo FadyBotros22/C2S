@@ -40,7 +40,7 @@ class _FormScreen6State extends State<FormScreen6> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id,
           ),
         ),
@@ -111,7 +111,7 @@ class _FormScreen6State extends State<FormScreen6> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), widget.id));
+                getIt<Preferences>().getData(kToken).toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -149,7 +149,8 @@ class _FormScreen6State extends State<FormScreen6> {
                                         leftConfirmation: (value == "Yes")));
                                   });
                                 },
-                                isRequired: isEmptyIsConfirmedNothingOnSite,
+                                isEmpty: isEmptyIsConfirmedNothingOnSite,
+                                isRequired: true,
                                 labels: ['Yes', 'No'],
                                 isColumn: false,
                                 isSquare: false,
@@ -171,7 +172,8 @@ class _FormScreen6State extends State<FormScreen6> {
                                             (value == "Yes")));
                                   });
                                 },
-                                isRequired: isEmptyIsConfirmedBathroom,
+                                isEmpty: isEmptyIsConfirmedBathroom,
+                                isRequired: true,
                                 labels: ['Yes', 'No'],
                                 isColumn: false,
                                 isSquare: false,
@@ -301,9 +303,9 @@ class _FormScreen6State extends State<FormScreen6> {
                         onPressed: () {
                           Navigator.of(context).pop(); // Close the dialog
                           formBloc.add(PatchEntryEvent(
-                              getIt<Preferences>().getData('token').toString(),
+                              getIt<Preferences>().getData(kToken).toString(),
                               widget.id,
-                              data.toJson(),
+                              data,
                               HomePage()));
                         },
                       ),

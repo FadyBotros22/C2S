@@ -21,7 +21,7 @@ PostEntriesRequestData _$PostEntriesRequestDataFromJson(
 
 /// @nodoc
 mixin _$PostEntriesRequestData {
-  String? get programType => throw _privateConstructorUsedError;
+  ProgramType? get programType => throw _privateConstructorUsedError;
   bool? get doeJob => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $PostEntriesRequestDataCopyWith<$Res> {
       _$PostEntriesRequestDataCopyWithImpl<$Res, PostEntriesRequestData>;
   @useResult
   $Res call(
-      {String? programType,
+      {ProgramType? programType,
       bool? doeJob,
       String? date,
       String? address,
@@ -86,7 +86,7 @@ class _$PostEntriesRequestDataCopyWithImpl<$Res,
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -139,7 +139,7 @@ abstract class _$$PostEntriesRequestDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? programType,
+      {ProgramType? programType,
       bool? doeJob,
       String? date,
       String? address,
@@ -178,7 +178,7 @@ class __$$PostEntriesRequestDataImplCopyWithImpl<$Res>
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -223,7 +223,7 @@ class _$PostEntriesRequestDataImpl implements _PostEntriesRequestData {
       _$$PostEntriesRequestDataImplFromJson(json);
 
   @override
-  final String? programType;
+  final ProgramType? programType;
   @override
   final bool? doeJob;
   @override
@@ -283,7 +283,7 @@ class _$PostEntriesRequestDataImpl implements _PostEntriesRequestData {
 
 abstract class _PostEntriesRequestData implements PostEntriesRequestData {
   const factory _PostEntriesRequestData(
-      {final String? programType,
+      {final ProgramType? programType,
       final bool? doeJob,
       final String? date,
       final String? address,
@@ -295,7 +295,7 @@ abstract class _PostEntriesRequestData implements PostEntriesRequestData {
       _$PostEntriesRequestDataImpl.fromJson;
 
   @override
-  String? get programType;
+  ProgramType? get programType;
   @override
   bool? get doeJob;
   @override

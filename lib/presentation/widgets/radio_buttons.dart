@@ -3,16 +3,18 @@ import 'mcq_option.dart';
 import 'package:c2s/constants.dart';
 
 class RadioButtons extends StatefulWidget {
-  const RadioButtons(
-      {super.key,
-      required this.labels,
-      required this.isColumn,
-      required this.isSquare,
-      this.title,
-      required this.chooseButton,
-      required this.activeChoice,
-      required this.isRequired,
-      this.isChecklistComponent});
+  const RadioButtons({
+    super.key,
+    required this.labels,
+    required this.isColumn,
+    required this.isSquare,
+    this.title,
+    required this.chooseButton,
+    required this.activeChoice,
+    required this.isRequired,
+    this.isChecklistComponent,
+    required this.isEmpty,
+  });
 
   final List<String> labels;
   final bool isColumn;
@@ -22,6 +24,7 @@ class RadioButtons extends StatefulWidget {
   final int activeChoice;
   final bool isRequired;
   final bool? isChecklistComponent;
+  final bool isEmpty;
 
   @override
   State<RadioButtons> createState() => _RadioButtonsState();
@@ -63,7 +66,7 @@ class _RadioButtonsState extends State<RadioButtons> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.title != null && widget.title!.contains('*'))
+          if (widget.title != null && widget.isRequired)
             Text.rich(
               TextSpan(
                 children: [
@@ -78,7 +81,7 @@ class _RadioButtonsState extends State<RadioButtons> {
                 ],
               ),
             ),
-          if (widget.title != null && !widget.title!.contains('*'))
+          if (widget.title != null && !widget.isRequired)
             Text(
               widget.title!,
               style:
@@ -89,7 +92,7 @@ class _RadioButtonsState extends State<RadioButtons> {
             child:
                 widget.isColumn ? Column(children: body) : Row(children: body),
           ),
-          if (widget.isRequired)
+          if (widget.isEmpty)
             const Text(
               'This field is Required',
               style: TextStyle(color: Colors.red),

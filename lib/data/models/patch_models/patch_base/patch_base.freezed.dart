@@ -190,7 +190,7 @@ BaseData _$BaseDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BaseData {
-  String? get programType => throw _privateConstructorUsedError;
+  ProgramType? get programType => throw _privateConstructorUsedError;
   bool? get doeJob => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get city => throw _privateConstructorUsedError;
@@ -212,7 +212,7 @@ abstract class $BaseDataCopyWith<$Res> {
       _$BaseDataCopyWithImpl<$Res, BaseData>;
   @useResult
   $Res call(
-      {String? programType,
+      {ProgramType? programType,
       bool? doeJob,
       String? address,
       String? city,
@@ -244,7 +244,7 @@ class _$BaseDataCopyWithImpl<$Res, $Val extends BaseData>
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -274,7 +274,7 @@ abstract class _$$BaseDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? programType,
+      {ProgramType? programType,
       bool? doeJob,
       String? address,
       String? city,
@@ -304,7 +304,7 @@ class __$$BaseDataImplCopyWithImpl<$Res>
       programType: freezed == programType
           ? _value.programType
           : programType // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ProgramType?,
       doeJob: freezed == doeJob
           ? _value.doeJob
           : doeJob // ignore: cast_nullable_to_non_nullable
@@ -335,7 +335,7 @@ class _$BaseDataImpl implements _BaseData {
       _$$BaseDataImplFromJson(json);
 
   @override
-  final String? programType;
+  final ProgramType? programType;
   @override
   final bool? doeJob;
   @override
@@ -386,7 +386,7 @@ class _$BaseDataImpl implements _BaseData {
 
 abstract class _BaseData implements BaseData {
   const factory _BaseData(
-      {final String? programType,
+      {final ProgramType? programType,
       final bool? doeJob,
       final String? address,
       final String? city,
@@ -396,7 +396,7 @@ abstract class _BaseData implements BaseData {
       _$BaseDataImpl.fromJson;
 
   @override
-  String? get programType;
+  ProgramType? get programType;
   @override
   bool? get doeJob;
   @override

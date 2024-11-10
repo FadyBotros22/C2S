@@ -1,3 +1,4 @@
+import 'package:c2s/constants.dart';
 import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
 import 'package:c2s/injection_container.dart';
@@ -13,28 +14,28 @@ class AuthRepoImpl implements AbstractAuthRepository {
   AuthRepoImpl(this._apiService);
 
   @override
-  Future<String> login(String userName, String password) async {
+  Future<bool?> login(String userName, String password) async {
     try {
       UserRequestData user = UserRequestData(
           user: User(userName: userName, password: password),
           device: Device(deviceId: "deviceId", os: "IOS"));
 
       final fetchedUser = await _apiService.login(user);
-      getIt<Preferences>().saveData('token', fetchedUser.data.authToken);
+      getIt<Preferences>().saveData(kToken, fetchedUser.data.authToken);
 
-      return "true";
+      return true;
     } on DioException catch (e) {
       if (e.type == DioExceptionType.badResponse) {
-        return "false";
+        return false;
       }
-      return "";
+      return null;
     }
   }
 
   @override
   Future<void> logout() async {
-    var token = getIt<Preferences>().getData('token').toString();
-    getIt<Preferences>().saveData('token', '');
+    var token = getIt<Preferences>().getData(kToken).toString();
+    getIt<Preferences>().saveData(kToken, '');
     await _apiService.logout(token);
   }
 }

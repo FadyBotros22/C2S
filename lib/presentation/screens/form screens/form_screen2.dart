@@ -46,7 +46,7 @@ class _FormScreen2State extends State<FormScreen2> {
       create: (context) => FormBloc(getIt<AbstractEntriesRepo>())
         ..add(
           LoadEntryEvent(
-            getIt<Preferences>().getData('token').toString(),
+            getIt<Preferences>().getData(kToken).toString(),
             widget.id,
           ),
         ),
@@ -148,7 +148,7 @@ class _FormScreen2State extends State<FormScreen2> {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<FormBloc>().add(LoadEntryEvent(
-                getIt<Preferences>().getData('token').toString(), widget.id));
+                getIt<Preferences>().getData(kToken).toString(), widget.id));
           },
           child: SafeArea(
             child: Column(
@@ -176,8 +176,8 @@ class _FormScreen2State extends State<FormScreen2> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, top: 16, bottom: 5),
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    16, 16, 0, 5),
                                 child: Text.rich(
                                   TextSpan(
                                     children: [
@@ -248,6 +248,7 @@ class _FormScreen2State extends State<FormScreen2> {
                                       blowerDoorStatus: (value == 'Yes')));
                                 },
                                 isRequired: false,
+                                isEmpty: false,
                                 title: 'Was blower door completed?',
                                 labels: const ['Yes', 'No'],
                                 isColumn: false,
@@ -387,7 +388,7 @@ class _FormScreen2State extends State<FormScreen2> {
                           ? entryData.concernsPic
                           : [],
                     ),
-                  ).toJson(),
+                  ),
                 ),
               ],
             ),

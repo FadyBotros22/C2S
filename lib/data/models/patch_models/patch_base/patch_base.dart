@@ -1,3 +1,4 @@
+import 'package:c2s/presentation/screens/form%20screens/form_screen1.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'patch_base.freezed.dart';
@@ -16,7 +17,7 @@ class PatchBaseData with _$PatchBaseData {
 @freezed
 class BaseData with _$BaseData {
   const factory BaseData({
-    String? programType,
+    ProgramType? programType,
     bool? doeJob,
     String? address,
     String? city,
