@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 
 class TransparentActionButton extends StatelessWidget {
   const TransparentActionButton(
@@ -14,24 +13,21 @@ class TransparentActionButton extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         height: 60,
-        child: SizedBox(
-          height: 50,
-          child: TextButton(
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+        child: TextButton(
+          style: ButtonStyle(
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
               ),
-              backgroundColor: const WidgetStatePropertyAll(Colors.white),
             ),
-            onPressed: () {
-              onPressed();
-            },
-            child: Text(
-              label,
-              style: kErrorMessageTextStyle.copyWith(color: Colors.black),
-            ),
+            backgroundColor: const WidgetStatePropertyAll(Colors.white),
+          ),
+          onPressed: () {
+            onPressed();
+          },
+          child: Text(
+            label,
+            style: kErrorMessageTextStyle.copyWith(color: Colors.black),
           ),
         ),
       ),

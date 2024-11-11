@@ -12,7 +12,8 @@ Future<String> uploadFile(File file) async {
       path: StoragePath.fromString('public/$key.jpg'),
     ).result;
     return "https://$bucket.s3.us-east-2.amazonaws.com/public/$key.jpg";
-  } catch (_) {
+  } catch (e) {
+    safePrint(e);
     return '';
   }
 }

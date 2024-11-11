@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'mcq_option.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 
 class RadioButtons extends StatefulWidget {
   const RadioButtons({

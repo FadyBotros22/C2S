@@ -1,7 +1,7 @@
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:c2s/data/remote/api_service.dart';
 import 'package:c2s/domain/repositories/abstract_auth_repo.dart';
-import 'package:c2s/injection_container.dart';
+import 'package:c2s/data/local/injection_container.dart';
 import 'package:dio/dio.dart';
 import '../../statics/preferences.dart';
 import 'package:c2s/data/models/user_models/request_user/user_request_data/user_request_data.dart';

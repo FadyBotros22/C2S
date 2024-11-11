@@ -1,10 +1,10 @@
 import 'package:c2s/data/models/post_entries_models/post_entries_request_data/post_entries_request_data.dart';
 import 'package:c2s/domain/blocs/form_bloc/form_event.dart';
-import 'package:c2s/injection_container.dart';
+import 'package:c2s/data/local/injection_container.dart';
 import 'package:c2s/presentation/screens/home_page.dart';
 import 'package:c2s/presentation/widgets/transparent_action_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../domain/blocs/form_bloc/form_bloc.dart';
 import 'package:flutter/material.dart';
 import 'action_button.dart';

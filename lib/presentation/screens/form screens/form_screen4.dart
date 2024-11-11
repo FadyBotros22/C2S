@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../../data/models/get_entry_models/attic_insulation/attic_insulation.dart';
 import '../../../data/models/patch_models/patch_attic_insulation/patch_attic_insulation.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -14,7 +14,7 @@ import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
 import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
@@ -144,6 +144,7 @@ class _FormScreen4State extends State<FormScreen4> {
                               ),
                               InputField(
                                 title: 'Notes on inaccurate measurements',
+                                isRequired: false,
                                 maxLines: 5,
                                 hintText:
                                     entryData?.inaccurateMeasurementsNotes,
@@ -154,6 +155,7 @@ class _FormScreen4State extends State<FormScreen4> {
                               ),
                               InputField(
                                 title: 'Attic insulation notes',
+                                isRequired: false,
                                 maxLines: 5,
                                 hintText: entryData?.notes,
                                 onChanged: (value) {

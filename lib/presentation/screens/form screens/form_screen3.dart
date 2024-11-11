@@ -1,4 +1,4 @@
-import '../../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../../data/models/get_entry_models/air_sealing/air_sealing.dart';
 import '../../../data/models/patch_models/patch_air_sealing/patch_air_sealing.dart';
 import '../../widgets/bottom_buttons.dart';
@@ -12,7 +12,7 @@ import 'form_screen4.dart';
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
@@ -149,6 +149,7 @@ class _FormScreen3State extends State<FormScreen3> {
                               ),
                               InputField(
                                 title: 'Air sealing notes',
+                                isRequired: false,
                                 hintText: entryData?.notes,
                                 maxLines: 5,
                                 onChanged: (value) {
@@ -158,7 +159,8 @@ class _FormScreen3State extends State<FormScreen3> {
                                 },
                               ),
                               ImageInputField(
-                                isRequired: isEmptyAirSealingPics,
+                                isEmpty: isEmptyAirSealingPics,
+                                isRequired: true,
                                 label: 'Air sealing quality pictures *',
                                 doesItExpand: true,
                                 url: entryData?.sealingQualityPic,

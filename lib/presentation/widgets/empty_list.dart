@@ -2,7 +2,7 @@ import 'package:c2s/presentation/screens/form%20screens/form_screen1.dart';
 import 'package:c2s/presentation/widgets/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../screens/home_page.dart';
 
 class EmptyList extends StatelessWidget {

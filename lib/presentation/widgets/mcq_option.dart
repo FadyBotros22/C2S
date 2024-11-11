@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 
 class McqOption extends StatefulWidget {
   const McqOption(

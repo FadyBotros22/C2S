@@ -1,6 +1,5 @@
 import 'snakbar.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -8,12 +7,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 class ImageDisplay extends StatelessWidget {
   const ImageDisplay({
     super.key,
-    this.image,
     required this.deleteImage,
     this.url,
   });
 
-  final File? image;
   final Function deleteImage;
   final String? url;
 

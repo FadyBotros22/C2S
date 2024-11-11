@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 
 class InputField extends StatefulWidget {
   const InputField({
     super.key,
     required this.title,
+    required this.isRequired,
     this.maxLines,
     required this.onChanged,
     this.color,
@@ -12,6 +13,7 @@ class InputField extends StatefulWidget {
     this.isNumber,
   });
   final String title;
+  final bool isRequired;
   final int? maxLines;
   final Color? color;
   final ValueChanged<String> onChanged;
@@ -24,14 +26,12 @@ class InputField extends StatefulWidget {
 class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
-    bool isRequired = widget.title.contains('*');
-
     return Container(
       margin: EdgeInsets.only(right: 16, left: 16, top: 0, bottom: 35),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isRequired)
+          if (widget.isRequired)
             Text.rich(
               TextSpan(
                 children: [
@@ -46,7 +46,7 @@ class _InputFieldState extends State<InputField> {
                 ],
               ),
             ),
-          if (!isRequired)
+          if (!widget.isRequired)
             Text(
               widget.title,
               style: kQuestionTitleTextStyle,

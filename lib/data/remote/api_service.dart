@@ -8,7 +8,7 @@ import 'package:c2s/data/models/user_models/request_user/user_request_data/user_
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import '../models/get_entry_models/get_entry_response_data/get_entry_response_data.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 part 'api_service.g.dart';
 
 @RestApi(baseUrl: kBaseUrl)

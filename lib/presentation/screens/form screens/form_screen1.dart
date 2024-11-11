@@ -2,11 +2,11 @@ import 'package:c2s/data/models/coordinates/coordinates.dart';
 
 import 'package:c2s/data/models/post_entries_models/post_entries_request_data/post_entries_request_data.dart'
     as req;
-import '../../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../../data/models/patch_models/patch_base/patch_base.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
 import '../../../domain/repositories/abstract_entries_repo.dart';
 import '../../../statics/preferences.dart';
@@ -243,8 +243,9 @@ class _FormScreen1State extends State<FormScreen1> {
                               ],
                               SizedBox(height: 8),
                               InputField(
-                                color: isEmptyCrew ? Colors.red : null,
                                 title: 'Crew Chief Submitting Form *',
+                                isRequired: true,
+                                color: isEmptyCrew ? Colors.red : null,
                                 hintText: crew,
                                 onChanged: (value) {
                                   setState(() {
@@ -267,6 +268,7 @@ class _FormScreen1State extends State<FormScreen1> {
                               ),
                               InputField(
                                 title: 'Address line 1 *',
+                                isRequired: true,
                                 color: isEmptyAdd ? Colors.red : null,
                                 hintText: entryData?.data?.address ?? '',
                                 onChanged: (value) {
@@ -280,6 +282,7 @@ class _FormScreen1State extends State<FormScreen1> {
                               ),
                               InputField(
                                 title: 'City *',
+                                isRequired: true,
                                 color: isEmptyCity ? Colors.red : null,
                                 hintText: entryData?.data?.city ?? '',
                                 onChanged: (value) {
@@ -294,6 +297,7 @@ class _FormScreen1State extends State<FormScreen1> {
                               if (widget.id == null)
                                 InputField(
                                   title: 'Job ID *',
+                                  isRequired: true,
                                   color: isEmptyJobId ? Colors.red : null,
                                   onChanged: (value) {
                                     setState(

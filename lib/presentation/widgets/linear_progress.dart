@@ -1,4 +1,4 @@
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:flutter/material.dart';
 
 class LinearProgress extends StatelessWidget {

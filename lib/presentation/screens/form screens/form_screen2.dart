@@ -17,10 +17,10 @@ import '../../widgets/title_component.dart';
 import 'form_screen1.dart';
 import 'form_screen3.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 
 class FormScreen2 extends StatefulWidget {
   const FormScreen2({super.key, required this.id});
@@ -259,6 +259,7 @@ class _FormScreen2State extends State<FormScreen2> {
                               SizedBox(height: 10),
                               InputField(
                                 title: 'Blower door starting value *',
+                                isRequired: true,
                                 color: isEmptyBlowerValue ? Colors.red : null,
                                 hintText:
                                     '${entryData?.blowerStartingValue ?? ''}',
@@ -273,6 +274,7 @@ class _FormScreen2State extends State<FormScreen2> {
                               ),
                               InputField(
                                 title: 'Initial walkthrough notes',
+                                isRequired: false,
                                 maxLines: 5,
                                 hintText: entryData?.notes,
                                 onChanged: (value) {
@@ -288,7 +290,8 @@ class _FormScreen2State extends State<FormScreen2> {
                                       .read<FormBloc>()
                                       .add(UpdateData(heatingSystemPic: ''));
                                 },
-                                isRequired: isEmptyHeatPic,
+                                isRequired: true,
+                                isEmpty: isEmptyHeatPic,
                                 label: 'Picture of heating system *',
                                 url: urlHandler(entryData?.heatingSystemPic),
                                 doesItExpand: false,
@@ -312,7 +315,8 @@ class _FormScreen2State extends State<FormScreen2> {
                                       .read<FormBloc>()
                                       .add(UpdateData(waterHeaterPic: ''));
                                 },
-                                isRequired: isEmptyWaterPic,
+                                isEmpty: isEmptyWaterPic,
+                                isRequired: true,
                                 url: urlHandler(entryData?.waterHeaterPic),
                                 label: 'Picture of water heater *',
                                 doesItExpand: false,
@@ -331,7 +335,7 @@ class _FormScreen2State extends State<FormScreen2> {
                                 },
                               ),
                               ImageInputField(
-                                isRequired: isEmptyWaterPic,
+                                isRequired: false,
                                 label: 'Photos of pre walkthrough concerns',
                                 url: entryData?.concernsPic,
                                 doesItExpand: true,

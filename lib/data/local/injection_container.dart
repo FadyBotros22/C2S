@@ -5,8 +5,8 @@ import 'package:c2s/statics/dio.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'data/remote/api_service.dart';
-import 'data/repositories/entries_impl.dart';
+import '../remote/api_service.dart';
+import '../repositories/entries_impl.dart';
 
 final getIt = GetIt.instance;
 

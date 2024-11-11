@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 
 class PicInputButton extends StatelessWidget {
   final Function onPickImage;

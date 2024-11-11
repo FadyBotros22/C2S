@@ -1,7 +1,7 @@
 import 'package:c2s/domain/blocs/home_bloc/home_bloc.dart';
 import 'package:c2s/domain/blocs/home_bloc/home_event.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PopupMenu extends StatefulWidget {

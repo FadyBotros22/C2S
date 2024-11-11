@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/blocs/home_bloc/home_state.dart';
 import '../../domain/repositories/abstract_entries_repo.dart';
-import '../../injection_container.dart';
+import '../../data/local/injection_container.dart';
 import '../../statics/preferences.dart';
 import '../widgets/empty_list.dart';
 import '../widgets/linear_progress.dart';
@@ -14,7 +14,7 @@ import '../widgets/popup_menu.dart';
 import '../widgets/snakbar.dart';
 import 'form screens/form_screen1.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 

@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 import '../../widgets/image_input_field.dart';
 import '../../widgets/input_field.dart';
 import '../../widgets/radio_buttons.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../widgets/action_button.dart';
 import 'package:c2s/statics/preferences.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 import '../../../domain/blocs/form_bloc/form_bloc.dart';
 import '../../../domain/blocs/form_bloc/form_event.dart';
 import '../../../domain/blocs/form_bloc/form_state.dart' as form_state;
@@ -133,6 +133,7 @@ class _FormScreen6State extends State<FormScreen6> {
                               InputField(
                                 title:
                                     'Final notes on job and anything the office may need to know',
+                                isRequired: false,
                                 maxLines: 5,
                                 hintText: entryData?.notes,
                                 onChanged: (value) {

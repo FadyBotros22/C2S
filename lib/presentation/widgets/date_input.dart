@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:intl/intl.dart';
 
 class DateInput extends StatefulWidget {

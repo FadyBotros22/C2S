@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:c2s/statics/preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import '../../../data/models/get_entry_models/wall_insulation/wall_insulation.dart';
 import '../../../data/models/patch_models/patch_wall_insulation/patch_wall_insulation.dart';
 import '../../../domain/repositories/abstract_entries_repo.dart';
-import '../../../injection_container.dart';
+import '../../../data/local/injection_container.dart';
 import '../../widgets/bottom_buttons.dart';
 import '../../widgets/snakbar.dart';
 import '../../widgets/title_component.dart';
@@ -138,6 +138,7 @@ class _FormScreen5State extends State<FormScreen5> {
                               ),
                               InputField(
                                 title: 'Inaccurate wall measurement notes',
+                                isRequired: false,
                                 maxLines: 6,
                                 hintText: entryData?.notes,
                                 onChanged: (value) {

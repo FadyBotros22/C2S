@@ -2,7 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:c2s/presentation/widgets/pic_input_button.dart';
 import 'image_display.dart';
 import 'package:flutter/material.dart';
-import 'package:c2s/constants.dart';
+import 'package:c2s/data/local/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'image_upload.dart';
@@ -20,6 +20,7 @@ class ImageInputField extends StatefulWidget {
     required this.deleteImage,
     required this.isRequired,
     required this.isImageLoading,
+    this.isEmpty,
   });
 
   final String label;
@@ -29,6 +30,7 @@ class ImageInputField extends StatefulWidget {
   final List<String>? url;
   final bool isRequired;
   final Function isImageLoading;
+  final bool? isEmpty;
 
   @override
   State<ImageInputField> createState() => _ImageInputFieldState();
@@ -177,7 +179,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
                                 pickImage();
                               },
                             ),
-                if (widget.isRequired)
+                if (widget.isEmpty == true)
                   Column(
                     children: [
                       SizedBox(height: 10),
