@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "628381792861",
+    "project_id": "c2s-649af",
+    "storage_bucket": "c2s-649af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628381792861:android:99b4fccc7332297beb2bb4",
+        "android_client_info": {
+          "package_name": "com.example.c2s"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK9wHmvYM0DWfw3wvJH9x71Yq7oWgn8SA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
